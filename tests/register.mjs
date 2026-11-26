@@ -30,6 +30,7 @@ registerHooks({
         format: "module",
         shortCircuit: true,
         source: ts.transpileModule(source, {
+          fileName: fileURLToPath(url),
           compilerOptions: { target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.ESNext, jsx: ts.JsxEmit.ReactJSX },
         }).outputText,
       };

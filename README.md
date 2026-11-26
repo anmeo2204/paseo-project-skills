@@ -48,7 +48,15 @@ Project-Skills is the single source of skill templates. The host setting starts 
 
 The loader requires Git on the daemon host and non-interactive SSH read access to `git@github.com:anmeo2204/project-skills.git` with its host key already trusted. It uses the host SSH identity or agent, an isolated temporary bare repo, and an in-memory cache of two resolved snapshots. For a runtime check, use the Paseo SDK settings RPC to save a known SHA, call `catalog.load` with `{}` twice, compare commit, IDs and descriptors, try an unavailable revision and restore the saved ref.
 
-The plugin validates existing directories without creating workspaces or writing target files. Native folder picking, agent sessions, scanning, previews and application remain outside the current milestone. The intended canonical skill location is `.agents/skills/`.
+The plugin validates existing directories without creating workspaces or writing target files. Native folder picking, agent sessions, previews and application remain outside the current milestone. The intended canonical skill location is `.agents/skills/`.
+
+## Project evidence
+
+The daemon-side `target.scan` subscription accepts a request ID and the canonical directory returned by `target.validate-directory` for the active host. Revalidation happens on the daemon. Each connected request emits one result. Release the subscription on receipt, target change, or unmount. Treat the request ID as part of the selection identity even when returning to the same path.
+
+The scanner reads bounded metadata and collects relative evidence references, application and workspace boundaries, technology declarations and inferences, and existing project skill/rule paths. Partial results carry warnings and coverage limits. It does not need a catalog ref or provider. M2.2 exposes the subscription for SDK use. The scan UI is planned for M2.5.
+
+The scanner is intended for local projects managed by the user. It excludes dependency trees, secret files, symlinks and special files, and never runs project commands. Node pathname checks can detect the tested replacement races, but do not provide an adversarial filesystem sandbox. See [the completion report](M2.2-completion-report.md) for the evidence policy and runtime checks.
 
 ## Roadmap
 

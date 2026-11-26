@@ -1,6 +1,7 @@
-import { defineRpc } from "@getpaseo/plugin";
+import { defineRpc, defineSubscription } from "@getpaseo/plugin";
 import { z } from "zod";
 import { catalogResultSchema } from "./catalog";
+import { projectScanEvent } from "./project-evidence";
 
 export const foundationStatusRpc = defineRpc({
   name: "foundation.status",
@@ -24,4 +25,13 @@ export const catalogLoadRpc = defineRpc({
   name: "catalog.load",
   input: z.strictObject({}),
   output: catalogResultSchema,
+});
+
+export const targetScanSubscription = defineSubscription({
+  name: "target.scan",
+  input: z.strictObject({
+    requestId: z.string().regex(/^[a-zA-Z0-9_-]{1,96}$/),
+    canonicalDirectory: z.string().min(1).max(4096),
+  }),
+  event: projectScanEvent,
 });
