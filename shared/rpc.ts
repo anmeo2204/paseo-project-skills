@@ -1,5 +1,6 @@
 import { defineRpc } from "@getpaseo/plugin";
 import { z } from "zod";
+import { catalogResultSchema } from "./catalog";
 
 export const foundationStatusRpc = defineRpc({
   name: "foundation.status",
@@ -17,4 +18,10 @@ export const validateDirectoryRpc = defineRpc({
       code: z.enum(["invalid_path", "missing", "not_directory", "permission_denied", "unreadable"]),
     }),
   ]),
+});
+
+export const catalogLoadRpc = defineRpc({
+  name: "catalog.load",
+  input: z.strictObject({}),
+  output: catalogResultSchema,
 });

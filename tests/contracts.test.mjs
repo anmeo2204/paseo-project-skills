@@ -6,7 +6,7 @@ import { test } from "node:test";
 import contribute from "../index.server.ts";
 import { validateDirectory } from "../server/validate-directory.ts";
 import { catalogSettings, catalogSource } from "../shared/catalog-settings.ts";
-import { foundationStatusRpc, validateDirectoryRpc } from "../shared/rpc.ts";
+import { catalogLoadRpc, foundationStatusRpc, validateDirectoryRpc } from "../shared/rpc.ts";
 
 async function fixture(t) {
   const directory = await mkdtemp(join(tmpdir(), "project-skills-test-"));
@@ -76,14 +76,20 @@ test("server contribution registers the expected typed contracts and host settin
   const settings = [];
   const cleanup = contribute({
     handle: (contract, handler) => handlers.set(contract, handler),
-    registerSettings: (definition) => settings.push(definition),
+    registerSettings(definition) {
+      settings.push(definition);
+      return { read: async () => ({ status: "ready", revision: "host-settings", values: { catalogRef: "" } }) };
+    },
   });
-  assert.deepEqual([...handlers.keys()], [foundationStatusRpc, validateDirectoryRpc]);
+  assert.deepEqual([...handlers.keys()], [foundationStatusRpc, validateDirectoryRpc, catalogLoadRpc]);
   assert.deepEqual(settings, [catalogSettings]);
   assert.deepEqual(foundationStatusRpc.output.parse(handlers.get(foundationStatusRpc)({})), { status: "ready" });
   assert.equal(foundationStatusRpc.input.safeParse({ extra: true }).success, false);
   assert.equal(validateDirectoryRpc.input.safeParse({ path: 7 }).success, false);
   assert.equal(validateDirectoryRpc.output.safeParse({ status: "ready" }).success, false);
+  assert.deepEqual(await handlers.get(catalogLoadRpc)({}), {
+    status: "error", code: "not_configured", settingsRevision: "host-settings", requestedRef: "",
+  });
   assert.equal(typeof cleanup, "function");
-  cleanup();
+  await cleanup();
 });

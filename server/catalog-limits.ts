@@ -1,0 +1,15 @@
+export const catalogLimits = {
+  skills: 512,
+  entries: 2_048,
+  blobBytes: 1024 ** 2,
+  entrypointBytes: 128 * 1024,
+  snapshotBytes: 8 * 1024 ** 2,
+  pathBytes: 512,
+  refBytes: 256,
+  rpcBytes: 512 * 1024,
+  timeoutMs: 20_000,
+  stagingBytes: 64 * 1024 ** 2,
+  concurrentStaging: 2,
+  cachedSnapshots: 2,
+  diagnostics: 32,
+} as const;

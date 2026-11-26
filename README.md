@@ -44,9 +44,11 @@ Directory installation registers your checkout as trusted plugin code. Paseo com
 
 ## Catalog and scope
 
-Project-Skills is the single source of skill templates. The host setting starts empty. Enter a tag name or a full 40-character commit SHA. A bare name is treated as a tag candidate. Catalog resolution must use the tag namespace or an explicit SHA, with no fallback to branches, `main` or a floating latest revision. Foundation validates syntax and saves the setting. It makes no request to the catalog repository. [Project-Skills repository](https://github.com/anmeo2204/project-skills)
+Project-Skills is the single source of skill templates. The host setting starts empty. Enter a tag name or a full 40-character commit SHA. A bare name is treated as a tag candidate. Catalog resolution must use the tag namespace or an explicit SHA, with no fallback to branches, `main` or a floating latest revision. Saving settings validates syntax. On demand, the daemon-side `catalog.load` RPC reads the active host’s saved revision and returns the resolved commit SHA, skill metadata and file descriptors. It discovers `skills/<name>/SKILL.md` in the pinned Git tree and rejects a malformed catalog as a whole. The existing screen saves the revision. Loading is exercised through the RPC. [Project-Skills repository](https://github.com/anmeo2204/project-skills)
 
-The plugin currently validates existing directories without creating workspaces or writing target files. Native folder picking, agent sessions, catalog resolution, scanning, previews and application are outside Foundation. The intended canonical skill location is `.agents/skills/`.
+The loader requires Git on the daemon host and non-interactive SSH read access to `git@github.com:anmeo2204/project-skills.git` with its host key already trusted. It uses the host SSH identity or agent, an isolated temporary bare repo, and an in-memory cache of two resolved snapshots. For a runtime check, use the Paseo SDK settings RPC to save a known SHA, call `catalog.load` with `{}` twice, compare commit, IDs and descriptors, try an unavailable revision and restore the saved ref.
+
+The plugin validates existing directories without creating workspaces or writing target files. Native folder picking, agent sessions, scanning, previews and application remain outside the current milestone. The intended canonical skill location is `.agents/skills/`.
 
 ## Roadmap
 
