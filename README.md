@@ -58,6 +58,10 @@ The scanner reads bounded metadata and collects relative evidence references, ap
 
 The scanner is intended for local projects managed by the user. It excludes dependency trees, secret files, symlinks and special files, and never runs project commands. Node pathname checks can detect the tested replacement races, but do not provide an adversarial filesystem sandbox. See [the completion report](M2.2-completion-report.md) for the evidence policy and runtime checks.
 
+## Optional AI capability
+
+M2.3 provides a server-side structured agent executor through the public Paseo SDK. It ships with no verified execution profiles, so provider availability alone cannot start a run. The executor is internal to the plugin and will be connected to the optional AI-assisted recommendation flow separately. Catalog and project evidence remain available independently. See [the M2.3 completion report](M2.3-completion-report.md) for the local preflight and provider limitations.
+
 ## Roadmap
 
 - **M2 — Read-only scan and recommendation.** Resolve the catalog to a commit SHA, then read it and recommend skills.
