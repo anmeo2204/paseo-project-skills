@@ -1,6 +1,6 @@
 # Project Skills for Paseo
 
-M1.2 provides the **Project Skills** sidebar screen and a read-only connection check. The button calls the plugin server on the active Paseo host. Project selection, provider discovery and catalog settings are planned for M1.3.
+Open **Project Skills** to choose a target project or workspace, or enter an absolute directory path on the current Paseo host. The plugin validates the directory on that host and uses the canonical path for provider discovery. Select any of the providers shown as ready. The Skill Catalog section saves a tag name or full commit SHA on the host for future use. An empty value leaves the revision unset.
 
 ## Development and local installation
 
@@ -34,4 +34,4 @@ Use `plugin disable paseo-project-skills` and `plugin enable paseo-project-skill
 - **Sidebar item is missing.** Verify the installation is enabled and running on the host shown in Desktop. Check Paseo's sidebar settings if the item is hidden.
 - **Connection check failed.** Verify the host is connected and the plugin is running, inspect the plugin logs, then select **Check connection** again.
 
-The RPC contract lives in `shared/rpc.ts`, the handler in `index.server.ts` and the screen in `client/foundation-screen.tsx`. Keep shared code independent of the client and server runtimes. [Paseo 0.17.4 plugin guide](https://github.com/getpaseo/paseo/blob/v0.17.4/docs/plugins.md)
+RPC contracts live in `shared/rpc.ts`. The server entrypoint registers the connection check, directory validation and catalog settings. The screen lives in `client/foundation-screen.tsx`. Keep shared code independent of the client and server runtimes. [Paseo 0.17.4 plugin guide](https://github.com/getpaseo/paseo/blob/v0.17.4/docs/plugins.md)
