@@ -1,0 +1,7 @@
+{
+  "id": "paseo-project-skills",
+  "name": "Project Skills",
+  "requirements": {
+    "paseo": ">=0.17.4"
+  }
+}
