@@ -25,7 +25,7 @@ export function ProviderSelection({ theme, hostId, cwd }: {
     retry: false,
     gcTime: 0,
     refetchInterval: ({ state }) => state.status === "success" && state.data?.entries.some(
-      (entry) => entry.status === "loading" && providers.some(([id]) => id === entry.provider),
+      (entry) => entry.enabled && entry.status === "loading" && providers.some(([id]) => id === entry.provider),
     ) ? 1500 : false,
   });
 

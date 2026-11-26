@@ -3,7 +3,7 @@ import { Modal } from "@getpaseo/plugin/client/ui";
 import type { PluginTheme } from "@getpaseo/plugin";
 import type { PaseoWorkspace } from "@getpaseo/client";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { Action, Detail, Input } from "./controls";
 
@@ -20,16 +20,18 @@ export function TargetPicker({ theme, hostId, onSelect }: {
   onSelect: (target: Target) => void;
 }) {
   const paseo = usePaseo();
+  const pickerId = useId();
   const [open, setOpen] = useState(false);
   const [path, setPath] = useState("");
   const projects = useQuery({
-    queryKey: ["projects", hostId],
+    queryKey: ["projects", hostId, pickerId],
     queryFn: async () => (await paseo.projects.list()).projects,
     enabled: open,
     retry: false,
+    gcTime: 0,
   });
   const workspaces = useQuery({
-    queryKey: ["workspaces", hostId],
+    queryKey: ["workspaces", hostId, pickerId],
     queryFn: async ({ signal }) => {
       const entries: PaseoWorkspace[] = [];
       let cursor: string | undefined;
@@ -43,6 +45,7 @@ export function TargetPicker({ theme, hostId, onSelect }: {
     },
     enabled: open,
     retry: false,
+    gcTime: 0,
   });
 
   function submitPath() {
