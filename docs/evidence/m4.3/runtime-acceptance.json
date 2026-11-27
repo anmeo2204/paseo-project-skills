@@ -1,0 +1,5496 @@
+{
+  "paseoVersion": "0.17.5",
+  "sdkVersions": {
+    "client": "0.17.4",
+    "plugin": "0.17.4",
+    "protocol": "0.17.4"
+  },
+  "agents": 0,
+  "parentLifecycle": {
+    "parentPid": 21523,
+    "helperPid": 24954,
+    "extraction": {
+      "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-AzeVkk",
+      "dev": "16777230",
+      "ino": "122737580",
+      "mode": 448
+    },
+    "lockBefore": {
+      "dev": "16777230",
+      "ino": "122737582",
+      "mode": 384
+    },
+    "lockAfter": {
+      "dev": "16777230",
+      "ino": "122737582",
+      "mode": 384
+    },
+    "busy": {
+      "result": {
+        "event": "result",
+        "protocol": 1,
+        "version": "m4.3-fixture.1",
+        "phase": "failed_before_write",
+        "code": "busy",
+        "targetMutated": false,
+        "ledger": [
+          {
+            "destination": ".agents/skills/demo/SKILL.md",
+            "kind": "file",
+            "state": "not_attempted",
+            "bytesWritten": 0,
+            "writeCalls": 0,
+            "shortWriteResults": 0
+          }
+        ],
+        "checkpoints": 12,
+        "durability": "not_confirmed"
+      },
+      "events": [
+        {
+          "event": "environment",
+          "filesystem": "apfs",
+          "local": true,
+          "caseMode": "insensitive",
+          "macOS": "27.2.1",
+          "arch": "arm64",
+          "fixtureOnly": true,
+          "pid": 24967
+        },
+        {
+          "event": "result",
+          "protocol": 1,
+          "version": "m4.3-fixture.1",
+          "phase": "failed_before_write",
+          "code": "busy",
+          "targetMutated": false,
+          "ledger": [
+            {
+              "destination": ".agents/skills/demo/SKILL.md",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "writeCalls": 0,
+              "shortWriteResults": 0
+            }
+          ],
+          "checkpoints": 12,
+          "durability": "not_confirmed"
+        }
+      ],
+      "extraction": {
+        "removed": true,
+        "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-Nh7ffz"
+      },
+      "artifactSha256": "48cc178ca0e5cd2b7bfdefbe5e23b27c1c9df7bbaa3f4766edacd4adc1a72d19",
+      "nativeExit": {
+        "code": 1,
+        "signal": null
+      }
+    },
+    "afterParentDeath": {
+      "result": {
+        "event": "result",
+        "protocol": 1,
+        "version": "m4.3-fixture.1",
+        "phase": "completed",
+        "code": "none",
+        "targetMutated": true,
+        "ledger": [
+          {
+            "destination": ".agents/skills/demo/SKILL.md",
+            "kind": "file",
+            "state": "created_verified",
+            "bytesWritten": 45,
+            "writeCalls": 1,
+            "shortWriteResults": 0,
+            "identity": {
+              "dev": "16777230",
+              "ino": "122737588"
+            }
+          }
+        ],
+        "checkpoints": 36,
+        "durability": "fsync_completed"
+      },
+      "events": [
+        {
+          "event": "environment",
+          "filesystem": "apfs",
+          "local": true,
+          "caseMode": "insensitive",
+          "macOS": "27.2.1",
+          "arch": "arm64",
+          "fixtureOnly": true,
+          "pid": 24969
+        },
+        {
+          "event": "lock_acquired",
+          "pid": 24969,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122737582"
+          }
+        },
+        {
+          "event": "mutation_intent",
+          "operation": "openat_exclusive",
+          "destination": ".agents/skills/demo/SKILL.md"
+        },
+        {
+          "event": "file_verified",
+          "destination": ".agents/skills/demo/SKILL.md",
+          "identity": {
+            "dev": "16777230",
+            "ino": "122737588"
+          }
+        },
+        {
+          "event": "ready_to_finalize",
+          "result": {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "completed",
+            "code": "none",
+            "targetMutated": true,
+            "ledger": [
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "created_verified",
+                "bytesWritten": 45,
+                "writeCalls": 1,
+                "shortWriteResults": 0,
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737588"
+                }
+              }
+            ],
+            "checkpoints": 34,
+            "durability": "fsync_completed"
+          },
+          "lockHeld": true
+        },
+        {
+          "event": "result",
+          "protocol": 1,
+          "version": "m4.3-fixture.1",
+          "phase": "completed",
+          "code": "none",
+          "targetMutated": true,
+          "ledger": [
+            {
+              "destination": ".agents/skills/demo/SKILL.md",
+              "kind": "file",
+              "state": "created_verified",
+              "bytesWritten": 45,
+              "writeCalls": 1,
+              "shortWriteResults": 0,
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737588"
+              }
+            }
+          ],
+          "checkpoints": 36,
+          "durability": "fsync_completed"
+        }
+      ],
+      "extraction": {
+        "removed": true,
+        "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-Hlou0N"
+      },
+      "artifactSha256": "48cc178ca0e5cd2b7bfdefbe5e23b27c1c9df7bbaa3f4766edacd4adc1a72d19",
+      "nativeExit": {
+        "code": 0,
+        "signal": null
+      }
+    },
+    "parentRpcOutcome": {
+      "settled": "rejected",
+      "code": "handler_error"
+    },
+    "privateOrphanObserved": true,
+    "orphanRemovedByFixtureHarness": true,
+    "targetBefore": [
+      {
+        "path": ".",
+        "type": "directory",
+        "mode": 448
+      },
+      {
+        "path": "./.agents",
+        "type": "directory",
+        "mode": 493
+      },
+      {
+        "path": "./.agents/skills",
+        "type": "directory",
+        "mode": 493
+      },
+      {
+        "path": "./.agents/skills/demo",
+        "type": "directory",
+        "mode": 493
+      }
+    ]
+  },
+  "runtime": {
+    "pid": 21523,
+    "node": "24.20.0",
+    "electron": "44.2.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "contextKeys": [
+      "paseo"
+    ]
+  },
+  "productWriteCapability": "unavailable_m4_2",
+  "passed": 19,
+  "cases": [
+    {
+      "name": "packaging-private-extraction",
+      "pass": true,
+      "outcome": {
+        "result": {
+          "event": "result",
+          "protocol": 1,
+          "version": "m4.3-fixture.1",
+          "phase": "completed",
+          "code": "none",
+          "targetMutated": true,
+          "ledger": [
+            {
+              "destination": ".agents",
+              "kind": "directory",
+              "state": "created_verified",
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737107"
+              }
+            },
+            {
+              "destination": ".agents/skills",
+              "kind": "directory",
+              "state": "created_verified",
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737108"
+              }
+            },
+            {
+              "destination": ".agents/skills/demo",
+              "kind": "directory",
+              "state": "created_verified",
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737109"
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/SKILL.md",
+              "kind": "file",
+              "state": "created_verified",
+              "bytesWritten": 45,
+              "writeCalls": 1,
+              "shortWriteResults": 0,
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737110"
+              }
+            }
+          ],
+          "checkpoints": 54,
+          "durability": "fsync_completed"
+        },
+        "events": [
+          {
+            "event": "environment",
+            "filesystem": "apfs",
+            "local": true,
+            "caseMode": "insensitive",
+            "macOS": "27.2.1",
+            "arch": "arm64",
+            "fixtureOnly": true,
+            "pid": 24484
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "mkdirat",
+            "destination": ".agents"
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "mkdirat",
+            "destination": ".agents/skills"
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "mkdirat",
+            "destination": ".agents/skills/demo"
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "openat_exclusive",
+            "destination": ".agents/skills/demo/SKILL.md"
+          },
+          {
+            "event": "file_verified",
+            "destination": ".agents/skills/demo/SKILL.md",
+            "identity": {
+              "dev": "16777230",
+              "ino": "122737110"
+            }
+          },
+          {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "completed",
+            "code": "none",
+            "targetMutated": true,
+            "ledger": [
+              {
+                "destination": ".agents",
+                "kind": "directory",
+                "state": "created_verified",
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737107"
+                }
+              },
+              {
+                "destination": ".agents/skills",
+                "kind": "directory",
+                "state": "created_verified",
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737108"
+                }
+              },
+              {
+                "destination": ".agents/skills/demo",
+                "kind": "directory",
+                "state": "created_verified",
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737109"
+                }
+              },
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "created_verified",
+                "bytesWritten": 45,
+                "writeCalls": 1,
+                "shortWriteResults": 0,
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737110"
+                }
+              }
+            ],
+            "checkpoints": 54,
+            "durability": "fsync_completed"
+          }
+        ],
+        "extraction": {
+          "removed": true,
+          "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-kilnbs"
+        },
+        "artifactSha256": "48cc178ca0e5cd2b7bfdefbe5e23b27c1c9df7bbaa3f4766edacd4adc1a72d19",
+        "nativeExit": {
+          "code": 0,
+          "signal": null
+        }
+      },
+      "caseAliasConfirmed": true,
+      "rootSnapshot": [
+        {
+          "path": ".",
+          "type": "directory",
+          "mode": 448
+        },
+        {
+          "path": "./.agents",
+          "type": "directory",
+          "mode": 493
+        },
+        {
+          "path": "./.agents/skills",
+          "type": "directory",
+          "mode": 493
+        },
+        {
+          "path": "./.agents/skills/demo",
+          "type": "directory",
+          "mode": 493
+        },
+        {
+          "path": "./.agents/skills/demo/SKILL.md",
+          "type": "file",
+          "mode": 420,
+          "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a"
+        }
+      ]
+    },
+    {
+      "name": "helper-fail-closed",
+      "pass": true,
+      "outcomes": {
+        "missing": {
+          "result": {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "failed_before_write",
+            "code": "helper_missing",
+            "targetMutated": false,
+            "ledger": [
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "not_attempted",
+                "bytesWritten": 0
+              }
+            ],
+            "checkpoints": 0,
+            "durability": "not_confirmed"
+          },
+          "events": [],
+          "extraction": {
+            "removed": true
+          }
+        },
+        "corrupt": {
+          "result": {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "failed_before_write",
+            "code": "helper_integrity",
+            "targetMutated": false,
+            "ledger": [
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "not_attempted",
+                "bytesWritten": 0
+              }
+            ],
+            "checkpoints": 0,
+            "durability": "not_confirmed"
+          },
+          "events": [],
+          "extraction": {
+            "removed": true
+          }
+        },
+        "wrong-metadata": {
+          "result": {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "failed_before_write",
+            "code": "helper_version",
+            "targetMutated": false,
+            "ledger": [
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "not_attempted",
+                "bytesWritten": 0
+              }
+            ],
+            "checkpoints": 0,
+            "durability": "not_confirmed"
+          },
+          "events": [],
+          "extraction": {
+            "removed": true
+          }
+        },
+        "wrong-handshake": {
+          "result": {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "failed_before_write",
+            "code": "helper_version",
+            "targetMutated": false,
+            "ledger": [
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "not_attempted",
+                "bytesWritten": 0
+              }
+            ],
+            "checkpoints": 0,
+            "durability": "not_confirmed"
+          },
+          "events": [],
+          "extraction": {
+            "removed": true,
+            "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-9J0Pii"
+          },
+          "artifactSha256": "cd849708bd9bcb497d92b78d6cb3264f15cadda1d3185776a41244e82e5c9aa9"
+        },
+        "removed": {
+          "result": {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "failed_before_write",
+            "code": "helper_missing",
+            "targetMutated": false,
+            "ledger": [
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "not_attempted",
+                "bytesWritten": 0
+              }
+            ],
+            "checkpoints": 0,
+            "durability": "not_confirmed"
+          },
+          "events": [],
+          "extraction": {
+            "removed": true,
+            "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-7kOnYy"
+          },
+          "artifactSha256": "48cc178ca0e5cd2b7bfdefbe5e23b27c1c9df7bbaa3f4766edacd4adc1a72d19"
+        },
+        "modified-extraction": {
+          "result": {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "failed_before_write",
+            "code": "helper_integrity",
+            "targetMutated": false,
+            "ledger": [
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "not_attempted",
+                "bytesWritten": 0
+              }
+            ],
+            "checkpoints": 0,
+            "durability": "not_confirmed"
+          },
+          "events": [],
+          "extraction": {
+            "removed": true,
+            "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-CMQgZm"
+          },
+          "artifactSha256": "48cc178ca0e5cd2b7bfdefbe5e23b27c1c9df7bbaa3f4766edacd4adc1a72d19"
+        }
+      },
+      "targetSnapshotMatch": true
+    },
+    {
+      "name": "environment-and-scope-gate",
+      "pass": true,
+      "outcomes": [
+        {
+          "result": {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "failed_before_write",
+            "code": "unsupported_environment",
+            "targetMutated": false,
+            "ledger": [
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "not_attempted",
+                "bytesWritten": 0,
+                "writeCalls": 0,
+                "shortWriteResults": 0
+              }
+            ],
+            "checkpoints": 2,
+            "durability": "not_confirmed"
+          },
+          "events": [
+            {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "failed_before_write",
+              "code": "unsupported_environment",
+              "targetMutated": false,
+              "ledger": [
+                {
+                  "destination": ".agents/skills/demo/SKILL.md",
+                  "kind": "file",
+                  "state": "not_attempted",
+                  "bytesWritten": 0,
+                  "writeCalls": 0,
+                  "shortWriteResults": 0
+                }
+              ],
+              "checkpoints": 2,
+              "durability": "not_confirmed"
+            }
+          ],
+          "extraction": {
+            "removed": true,
+            "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-EQR4ol"
+          },
+          "artifactSha256": "48cc178ca0e5cd2b7bfdefbe5e23b27c1c9df7bbaa3f4766edacd4adc1a72d19",
+          "nativeExit": {
+            "code": 1,
+            "signal": null
+          }
+        },
+        {
+          "result": {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "failed_before_write",
+            "code": "unsupported_environment",
+            "targetMutated": false,
+            "ledger": [
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "not_attempted",
+                "bytesWritten": 0,
+                "writeCalls": 0,
+                "shortWriteResults": 0
+              }
+            ],
+            "checkpoints": 2,
+            "durability": "not_confirmed"
+          },
+          "events": [
+            {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "failed_before_write",
+              "code": "unsupported_environment",
+              "targetMutated": false,
+              "ledger": [
+                {
+                  "destination": ".agents/skills/demo/SKILL.md",
+                  "kind": "file",
+                  "state": "not_attempted",
+                  "bytesWritten": 0,
+                  "writeCalls": 0,
+                  "shortWriteResults": 0
+                }
+              ],
+              "checkpoints": 2,
+              "durability": "not_confirmed"
+            }
+          ],
+          "extraction": {
+            "removed": true,
+            "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-UPslO7"
+          },
+          "artifactSha256": "48cc178ca0e5cd2b7bfdefbe5e23b27c1c9df7bbaa3f4766edacd4adc1a72d19",
+          "nativeExit": {
+            "code": 1,
+            "signal": null
+          }
+        },
+        {
+          "result": {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "failed_before_write",
+            "code": "fixture_scope_required",
+            "targetMutated": false,
+            "ledger": [
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "not_attempted",
+                "bytesWritten": 0,
+                "writeCalls": 0,
+                "shortWriteResults": 0
+              }
+            ],
+            "checkpoints": 2,
+            "durability": "not_confirmed"
+          },
+          "events": [
+            {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "failed_before_write",
+              "code": "fixture_scope_required",
+              "targetMutated": false,
+              "ledger": [
+                {
+                  "destination": ".agents/skills/demo/SKILL.md",
+                  "kind": "file",
+                  "state": "not_attempted",
+                  "bytesWritten": 0,
+                  "writeCalls": 0,
+                  "shortWriteResults": 0
+                }
+              ],
+              "checkpoints": 2,
+              "durability": "not_confirmed"
+            }
+          ],
+          "extraction": {
+            "removed": true,
+            "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-DqSmXo"
+          },
+          "artifactSha256": "48cc178ca0e5cd2b7bfdefbe5e23b27c1c9df7bbaa3f4766edacd4adc1a72d19",
+          "nativeExit": {
+            "code": 1,
+            "signal": null
+          }
+        }
+      ],
+      "standardRejectsControls": {
+        "result": {
+          "event": "result",
+          "protocol": 1,
+          "version": "m4.3-fixture.1",
+          "phase": "failed_before_write",
+          "code": "test_controls_disabled",
+          "targetMutated": false,
+          "ledger": [
+            {
+              "destination": ".agents/skills/demo/SKILL.md",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0
+            }
+          ],
+          "checkpoints": 2,
+          "durability": "not_confirmed"
+        },
+        "events": [
+          {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "failed_before_write",
+            "code": "test_controls_disabled",
+            "targetMutated": false,
+            "ledger": [],
+            "checkpoints": 2,
+            "durability": "not_confirmed"
+          }
+        ],
+        "extraction": {
+          "removed": true,
+          "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-fh0A0Z"
+        },
+        "artifactSha256": "48cc178ca0e5cd2b7bfdefbe5e23b27c1c9df7bbaa3f4766edacd4adc1a72d19",
+        "nativeExit": {
+          "code": 1,
+          "signal": null
+        }
+      },
+      "targetSnapshotMatch": true
+    },
+    {
+      "name": "bytes-modes-binary-empty-and-short-writes",
+      "pass": true,
+      "outcome": {
+        "result": {
+          "event": "result",
+          "protocol": 1,
+          "version": "m4.3-fixture.1",
+          "phase": "completed",
+          "code": "none",
+          "targetMutated": true,
+          "ledger": [
+            {
+              "destination": ".agents",
+              "kind": "directory",
+              "state": "created_verified",
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737147"
+              }
+            },
+            {
+              "destination": ".agents/skills",
+              "kind": "directory",
+              "state": "created_verified",
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737148"
+              }
+            },
+            {
+              "destination": ".agents/skills/demo",
+              "kind": "directory",
+              "state": "created_verified",
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737149"
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/a-empty",
+              "kind": "file",
+              "state": "created_verified",
+              "bytesWritten": 0,
+              "writeCalls": 0,
+              "shortWriteResults": 0,
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737150"
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/b-binary",
+              "kind": "file",
+              "state": "created_verified",
+              "bytesWritten": 4,
+              "writeCalls": 1,
+              "shortWriteResults": 0,
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737151"
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/c-run.sh",
+              "kind": "file",
+              "state": "created_verified",
+              "bytesWritten": 23,
+              "writeCalls": 1,
+              "shortWriteResults": 0,
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737152"
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/d-many.bin",
+              "kind": "file",
+              "state": "created_verified",
+              "bytesWritten": 501,
+              "writeCalls": 167,
+              "shortWriteResults": 166,
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737153"
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/SKILL.md",
+              "kind": "file",
+              "state": "created_verified",
+              "bytesWritten": 45,
+              "writeCalls": 1,
+              "shortWriteResults": 0,
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737154"
+              }
+            }
+          ],
+          "checkpoints": 442,
+          "durability": "fsync_completed"
+        },
+        "events": [
+          {
+            "event": "environment",
+            "filesystem": "apfs",
+            "local": true,
+            "caseMode": "insensitive",
+            "macOS": "27.2.1",
+            "arch": "arm64",
+            "fixtureOnly": true,
+            "pid": 24495
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "mkdirat",
+            "destination": ".agents"
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "mkdirat",
+            "destination": ".agents/skills"
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "mkdirat",
+            "destination": ".agents/skills/demo"
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "openat_exclusive",
+            "destination": ".agents/skills/demo/a-empty"
+          },
+          {
+            "event": "file_verified",
+            "destination": ".agents/skills/demo/a-empty",
+            "identity": {
+              "dev": "16777230",
+              "ino": "122737150"
+            }
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "openat_exclusive",
+            "destination": ".agents/skills/demo/b-binary"
+          },
+          {
+            "event": "file_verified",
+            "destination": ".agents/skills/demo/b-binary",
+            "identity": {
+              "dev": "16777230",
+              "ino": "122737151"
+            }
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "openat_exclusive",
+            "destination": ".agents/skills/demo/c-run.sh"
+          },
+          {
+            "event": "file_verified",
+            "destination": ".agents/skills/demo/c-run.sh",
+            "identity": {
+              "dev": "16777230",
+              "ino": "122737152"
+            }
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "openat_exclusive",
+            "destination": ".agents/skills/demo/d-many.bin"
+          },
+          {
+            "event": "file_verified",
+            "destination": ".agents/skills/demo/d-many.bin",
+            "identity": {
+              "dev": "16777230",
+              "ino": "122737153"
+            }
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "openat_exclusive",
+            "destination": ".agents/skills/demo/SKILL.md"
+          },
+          {
+            "event": "file_verified",
+            "destination": ".agents/skills/demo/SKILL.md",
+            "identity": {
+              "dev": "16777230",
+              "ino": "122737154"
+            }
+          },
+          {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "completed",
+            "code": "none",
+            "targetMutated": true,
+            "ledger": [
+              {
+                "destination": ".agents",
+                "kind": "directory",
+                "state": "created_verified",
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737147"
+                }
+              },
+              {
+                "destination": ".agents/skills",
+                "kind": "directory",
+                "state": "created_verified",
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737148"
+                }
+              },
+              {
+                "destination": ".agents/skills/demo",
+                "kind": "directory",
+                "state": "created_verified",
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737149"
+                }
+              },
+              {
+                "destination": ".agents/skills/demo/a-empty",
+                "kind": "file",
+                "state": "created_verified",
+                "bytesWritten": 0,
+                "writeCalls": 0,
+                "shortWriteResults": 0,
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737150"
+                }
+              },
+              {
+                "destination": ".agents/skills/demo/b-binary",
+                "kind": "file",
+                "state": "created_verified",
+                "bytesWritten": 4,
+                "writeCalls": 1,
+                "shortWriteResults": 0,
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737151"
+                }
+              },
+              {
+                "destination": ".agents/skills/demo/c-run.sh",
+                "kind": "file",
+                "state": "created_verified",
+                "bytesWritten": 23,
+                "writeCalls": 1,
+                "shortWriteResults": 0,
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737152"
+                }
+              },
+              {
+                "destination": ".agents/skills/demo/d-many.bin",
+                "kind": "file",
+                "state": "created_verified",
+                "bytesWritten": 501,
+                "writeCalls": 167,
+                "shortWriteResults": 166,
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737153"
+                }
+              },
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "created_verified",
+                "bytesWritten": 45,
+                "writeCalls": 1,
+                "shortWriteResults": 0,
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737154"
+                }
+              }
+            ],
+            "checkpoints": 442,
+            "durability": "fsync_completed"
+          }
+        ],
+        "extraction": {
+          "removed": true,
+          "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-EVBpks"
+        },
+        "artifactSha256": "739b23bca8adf032a6db6f08e25b1fe2b34703aa33c6c02e4650ae132d33b7fb",
+        "nativeExit": {
+          "code": 0,
+          "signal": null
+        }
+      },
+      "noOp": {
+        "result": {
+          "event": "result",
+          "protocol": 1,
+          "version": "m4.3-fixture.1",
+          "phase": "completed",
+          "code": "none",
+          "targetMutated": false,
+          "ledger": [
+            {
+              "destination": ".agents/skills/demo/a-empty",
+              "kind": "file",
+              "state": "unchanged_verified",
+              "bytesWritten": 0,
+              "writeCalls": 0,
+              "shortWriteResults": 0
+            },
+            {
+              "destination": ".agents/skills/demo/b-binary",
+              "kind": "file",
+              "state": "unchanged_verified",
+              "bytesWritten": 0,
+              "writeCalls": 0,
+              "shortWriteResults": 0
+            },
+            {
+              "destination": ".agents/skills/demo/c-run.sh",
+              "kind": "file",
+              "state": "unchanged_verified",
+              "bytesWritten": 0,
+              "writeCalls": 0,
+              "shortWriteResults": 0
+            },
+            {
+              "destination": ".agents/skills/demo/d-many.bin",
+              "kind": "file",
+              "state": "unchanged_verified",
+              "bytesWritten": 0,
+              "writeCalls": 0,
+              "shortWriteResults": 0
+            },
+            {
+              "destination": ".agents/skills/demo/SKILL.md",
+              "kind": "file",
+              "state": "unchanged_verified",
+              "bytesWritten": 0,
+              "writeCalls": 0,
+              "shortWriteResults": 0
+            }
+          ],
+          "checkpoints": 26,
+          "durability": "fsync_completed"
+        },
+        "events": [
+          {
+            "event": "environment",
+            "filesystem": "apfs",
+            "local": true,
+            "caseMode": "insensitive",
+            "macOS": "27.2.1",
+            "arch": "arm64",
+            "fixtureOnly": true,
+            "pid": 24497
+          },
+          {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "completed",
+            "code": "none",
+            "targetMutated": false,
+            "ledger": [
+              {
+                "destination": ".agents/skills/demo/a-empty",
+                "kind": "file",
+                "state": "unchanged_verified",
+                "bytesWritten": 0,
+                "writeCalls": 0,
+                "shortWriteResults": 0
+              },
+              {
+                "destination": ".agents/skills/demo/b-binary",
+                "kind": "file",
+                "state": "unchanged_verified",
+                "bytesWritten": 0,
+                "writeCalls": 0,
+                "shortWriteResults": 0
+              },
+              {
+                "destination": ".agents/skills/demo/c-run.sh",
+                "kind": "file",
+                "state": "unchanged_verified",
+                "bytesWritten": 0,
+                "writeCalls": 0,
+                "shortWriteResults": 0
+              },
+              {
+                "destination": ".agents/skills/demo/d-many.bin",
+                "kind": "file",
+                "state": "unchanged_verified",
+                "bytesWritten": 0,
+                "writeCalls": 0,
+                "shortWriteResults": 0
+              },
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "unchanged_verified",
+                "bytesWritten": 0,
+                "writeCalls": 0,
+                "shortWriteResults": 0
+              }
+            ],
+            "checkpoints": 26,
+            "durability": "fsync_completed"
+          }
+        ],
+        "extraction": {
+          "removed": true,
+          "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-HsoNPh"
+        },
+        "artifactSha256": "48cc178ca0e5cd2b7bfdefbe5e23b27c1c9df7bbaa3f4766edacd4adc1a72d19",
+        "nativeExit": {
+          "code": 0,
+          "signal": null
+        }
+      },
+      "files": [
+        {
+          "dev": "16777230",
+          "ino": "122737150",
+          "mode": 420,
+          "size": "0",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "dev": "16777230",
+          "ino": "122737151",
+          "mode": 420,
+          "size": "4",
+          "sha256": "f7d2a93c29506ba14eee181e774135885a288e2e8f729092ce9532276da65d52"
+        },
+        {
+          "dev": "16777230",
+          "ino": "122737152",
+          "mode": 493,
+          "size": "23",
+          "sha256": "6ecf06f6dbbab6a920b5b208bc7c4069ca266b150d6c00533a00b5975a8417ca"
+        },
+        {
+          "dev": "16777230",
+          "ino": "122737153",
+          "mode": 420,
+          "size": "501",
+          "sha256": "f052bfde1fb44daf1ba39a292d45b509b84c0e59d090217d04e9fb026d78acc4"
+        },
+        {
+          "dev": "16777230",
+          "ino": "122737154",
+          "mode": 420,
+          "size": "45",
+          "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a"
+        }
+      ]
+    },
+    {
+      "name": "kiro-derived-pinned-bytes-and-read-only-git",
+      "pass": true,
+      "outcome": {
+        "result": {
+          "event": "result",
+          "protocol": 1,
+          "version": "m4.3-fixture.1",
+          "phase": "completed",
+          "code": "none",
+          "targetMutated": true,
+          "ledger": [
+            {
+              "destination": ".agents",
+              "kind": "directory",
+              "state": "created_verified",
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737198"
+              }
+            },
+            {
+              "destination": ".kiro",
+              "kind": "directory",
+              "state": "created_verified",
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737199"
+              }
+            },
+            {
+              "destination": ".agents/skills",
+              "kind": "directory",
+              "state": "created_verified",
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737200"
+              }
+            },
+            {
+              "destination": ".kiro/skills",
+              "kind": "directory",
+              "state": "created_verified",
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737201"
+              }
+            },
+            {
+              "destination": ".agents/skills/demo",
+              "kind": "directory",
+              "state": "created_verified",
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737202"
+              }
+            },
+            {
+              "destination": ".kiro/skills/demo",
+              "kind": "directory",
+              "state": "created_verified",
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737203"
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/nested",
+              "kind": "directory",
+              "state": "created_verified",
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737204"
+              }
+            },
+            {
+              "destination": ".kiro/skills/demo/nested",
+              "kind": "directory",
+              "state": "created_verified",
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737205"
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/nested/data.bin",
+              "kind": "file",
+              "state": "created_verified",
+              "bytesWritten": 3,
+              "writeCalls": 1,
+              "shortWriteResults": 0,
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737206"
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/run.sh",
+              "kind": "file",
+              "state": "created_verified",
+              "bytesWritten": 10,
+              "writeCalls": 1,
+              "shortWriteResults": 0,
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737207"
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/SKILL.md",
+              "kind": "file",
+              "state": "created_verified",
+              "bytesWritten": 45,
+              "writeCalls": 1,
+              "shortWriteResults": 0,
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737208"
+              }
+            },
+            {
+              "destination": ".kiro/skills/demo/nested/data.bin",
+              "kind": "file",
+              "state": "created_verified",
+              "bytesWritten": 3,
+              "writeCalls": 1,
+              "shortWriteResults": 0,
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737209"
+              }
+            },
+            {
+              "destination": ".kiro/skills/demo/run.sh",
+              "kind": "file",
+              "state": "created_verified",
+              "bytesWritten": 10,
+              "writeCalls": 1,
+              "shortWriteResults": 0,
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737210"
+              }
+            },
+            {
+              "destination": ".kiro/skills/demo/SKILL.md",
+              "kind": "file",
+              "state": "created_verified",
+              "bytesWritten": 45,
+              "writeCalls": 1,
+              "shortWriteResults": 0,
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737211"
+              }
+            }
+          ],
+          "checkpoints": 173,
+          "durability": "fsync_completed"
+        },
+        "events": [
+          {
+            "event": "environment",
+            "filesystem": "apfs",
+            "local": true,
+            "caseMode": "insensitive",
+            "macOS": "27.2.1",
+            "arch": "arm64",
+            "fixtureOnly": true,
+            "pid": 24643
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "mkdirat",
+            "destination": ".agents"
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "mkdirat",
+            "destination": ".kiro"
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "mkdirat",
+            "destination": ".agents/skills"
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "mkdirat",
+            "destination": ".kiro/skills"
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "mkdirat",
+            "destination": ".agents/skills/demo"
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "mkdirat",
+            "destination": ".kiro/skills/demo"
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "mkdirat",
+            "destination": ".agents/skills/demo/nested"
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "mkdirat",
+            "destination": ".kiro/skills/demo/nested"
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "openat_exclusive",
+            "destination": ".agents/skills/demo/nested/data.bin"
+          },
+          {
+            "event": "file_verified",
+            "destination": ".agents/skills/demo/nested/data.bin",
+            "identity": {
+              "dev": "16777230",
+              "ino": "122737206"
+            }
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "openat_exclusive",
+            "destination": ".agents/skills/demo/run.sh"
+          },
+          {
+            "event": "file_verified",
+            "destination": ".agents/skills/demo/run.sh",
+            "identity": {
+              "dev": "16777230",
+              "ino": "122737207"
+            }
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "openat_exclusive",
+            "destination": ".agents/skills/demo/SKILL.md"
+          },
+          {
+            "event": "file_verified",
+            "destination": ".agents/skills/demo/SKILL.md",
+            "identity": {
+              "dev": "16777230",
+              "ino": "122737208"
+            }
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "openat_exclusive",
+            "destination": ".kiro/skills/demo/nested/data.bin"
+          },
+          {
+            "event": "file_verified",
+            "destination": ".kiro/skills/demo/nested/data.bin",
+            "identity": {
+              "dev": "16777230",
+              "ino": "122737209"
+            }
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "openat_exclusive",
+            "destination": ".kiro/skills/demo/run.sh"
+          },
+          {
+            "event": "file_verified",
+            "destination": ".kiro/skills/demo/run.sh",
+            "identity": {
+              "dev": "16777230",
+              "ino": "122737210"
+            }
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "openat_exclusive",
+            "destination": ".kiro/skills/demo/SKILL.md"
+          },
+          {
+            "event": "file_verified",
+            "destination": ".kiro/skills/demo/SKILL.md",
+            "identity": {
+              "dev": "16777230",
+              "ino": "122737211"
+            }
+          },
+          {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "completed",
+            "code": "none",
+            "targetMutated": true,
+            "ledger": [
+              {
+                "destination": ".agents",
+                "kind": "directory",
+                "state": "created_verified",
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737198"
+                }
+              },
+              {
+                "destination": ".kiro",
+                "kind": "directory",
+                "state": "created_verified",
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737199"
+                }
+              },
+              {
+                "destination": ".agents/skills",
+                "kind": "directory",
+                "state": "created_verified",
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737200"
+                }
+              },
+              {
+                "destination": ".kiro/skills",
+                "kind": "directory",
+                "state": "created_verified",
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737201"
+                }
+              },
+              {
+                "destination": ".agents/skills/demo",
+                "kind": "directory",
+                "state": "created_verified",
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737202"
+                }
+              },
+              {
+                "destination": ".kiro/skills/demo",
+                "kind": "directory",
+                "state": "created_verified",
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737203"
+                }
+              },
+              {
+                "destination": ".agents/skills/demo/nested",
+                "kind": "directory",
+                "state": "created_verified",
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737204"
+                }
+              },
+              {
+                "destination": ".kiro/skills/demo/nested",
+                "kind": "directory",
+                "state": "created_verified",
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737205"
+                }
+              },
+              {
+                "destination": ".agents/skills/demo/nested/data.bin",
+                "kind": "file",
+                "state": "created_verified",
+                "bytesWritten": 3,
+                "writeCalls": 1,
+                "shortWriteResults": 0,
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737206"
+                }
+              },
+              {
+                "destination": ".agents/skills/demo/run.sh",
+                "kind": "file",
+                "state": "created_verified",
+                "bytesWritten": 10,
+                "writeCalls": 1,
+                "shortWriteResults": 0,
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737207"
+                }
+              },
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "created_verified",
+                "bytesWritten": 45,
+                "writeCalls": 1,
+                "shortWriteResults": 0,
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737208"
+                }
+              },
+              {
+                "destination": ".kiro/skills/demo/nested/data.bin",
+                "kind": "file",
+                "state": "created_verified",
+                "bytesWritten": 3,
+                "writeCalls": 1,
+                "shortWriteResults": 0,
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737209"
+                }
+              },
+              {
+                "destination": ".kiro/skills/demo/run.sh",
+                "kind": "file",
+                "state": "created_verified",
+                "bytesWritten": 10,
+                "writeCalls": 1,
+                "shortWriteResults": 0,
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737210"
+                }
+              },
+              {
+                "destination": ".kiro/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "created_verified",
+                "bytesWritten": 45,
+                "writeCalls": 1,
+                "shortWriteResults": 0,
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737211"
+                }
+              }
+            ],
+            "checkpoints": 173,
+            "durability": "fsync_completed"
+          }
+        ],
+        "extraction": {
+          "removed": true,
+          "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-l8pL3L"
+        },
+        "artifactSha256": "48cc178ca0e5cd2b7bfdefbe5e23b27c1c9df7bbaa3f4766edacd4adc1a72d19",
+        "nativeExit": {
+          "code": 0,
+          "signal": null
+        }
+      },
+      "gitSnapshotUnchanged": true,
+      "snapshot": [
+        {
+          "path": ".",
+          "type": "directory",
+          "mode": 448
+        },
+        {
+          "path": "./.agents",
+          "type": "directory",
+          "mode": 493
+        },
+        {
+          "path": "./.agents/skills",
+          "type": "directory",
+          "mode": 493
+        },
+        {
+          "path": "./.agents/skills/demo",
+          "type": "directory",
+          "mode": 493
+        },
+        {
+          "path": "./.agents/skills/demo/SKILL.md",
+          "type": "file",
+          "mode": 420,
+          "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a"
+        },
+        {
+          "path": "./.agents/skills/demo/nested",
+          "type": "directory",
+          "mode": 493
+        },
+        {
+          "path": "./.agents/skills/demo/nested/data.bin",
+          "type": "file",
+          "mode": 420,
+          "sha256": "92e469e6f34332f611f46cc5371592264628458db80d2a9c40310daec8384d23"
+        },
+        {
+          "path": "./.agents/skills/demo/run.sh",
+          "type": "file",
+          "mode": 493,
+          "sha256": "a8076d3d28d21e02012b20eaf7dbf75409a6277134439025f282e368e3305abf"
+        },
+        {
+          "path": "./.git",
+          "type": "directory",
+          "mode": 493
+        },
+        {
+          "path": "./.git/HEAD",
+          "type": "file",
+          "mode": 420,
+          "sha256": "28d25bf82af4c0e2b72f50959b2beb859e3e60b9630a5e8c603dad4ddb2b6e80"
+        },
+        {
+          "path": "./.git/config",
+          "type": "file",
+          "mode": 420,
+          "sha256": "cae33efdb02cf774435c1ff9cb16bcc1014606908530c6e1dc727615fe3e8cda"
+        },
+        {
+          "path": "./.git/description",
+          "type": "file",
+          "mode": 420,
+          "sha256": "85ab6c163d43a17ea9cf7788308bca1466f1b0a8d1cc92e26e9bf63da4062aee"
+        },
+        {
+          "path": "./.git/hooks",
+          "type": "directory",
+          "mode": 493
+        },
+        {
+          "path": "./.git/hooks/applypatch-msg.sample",
+          "type": "file",
+          "mode": 493,
+          "sha256": "0223497a0b8b033aa58a3a521b8629869386cf7ab0e2f101963d328aa62193f7"
+        },
+        {
+          "path": "./.git/hooks/commit-msg.sample",
+          "type": "file",
+          "mode": 493,
+          "sha256": "efc1401b0e99d1ff51494d154d98b46c1e99059bcd8bf9f73cecde19fd3eb23b"
+        },
+        {
+          "path": "./.git/hooks/fsmonitor-watchman.sample",
+          "type": "file",
+          "mode": 493,
+          "sha256": "9159720099ad5595b8e66645cbfd47763c1e920f46e0b50ae75e642bbec57ef0"
+        },
+        {
+          "path": "./.git/hooks/post-update.sample",
+          "type": "file",
+          "mode": 493,
+          "sha256": "81765af2daef323061dcbc5e61fc16481cb74b3bac9ad8a174b186523586f6c5"
+        },
+        {
+          "path": "./.git/hooks/pre-applypatch.sample",
+          "type": "file",
+          "mode": 493,
+          "sha256": "e15c5b469ea3e0a695bea6f2c82bcf8e62821074939ddd85b77e0007ff165475"
+        },
+        {
+          "path": "./.git/hooks/pre-commit.sample",
+          "type": "file",
+          "mode": 493,
+          "sha256": "57185b7b9f05239d7ab52db045f5b89eb31348d7b2177eab214f5eb872e1971b"
+        },
+        {
+          "path": "./.git/hooks/pre-merge-commit.sample",
+          "type": "file",
+          "mode": 493,
+          "sha256": "d3825a70337940ebbd0a5c072984e13245920cdf8898bd225c8d27a6dfc9cb53"
+        },
+        {
+          "path": "./.git/hooks/pre-push.sample",
+          "type": "file",
+          "mode": 493,
+          "sha256": "ecce9c7e04d3f5dd9d8ada81753dd1d549a9634b26770042b58dda00217d086a"
+        },
+        {
+          "path": "./.git/hooks/pre-rebase.sample",
+          "type": "file",
+          "mode": 493,
+          "sha256": "4febce867790052338076f4e66cc47efb14879d18097d1d61c8261859eaaa7b3"
+        },
+        {
+          "path": "./.git/hooks/pre-receive.sample",
+          "type": "file",
+          "mode": 493,
+          "sha256": "a4c3d2b9c7bb3fd8d1441c31bd4ee71a595d66b44fcf49ddb310252320169989"
+        },
+        {
+          "path": "./.git/hooks/prepare-commit-msg.sample",
+          "type": "file",
+          "mode": 493,
+          "sha256": "e9ddcaa4189fddd25ed97fc8c789eca7b6ca16390b2392ae3276f0c8e1aa4619"
+        },
+        {
+          "path": "./.git/hooks/push-to-checkout.sample",
+          "type": "file",
+          "mode": 493,
+          "sha256": "a53d0741798b287c6dd7afa64aee473f305e65d3f49463bb9d7408ec3b12bf5f"
+        },
+        {
+          "path": "./.git/hooks/sendemail-validate.sample",
+          "type": "file",
+          "mode": 493,
+          "sha256": "44ebfc923dc5466bc009602f0ecf067b9c65459abfe8868ddc49b78e6ced7a92"
+        },
+        {
+          "path": "./.git/hooks/update.sample",
+          "type": "file",
+          "mode": 493,
+          "sha256": "8d5f2fa83e103cf08b57eaa67521df9194f45cbdbcb37da52ad586097a14d106"
+        },
+        {
+          "path": "./.git/info",
+          "type": "directory",
+          "mode": 493
+        },
+        {
+          "path": "./.git/info/exclude",
+          "type": "file",
+          "mode": 420,
+          "sha256": "6671fe83b7a07c8932ee89164d1f2793b2318058eb8b98dc5c06ee0a5a3b0ec1"
+        },
+        {
+          "path": "./.git/objects",
+          "type": "directory",
+          "mode": 493
+        },
+        {
+          "path": "./.git/objects/info",
+          "type": "directory",
+          "mode": 493
+        },
+        {
+          "path": "./.git/objects/pack",
+          "type": "directory",
+          "mode": 493
+        },
+        {
+          "path": "./.git/refs",
+          "type": "directory",
+          "mode": 493
+        },
+        {
+          "path": "./.git/refs/heads",
+          "type": "directory",
+          "mode": 493
+        },
+        {
+          "path": "./.git/refs/tags",
+          "type": "directory",
+          "mode": 493
+        },
+        {
+          "path": "./.kiro",
+          "type": "directory",
+          "mode": 493
+        },
+        {
+          "path": "./.kiro/skills",
+          "type": "directory",
+          "mode": 493
+        },
+        {
+          "path": "./.kiro/skills/demo",
+          "type": "directory",
+          "mode": 493
+        },
+        {
+          "path": "./.kiro/skills/demo/SKILL.md",
+          "type": "file",
+          "mode": 420,
+          "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a"
+        },
+        {
+          "path": "./.kiro/skills/demo/nested",
+          "type": "directory",
+          "mode": 493
+        },
+        {
+          "path": "./.kiro/skills/demo/nested/data.bin",
+          "type": "file",
+          "mode": 420,
+          "sha256": "92e469e6f34332f611f46cc5371592264628458db80d2a9c40310daec8384d23"
+        },
+        {
+          "path": "./.kiro/skills/demo/run.sh",
+          "type": "file",
+          "mode": 493,
+          "sha256": "a8076d3d28d21e02012b20eaf7dbf75409a6277134439025f282e368e3305abf"
+        }
+      ]
+    },
+    {
+      "name": "changed-canonical-dependency-stops-derived-create",
+      "pass": true,
+      "outcome": {
+        "result": {
+          "event": "result",
+          "protocol": 1,
+          "version": "m4.3-fixture.1",
+          "phase": "partial_failure",
+          "code": "verification_failed",
+          "targetMutated": true,
+          "ledger": [
+            {
+              "destination": ".agents",
+              "kind": "directory",
+              "state": "created_verified",
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737254"
+              }
+            },
+            {
+              "destination": ".kiro",
+              "kind": "directory",
+              "state": "created_verified",
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737255"
+              }
+            },
+            {
+              "destination": ".agents/skills",
+              "kind": "directory",
+              "state": "created_verified",
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737256"
+              }
+            },
+            {
+              "destination": ".kiro/skills",
+              "kind": "directory",
+              "state": "created_verified",
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737257"
+              }
+            },
+            {
+              "destination": ".agents/skills/demo",
+              "kind": "directory",
+              "state": "created_verified",
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737258"
+              }
+            },
+            {
+              "destination": ".kiro/skills/demo",
+              "kind": "directory",
+              "state": "created_verified",
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737259"
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/SKILL.md",
+              "kind": "file",
+              "state": "observation_changed",
+              "bytesWritten": 45,
+              "writeCalls": 1,
+              "shortWriteResults": 0,
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737260"
+              }
+            },
+            {
+              "destination": ".kiro/skills/demo/SKILL.md",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "writeCalls": 0,
+              "shortWriteResults": 0
+            }
+          ],
+          "checkpoints": 81,
+          "durability": "not_confirmed"
+        },
+        "events": [
+          {
+            "event": "environment",
+            "filesystem": "apfs",
+            "local": true,
+            "caseMode": "insensitive",
+            "macOS": "27.2.1",
+            "arch": "arm64",
+            "fixtureOnly": true,
+            "pid": 24790
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "mkdirat",
+            "destination": ".agents"
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "mkdirat",
+            "destination": ".kiro"
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "mkdirat",
+            "destination": ".agents/skills"
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "mkdirat",
+            "destination": ".kiro/skills"
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "mkdirat",
+            "destination": ".agents/skills/demo"
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "mkdirat",
+            "destination": ".kiro/skills/demo"
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "openat_exclusive",
+            "destination": ".agents/skills/demo/SKILL.md"
+          },
+          {
+            "event": "file_verified",
+            "destination": ".agents/skills/demo/SKILL.md",
+            "identity": {
+              "dev": "16777230",
+              "ino": "122737260"
+            }
+          },
+          {
+            "event": "barrier",
+            "point": "before_create",
+            "destination": ".kiro/skills/demo/SKILL.md",
+            "sequence": 1,
+            "pid": 24790
+          },
+          {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "partial_failure",
+            "code": "verification_failed",
+            "targetMutated": true,
+            "ledger": [
+              {
+                "destination": ".agents",
+                "kind": "directory",
+                "state": "created_verified",
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737254"
+                }
+              },
+              {
+                "destination": ".kiro",
+                "kind": "directory",
+                "state": "created_verified",
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737255"
+                }
+              },
+              {
+                "destination": ".agents/skills",
+                "kind": "directory",
+                "state": "created_verified",
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737256"
+                }
+              },
+              {
+                "destination": ".kiro/skills",
+                "kind": "directory",
+                "state": "created_verified",
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737257"
+                }
+              },
+              {
+                "destination": ".agents/skills/demo",
+                "kind": "directory",
+                "state": "created_verified",
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737258"
+                }
+              },
+              {
+                "destination": ".kiro/skills/demo",
+                "kind": "directory",
+                "state": "created_verified",
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737259"
+                }
+              },
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "observation_changed",
+                "bytesWritten": 45,
+                "writeCalls": 1,
+                "shortWriteResults": 0,
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737260"
+                }
+              },
+              {
+                "destination": ".kiro/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "not_attempted",
+                "bytesWritten": 0,
+                "writeCalls": 0,
+                "shortWriteResults": 0
+              }
+            ],
+            "checkpoints": 81,
+            "durability": "not_confirmed"
+          }
+        ],
+        "extraction": {
+          "removed": true,
+          "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-Pbed23"
+        },
+        "artifactSha256": "739b23bca8adf032a6db6f08e25b1fe2b34703aa33c6c02e4650ae132d33b7fb",
+        "nativeExit": {
+          "code": 1,
+          "signal": null
+        }
+      },
+      "foreignBefore": {
+        "dev": "16777230",
+        "ino": "122737261",
+        "mode": 416,
+        "size": "17",
+        "sha256": "b2a92a701a1ac70fdbfae0da0371eb079e25ed91f427c902b6487da476d82e16"
+      },
+      "foreignAfter": {
+        "dev": "16777230",
+        "ino": "122737261",
+        "mode": 416,
+        "size": "17",
+        "sha256": "b2a92a701a1ac70fdbfae0da0371eb079e25ed91f427c902b6487da476d82e16"
+      }
+    },
+    {
+      "name": "full-preflight-conflict-source-collision-and-budget",
+      "pass": true,
+      "outcomes": {
+        "conflict": {
+          "result": {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "failed_before_write",
+            "code": "plan_not_applicable",
+            "targetMutated": false,
+            "ledger": [
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "not_attempted",
+                "bytesWritten": 0,
+                "writeCalls": 0,
+                "shortWriteResults": 0
+              }
+            ],
+            "checkpoints": 11,
+            "durability": "not_confirmed"
+          },
+          "events": [
+            {
+              "event": "environment",
+              "filesystem": "apfs",
+              "local": true,
+              "caseMode": "insensitive",
+              "macOS": "27.2.1",
+              "arch": "arm64",
+              "fixtureOnly": true,
+              "pid": 24804
+            },
+            {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "failed_before_write",
+              "code": "plan_not_applicable",
+              "targetMutated": false,
+              "ledger": [
+                {
+                  "destination": ".agents/skills/demo/SKILL.md",
+                  "kind": "file",
+                  "state": "not_attempted",
+                  "bytesWritten": 0,
+                  "writeCalls": 0,
+                  "shortWriteResults": 0
+                }
+              ],
+              "checkpoints": 11,
+              "durability": "not_confirmed"
+            }
+          ],
+          "extraction": {
+            "removed": true,
+            "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-cjN7F1"
+          },
+          "artifactSha256": "48cc178ca0e5cd2b7bfdefbe5e23b27c1c9df7bbaa3f4766edacd4adc1a72d19",
+          "nativeExit": {
+            "code": 1,
+            "signal": null
+          }
+        },
+        "blocked": {
+          "result": {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "failed_before_write",
+            "code": "plan_not_applicable",
+            "targetMutated": false,
+            "ledger": [
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "not_attempted",
+                "bytesWritten": 0,
+                "writeCalls": 0,
+                "shortWriteResults": 0
+              }
+            ],
+            "checkpoints": 11,
+            "durability": "not_confirmed"
+          },
+          "events": [
+            {
+              "event": "environment",
+              "filesystem": "apfs",
+              "local": true,
+              "caseMode": "insensitive",
+              "macOS": "27.2.1",
+              "arch": "arm64",
+              "fixtureOnly": true,
+              "pid": 24810
+            },
+            {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "failed_before_write",
+              "code": "plan_not_applicable",
+              "targetMutated": false,
+              "ledger": [
+                {
+                  "destination": ".agents/skills/demo/SKILL.md",
+                  "kind": "file",
+                  "state": "not_attempted",
+                  "bytesWritten": 0,
+                  "writeCalls": 0,
+                  "shortWriteResults": 0
+                }
+              ],
+              "checkpoints": 11,
+              "durability": "not_confirmed"
+            }
+          ],
+          "extraction": {
+            "removed": true,
+            "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-9zhx6V"
+          },
+          "artifactSha256": "48cc178ca0e5cd2b7bfdefbe5e23b27c1c9df7bbaa3f4766edacd4adc1a72d19",
+          "nativeExit": {
+            "code": 1,
+            "signal": null
+          }
+        },
+        "source": {
+          "result": {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "failed_before_write",
+            "code": "source_mismatch",
+            "targetMutated": false,
+            "ledger": [
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "not_attempted",
+                "bytesWritten": 0
+              }
+            ],
+            "checkpoints": 2,
+            "durability": "not_confirmed"
+          },
+          "events": [
+            {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "failed_before_write",
+              "code": "source_mismatch",
+              "targetMutated": false,
+              "ledger": [],
+              "checkpoints": 2,
+              "durability": "not_confirmed"
+            }
+          ],
+          "extraction": {
+            "removed": true,
+            "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-ZPS0iJ"
+          },
+          "artifactSha256": "48cc178ca0e5cd2b7bfdefbe5e23b27c1c9df7bbaa3f4766edacd4adc1a72d19",
+          "nativeExit": {
+            "code": 1,
+            "signal": null
+          }
+        },
+        "case-alias": {
+          "result": {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "failed_before_write",
+            "code": "invalid_request",
+            "targetMutated": false,
+            "ledger": [
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "not_attempted",
+                "bytesWritten": 0,
+                "writeCalls": 0,
+                "shortWriteResults": 0
+              },
+              {
+                "destination": ".agents/skills/demo/skill.md",
+                "kind": "file",
+                "state": "not_attempted",
+                "bytesWritten": 0
+              }
+            ],
+            "checkpoints": 2,
+            "durability": "not_confirmed"
+          },
+          "events": [
+            {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "failed_before_write",
+              "code": "invalid_request",
+              "targetMutated": false,
+              "ledger": [
+                {
+                  "destination": ".agents/skills/demo/SKILL.md",
+                  "kind": "file",
+                  "state": "not_attempted",
+                  "bytesWritten": 0,
+                  "writeCalls": 0,
+                  "shortWriteResults": 0
+                }
+              ],
+              "checkpoints": 2,
+              "durability": "not_confirmed"
+            }
+          ],
+          "extraction": {
+            "removed": true,
+            "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-Yin36f"
+          },
+          "artifactSha256": "48cc178ca0e5cd2b7bfdefbe5e23b27c1c9df7bbaa3f4766edacd4adc1a72d19",
+          "nativeExit": {
+            "code": 1,
+            "signal": null
+          }
+        },
+        "directory-alias": {
+          "result": {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "failed_before_write",
+            "code": "invalid_request",
+            "targetMutated": false,
+            "ledger": [
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "directory",
+                "state": "not_attempted"
+              },
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "directory",
+                "state": "not_attempted"
+              }
+            ],
+            "checkpoints": 2,
+            "durability": "not_confirmed"
+          },
+          "events": [
+            {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "failed_before_write",
+              "code": "invalid_request",
+              "targetMutated": false,
+              "ledger": [
+                {
+                  "destination": ".agents/skills/demo/SKILL.md",
+                  "kind": "directory",
+                  "state": "not_attempted"
+                }
+              ],
+              "checkpoints": 2,
+              "durability": "not_confirmed"
+            }
+          ],
+          "extraction": {
+            "removed": true,
+            "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-xqBh8X"
+          },
+          "artifactSha256": "48cc178ca0e5cd2b7bfdefbe5e23b27c1c9df7bbaa3f4766edacd4adc1a72d19",
+          "nativeExit": {
+            "code": 1,
+            "signal": null
+          }
+        },
+        "sourceBudget": {
+          "result": {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "failed_before_write",
+            "code": "limit_exceeded",
+            "targetMutated": false,
+            "ledger": [
+              {
+                "destination": ".agents/skills/demo/a.bin",
+                "kind": "file",
+                "state": "not_attempted",
+                "bytesWritten": 0,
+                "writeCalls": 0,
+                "shortWriteResults": 0
+              },
+              {
+                "destination": ".agents/skills/demo/b.bin",
+                "kind": "file",
+                "state": "not_attempted",
+                "bytesWritten": 0,
+                "writeCalls": 0,
+                "shortWriteResults": 0
+              },
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "not_attempted",
+                "bytesWritten": 0
+              }
+            ],
+            "checkpoints": 1367,
+            "durability": "not_confirmed"
+          },
+          "events": [
+            {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "failed_before_write",
+              "code": "limit_exceeded",
+              "targetMutated": false,
+              "ledger": [
+                {
+                  "destination": ".agents/skills/demo/a.bin",
+                  "kind": "file",
+                  "state": "not_attempted",
+                  "bytesWritten": 0,
+                  "writeCalls": 0,
+                  "shortWriteResults": 0
+                },
+                {
+                  "destination": ".agents/skills/demo/b.bin",
+                  "kind": "file",
+                  "state": "not_attempted",
+                  "bytesWritten": 0,
+                  "writeCalls": 0,
+                  "shortWriteResults": 0
+                }
+              ],
+              "checkpoints": 1367,
+              "durability": "not_confirmed"
+            }
+          ],
+          "extraction": {
+            "removed": true,
+            "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-wZyIei"
+          },
+          "artifactSha256": "48cc178ca0e5cd2b7bfdefbe5e23b27c1c9df7bbaa3f4766edacd4adc1a72d19",
+          "nativeExit": {
+            "code": 1,
+            "signal": null
+          }
+        }
+      },
+      "targetSnapshotMatch": true
+    },
+    {
+      "name": "late-leaf-no-clobber",
+      "pass": true,
+      "variants": [
+        {
+          "kind": "different",
+          "outcome": {
+            "result": {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "failed_before_write",
+              "code": "destination_exists",
+              "targetMutated": false,
+              "ledger": [
+                {
+                  "destination": ".agents/skills/demo/SKILL.md",
+                  "kind": "file",
+                  "state": "not_attempted",
+                  "bytesWritten": 0,
+                  "writeCalls": 0,
+                  "shortWriteResults": 0
+                }
+              ],
+              "checkpoints": 24,
+              "durability": "not_confirmed"
+            },
+            "events": [
+              {
+                "event": "environment",
+                "filesystem": "apfs",
+                "local": true,
+                "caseMode": "insensitive",
+                "macOS": "27.2.1",
+                "arch": "arm64",
+                "fixtureOnly": true,
+                "pid": 24895
+              },
+              {
+                "event": "barrier",
+                "point": "after_create_check",
+                "destination": ".agents/skills/demo/SKILL.md",
+                "sequence": 1,
+                "pid": 24895
+              },
+              {
+                "event": "mutation_intent",
+                "operation": "openat_exclusive",
+                "destination": ".agents/skills/demo/SKILL.md"
+              },
+              {
+                "event": "result",
+                "protocol": 1,
+                "version": "m4.3-fixture.1",
+                "phase": "failed_before_write",
+                "code": "destination_exists",
+                "targetMutated": false,
+                "ledger": [
+                  {
+                    "destination": ".agents/skills/demo/SKILL.md",
+                    "kind": "file",
+                    "state": "not_attempted",
+                    "bytesWritten": 0,
+                    "writeCalls": 0,
+                    "shortWriteResults": 0
+                  }
+                ],
+                "checkpoints": 24,
+                "durability": "not_confirmed"
+              }
+            ],
+            "extraction": {
+              "removed": true,
+              "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-IvItI2"
+            },
+            "artifactSha256": "739b23bca8adf032a6db6f08e25b1fe2b34703aa33c6c02e4650ae132d33b7fb",
+            "nativeExit": {
+              "code": 1,
+              "signal": null
+            }
+          },
+          "foreignBefore": {
+            "dev": "16777230",
+            "ino": "122737306",
+            "mode": 416,
+            "size": "13",
+            "sha256": "053d94775e4ca5b2a318d3310740c21b59aab01764799042496c53668bde648e"
+          },
+          "foreignAfter": {
+            "dev": "16777230",
+            "ino": "122737306",
+            "mode": 416,
+            "size": "13",
+            "sha256": "053d94775e4ca5b2a318d3310740c21b59aab01764799042496c53668bde648e"
+          }
+        },
+        {
+          "kind": "identical",
+          "outcome": {
+            "result": {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "failed_before_write",
+              "code": "destination_exists",
+              "targetMutated": false,
+              "ledger": [
+                {
+                  "destination": ".agents/skills/demo/SKILL.md",
+                  "kind": "file",
+                  "state": "not_attempted",
+                  "bytesWritten": 0,
+                  "writeCalls": 0,
+                  "shortWriteResults": 0
+                }
+              ],
+              "checkpoints": 24,
+              "durability": "not_confirmed"
+            },
+            "events": [
+              {
+                "event": "environment",
+                "filesystem": "apfs",
+                "local": true,
+                "caseMode": "insensitive",
+                "macOS": "27.2.1",
+                "arch": "arm64",
+                "fixtureOnly": true,
+                "pid": 24897
+              },
+              {
+                "event": "barrier",
+                "point": "after_create_check",
+                "destination": ".agents/skills/demo/SKILL.md",
+                "sequence": 1,
+                "pid": 24897
+              },
+              {
+                "event": "mutation_intent",
+                "operation": "openat_exclusive",
+                "destination": ".agents/skills/demo/SKILL.md"
+              },
+              {
+                "event": "result",
+                "protocol": 1,
+                "version": "m4.3-fixture.1",
+                "phase": "failed_before_write",
+                "code": "destination_exists",
+                "targetMutated": false,
+                "ledger": [
+                  {
+                    "destination": ".agents/skills/demo/SKILL.md",
+                    "kind": "file",
+                    "state": "not_attempted",
+                    "bytesWritten": 0,
+                    "writeCalls": 0,
+                    "shortWriteResults": 0
+                  }
+                ],
+                "checkpoints": 24,
+                "durability": "not_confirmed"
+              }
+            ],
+            "extraction": {
+              "removed": true,
+              "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-Lekyij"
+            },
+            "artifactSha256": "739b23bca8adf032a6db6f08e25b1fe2b34703aa33c6c02e4650ae132d33b7fb",
+            "nativeExit": {
+              "code": 1,
+              "signal": null
+            }
+          },
+          "foreignBefore": {
+            "dev": "16777230",
+            "ino": "122737316",
+            "mode": 416,
+            "size": "45",
+            "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a"
+          },
+          "foreignAfter": {
+            "dev": "16777230",
+            "ino": "122737316",
+            "mode": 416,
+            "size": "45",
+            "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a"
+          }
+        },
+        {
+          "kind": "symlink",
+          "outcome": {
+            "result": {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "failed_before_write",
+              "code": "destination_exists",
+              "targetMutated": false,
+              "ledger": [
+                {
+                  "destination": ".agents/skills/demo/SKILL.md",
+                  "kind": "file",
+                  "state": "not_attempted",
+                  "bytesWritten": 0,
+                  "writeCalls": 0,
+                  "shortWriteResults": 0
+                }
+              ],
+              "checkpoints": 24,
+              "durability": "not_confirmed"
+            },
+            "events": [
+              {
+                "event": "environment",
+                "filesystem": "apfs",
+                "local": true,
+                "caseMode": "insensitive",
+                "macOS": "27.2.1",
+                "arch": "arm64",
+                "fixtureOnly": true,
+                "pid": 24899
+              },
+              {
+                "event": "barrier",
+                "point": "after_create_check",
+                "destination": ".agents/skills/demo/SKILL.md",
+                "sequence": 1,
+                "pid": 24899
+              },
+              {
+                "event": "mutation_intent",
+                "operation": "openat_exclusive",
+                "destination": ".agents/skills/demo/SKILL.md"
+              },
+              {
+                "event": "result",
+                "protocol": 1,
+                "version": "m4.3-fixture.1",
+                "phase": "failed_before_write",
+                "code": "destination_exists",
+                "targetMutated": false,
+                "ledger": [
+                  {
+                    "destination": ".agents/skills/demo/SKILL.md",
+                    "kind": "file",
+                    "state": "not_attempted",
+                    "bytesWritten": 0,
+                    "writeCalls": 0,
+                    "shortWriteResults": 0
+                  }
+                ],
+                "checkpoints": 24,
+                "durability": "not_confirmed"
+              }
+            ],
+            "extraction": {
+              "removed": true,
+              "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-EPi3bB"
+            },
+            "artifactSha256": "739b23bca8adf032a6db6f08e25b1fe2b34703aa33c6c02e4650ae132d33b7fb",
+            "nativeExit": {
+              "code": 1,
+              "signal": null
+            }
+          },
+          "foreignBefore": {
+            "dev": "16777230",
+            "ino": "122737326",
+            "mode": 493,
+            "size": "88",
+            "sha256": null,
+            "link": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-qQCXye/foreign-sentinel"
+          },
+          "foreignAfter": {
+            "dev": "16777230",
+            "ino": "122737326",
+            "mode": 493,
+            "size": "88",
+            "sha256": null,
+            "link": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-qQCXye/foreign-sentinel"
+          }
+        },
+        {
+          "kind": "hardlink",
+          "outcome": {
+            "result": {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "failed_before_write",
+              "code": "destination_exists",
+              "targetMutated": false,
+              "ledger": [
+                {
+                  "destination": ".agents/skills/demo/SKILL.md",
+                  "kind": "file",
+                  "state": "not_attempted",
+                  "bytesWritten": 0,
+                  "writeCalls": 0,
+                  "shortWriteResults": 0
+                }
+              ],
+              "checkpoints": 24,
+              "durability": "not_confirmed"
+            },
+            "events": [
+              {
+                "event": "environment",
+                "filesystem": "apfs",
+                "local": true,
+                "caseMode": "insensitive",
+                "macOS": "27.2.1",
+                "arch": "arm64",
+                "fixtureOnly": true,
+                "pid": 24901
+              },
+              {
+                "event": "barrier",
+                "point": "after_create_check",
+                "destination": ".agents/skills/demo/SKILL.md",
+                "sequence": 1,
+                "pid": 24901
+              },
+              {
+                "event": "mutation_intent",
+                "operation": "openat_exclusive",
+                "destination": ".agents/skills/demo/SKILL.md"
+              },
+              {
+                "event": "result",
+                "protocol": 1,
+                "version": "m4.3-fixture.1",
+                "phase": "failed_before_write",
+                "code": "destination_exists",
+                "targetMutated": false,
+                "ledger": [
+                  {
+                    "destination": ".agents/skills/demo/SKILL.md",
+                    "kind": "file",
+                    "state": "not_attempted",
+                    "bytesWritten": 0,
+                    "writeCalls": 0,
+                    "shortWriteResults": 0
+                  }
+                ],
+                "checkpoints": 24,
+                "durability": "not_confirmed"
+              }
+            ],
+            "extraction": {
+              "removed": true,
+              "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-mkAH3f"
+            },
+            "artifactSha256": "739b23bca8adf032a6db6f08e25b1fe2b34703aa33c6c02e4650ae132d33b7fb",
+            "nativeExit": {
+              "code": 1,
+              "signal": null
+            }
+          },
+          "foreignBefore": {
+            "dev": "16777230",
+            "ino": "122737335",
+            "mode": 384,
+            "size": "16",
+            "sha256": "795bd1b441bc13002af2cea1bf3558c4ef9254c9dafb395585cddc79ca51109c"
+          },
+          "foreignAfter": {
+            "dev": "16777230",
+            "ino": "122737335",
+            "mode": 384,
+            "size": "16",
+            "sha256": "795bd1b441bc13002af2cea1bf3558c4ef9254c9dafb395585cddc79ca51109c"
+          }
+        }
+      ]
+    },
+    {
+      "name": "two-writers-exclusive-leaf",
+      "pass": true,
+      "outcomes": [
+        {
+          "result": {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "completed",
+            "code": "none",
+            "targetMutated": true,
+            "ledger": [
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "created_verified",
+                "bytesWritten": 45,
+                "writeCalls": 1,
+                "shortWriteResults": 0,
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737349"
+                }
+              }
+            ],
+            "checkpoints": 35,
+            "durability": "fsync_completed"
+          },
+          "events": [
+            {
+              "event": "environment",
+              "filesystem": "apfs",
+              "local": true,
+              "caseMode": "insensitive",
+              "macOS": "27.2.1",
+              "arch": "arm64",
+              "fixtureOnly": true,
+              "pid": 24906
+            },
+            {
+              "event": "barrier",
+              "point": "after_create_check",
+              "destination": ".agents/skills/demo/SKILL.md",
+              "sequence": 1,
+              "pid": 24906
+            },
+            {
+              "event": "mutation_intent",
+              "operation": "openat_exclusive",
+              "destination": ".agents/skills/demo/SKILL.md"
+            },
+            {
+              "event": "file_verified",
+              "destination": ".agents/skills/demo/SKILL.md",
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737349"
+              }
+            },
+            {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "completed",
+              "code": "none",
+              "targetMutated": true,
+              "ledger": [
+                {
+                  "destination": ".agents/skills/demo/SKILL.md",
+                  "kind": "file",
+                  "state": "created_verified",
+                  "bytesWritten": 45,
+                  "writeCalls": 1,
+                  "shortWriteResults": 0,
+                  "identity": {
+                    "dev": "16777230",
+                    "ino": "122737349"
+                  }
+                }
+              ],
+              "checkpoints": 35,
+              "durability": "fsync_completed"
+            }
+          ],
+          "extraction": {
+            "removed": true,
+            "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-YYpwR6"
+          },
+          "artifactSha256": "739b23bca8adf032a6db6f08e25b1fe2b34703aa33c6c02e4650ae132d33b7fb",
+          "nativeExit": {
+            "code": 0,
+            "signal": null
+          }
+        },
+        {
+          "result": {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "failed_before_write",
+            "code": "destination_exists",
+            "targetMutated": false,
+            "ledger": [
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "not_attempted",
+                "bytesWritten": 0,
+                "writeCalls": 0,
+                "shortWriteResults": 0
+              }
+            ],
+            "checkpoints": 24,
+            "durability": "not_confirmed"
+          },
+          "events": [
+            {
+              "event": "environment",
+              "filesystem": "apfs",
+              "local": true,
+              "caseMode": "insensitive",
+              "macOS": "27.2.1",
+              "arch": "arm64",
+              "fixtureOnly": true,
+              "pid": 24905
+            },
+            {
+              "event": "barrier",
+              "point": "after_create_check",
+              "destination": ".agents/skills/demo/SKILL.md",
+              "sequence": 1,
+              "pid": 24905
+            },
+            {
+              "event": "mutation_intent",
+              "operation": "openat_exclusive",
+              "destination": ".agents/skills/demo/SKILL.md"
+            },
+            {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "failed_before_write",
+              "code": "destination_exists",
+              "targetMutated": false,
+              "ledger": [
+                {
+                  "destination": ".agents/skills/demo/SKILL.md",
+                  "kind": "file",
+                  "state": "not_attempted",
+                  "bytesWritten": 0,
+                  "writeCalls": 0,
+                  "shortWriteResults": 0
+                }
+              ],
+              "checkpoints": 24,
+              "durability": "not_confirmed"
+            }
+          ],
+          "extraction": {
+            "removed": true,
+            "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-JC9P2k"
+          },
+          "artifactSha256": "739b23bca8adf032a6db6f08e25b1fe2b34703aa33c6c02e4650ae132d33b7fb",
+          "nativeExit": {
+            "code": 1,
+            "signal": null
+          }
+        }
+      ],
+      "winnerFile": {
+        "dev": "16777230",
+        "ino": "122737349",
+        "mode": 420,
+        "size": "45",
+        "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a"
+      }
+    },
+    {
+      "name": "replacement-before-and-after-linkage-check",
+      "pass": true,
+      "variants": [
+        {
+          "which": "root",
+          "point": "before_create",
+          "outcome": {
+            "result": {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "failed_before_write",
+              "code": "linkage_changed",
+              "targetMutated": false,
+              "ledger": [
+                {
+                  "destination": ".agents/skills/demo/SKILL.md",
+                  "kind": "file",
+                  "state": "not_attempted",
+                  "bytesWritten": 0,
+                  "writeCalls": 0,
+                  "shortWriteResults": 0
+                }
+              ],
+              "checkpoints": 21,
+              "durability": "not_confirmed"
+            },
+            "events": [
+              {
+                "event": "environment",
+                "filesystem": "apfs",
+                "local": true,
+                "caseMode": "insensitive",
+                "macOS": "27.2.1",
+                "arch": "arm64",
+                "fixtureOnly": true,
+                "pid": 24908
+              },
+              {
+                "event": "barrier",
+                "point": "before_create",
+                "destination": ".agents/skills/demo/SKILL.md",
+                "sequence": 1,
+                "pid": 24908
+              },
+              {
+                "event": "result",
+                "protocol": 1,
+                "version": "m4.3-fixture.1",
+                "phase": "failed_before_write",
+                "code": "linkage_changed",
+                "targetMutated": false,
+                "ledger": [
+                  {
+                    "destination": ".agents/skills/demo/SKILL.md",
+                    "kind": "file",
+                    "state": "not_attempted",
+                    "bytesWritten": 0,
+                    "writeCalls": 0,
+                    "shortWriteResults": 0
+                  }
+                ],
+                "checkpoints": 21,
+                "durability": "not_confirmed"
+              }
+            ],
+            "extraction": {
+              "removed": true,
+              "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-Tmf6Ci"
+            },
+            "artifactSha256": "739b23bca8adf032a6db6f08e25b1fe2b34703aa33c6c02e4650ae132d33b7fb",
+            "nativeExit": {
+              "code": 1,
+              "signal": null
+            }
+          },
+          "foreignBefore": {
+            "dev": "16777230",
+            "ino": "122737362",
+            "mode": 416,
+            "size": "19",
+            "sha256": "576e75a98c0a069ab7b639d1a1df4e743f8d2d002e51ddc04ced417616410c89"
+          },
+          "foreignAfter": {
+            "dev": "16777230",
+            "ino": "122737362",
+            "mode": 416,
+            "size": "19",
+            "sha256": "576e75a98c0a069ab7b639d1a1df4e743f8d2d002e51ddc04ced417616410c89"
+          },
+          "detachedFile": null
+        },
+        {
+          "which": "root",
+          "point": "after_create_check",
+          "outcome": {
+            "result": {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "partial_failure",
+              "code": "linkage_changed",
+              "targetMutated": true,
+              "ledger": [
+                {
+                  "destination": ".agents/skills/demo/SKILL.md",
+                  "kind": "file",
+                  "state": "created_incomplete",
+                  "bytesWritten": 0,
+                  "writeCalls": 0,
+                  "shortWriteResults": 0,
+                  "identity": {
+                    "dev": "16777230",
+                    "ino": "122737376"
+                  }
+                }
+              ],
+              "checkpoints": 26,
+              "durability": "not_confirmed"
+            },
+            "events": [
+              {
+                "event": "environment",
+                "filesystem": "apfs",
+                "local": true,
+                "caseMode": "insensitive",
+                "macOS": "27.2.1",
+                "arch": "arm64",
+                "fixtureOnly": true,
+                "pid": 24910
+              },
+              {
+                "event": "barrier",
+                "point": "after_create_check",
+                "destination": ".agents/skills/demo/SKILL.md",
+                "sequence": 1,
+                "pid": 24910
+              },
+              {
+                "event": "mutation_intent",
+                "operation": "openat_exclusive",
+                "destination": ".agents/skills/demo/SKILL.md"
+              },
+              {
+                "event": "result",
+                "protocol": 1,
+                "version": "m4.3-fixture.1",
+                "phase": "partial_failure",
+                "code": "linkage_changed",
+                "targetMutated": true,
+                "ledger": [
+                  {
+                    "destination": ".agents/skills/demo/SKILL.md",
+                    "kind": "file",
+                    "state": "created_incomplete",
+                    "bytesWritten": 0,
+                    "writeCalls": 0,
+                    "shortWriteResults": 0,
+                    "identity": {
+                      "dev": "16777230",
+                      "ino": "122737376"
+                    }
+                  }
+                ],
+                "checkpoints": 26,
+                "durability": "not_confirmed"
+              }
+            ],
+            "extraction": {
+              "removed": true,
+              "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-IdHxZ4"
+            },
+            "artifactSha256": "739b23bca8adf032a6db6f08e25b1fe2b34703aa33c6c02e4650ae132d33b7fb",
+            "nativeExit": {
+              "code": 1,
+              "signal": null
+            }
+          },
+          "foreignBefore": {
+            "dev": "16777230",
+            "ino": "122737375",
+            "mode": 416,
+            "size": "19",
+            "sha256": "576e75a98c0a069ab7b639d1a1df4e743f8d2d002e51ddc04ced417616410c89"
+          },
+          "foreignAfter": {
+            "dev": "16777230",
+            "ino": "122737375",
+            "mode": 416,
+            "size": "19",
+            "sha256": "576e75a98c0a069ab7b639d1a1df4e743f8d2d002e51ddc04ced417616410c89"
+          },
+          "detachedFile": {
+            "dev": "16777230",
+            "ino": "122737376",
+            "mode": 384,
+            "size": "0",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "which": "ancestor",
+          "point": "before_create",
+          "outcome": {
+            "result": {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "failed_before_write",
+              "code": "linkage_changed",
+              "targetMutated": false,
+              "ledger": [
+                {
+                  "destination": ".agents/skills/demo/SKILL.md",
+                  "kind": "file",
+                  "state": "not_attempted",
+                  "bytesWritten": 0,
+                  "writeCalls": 0,
+                  "shortWriteResults": 0
+                }
+              ],
+              "checkpoints": 21,
+              "durability": "not_confirmed"
+            },
+            "events": [
+              {
+                "event": "environment",
+                "filesystem": "apfs",
+                "local": true,
+                "caseMode": "insensitive",
+                "macOS": "27.2.1",
+                "arch": "arm64",
+                "fixtureOnly": true,
+                "pid": 24912
+              },
+              {
+                "event": "barrier",
+                "point": "before_create",
+                "destination": ".agents/skills/demo/SKILL.md",
+                "sequence": 1,
+                "pid": 24912
+              },
+              {
+                "event": "result",
+                "protocol": 1,
+                "version": "m4.3-fixture.1",
+                "phase": "failed_before_write",
+                "code": "linkage_changed",
+                "targetMutated": false,
+                "ledger": [
+                  {
+                    "destination": ".agents/skills/demo/SKILL.md",
+                    "kind": "file",
+                    "state": "not_attempted",
+                    "bytesWritten": 0,
+                    "writeCalls": 0,
+                    "shortWriteResults": 0
+                  }
+                ],
+                "checkpoints": 21,
+                "durability": "not_confirmed"
+              }
+            ],
+            "extraction": {
+              "removed": true,
+              "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-fz8zgQ"
+            },
+            "artifactSha256": "739b23bca8adf032a6db6f08e25b1fe2b34703aa33c6c02e4650ae132d33b7fb",
+            "nativeExit": {
+              "code": 1,
+              "signal": null
+            }
+          },
+          "foreignBefore": {
+            "dev": "16777230",
+            "ino": "122737386",
+            "mode": 416,
+            "size": "19",
+            "sha256": "576e75a98c0a069ab7b639d1a1df4e743f8d2d002e51ddc04ced417616410c89"
+          },
+          "foreignAfter": {
+            "dev": "16777230",
+            "ino": "122737386",
+            "mode": 416,
+            "size": "19",
+            "sha256": "576e75a98c0a069ab7b639d1a1df4e743f8d2d002e51ddc04ced417616410c89"
+          },
+          "detachedFile": null
+        },
+        {
+          "which": "ancestor",
+          "point": "after_create_check",
+          "outcome": {
+            "result": {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "partial_failure",
+              "code": "linkage_changed",
+              "targetMutated": true,
+              "ledger": [
+                {
+                  "destination": ".agents/skills/demo/SKILL.md",
+                  "kind": "file",
+                  "state": "created_incomplete",
+                  "bytesWritten": 0,
+                  "writeCalls": 0,
+                  "shortWriteResults": 0,
+                  "identity": {
+                    "dev": "16777230",
+                    "ino": "122737405"
+                  }
+                }
+              ],
+              "checkpoints": 26,
+              "durability": "not_confirmed"
+            },
+            "events": [
+              {
+                "event": "environment",
+                "filesystem": "apfs",
+                "local": true,
+                "caseMode": "insensitive",
+                "macOS": "27.2.1",
+                "arch": "arm64",
+                "fixtureOnly": true,
+                "pid": 24914
+              },
+              {
+                "event": "barrier",
+                "point": "after_create_check",
+                "destination": ".agents/skills/demo/SKILL.md",
+                "sequence": 1,
+                "pid": 24914
+              },
+              {
+                "event": "mutation_intent",
+                "operation": "openat_exclusive",
+                "destination": ".agents/skills/demo/SKILL.md"
+              },
+              {
+                "event": "result",
+                "protocol": 1,
+                "version": "m4.3-fixture.1",
+                "phase": "partial_failure",
+                "code": "linkage_changed",
+                "targetMutated": true,
+                "ledger": [
+                  {
+                    "destination": ".agents/skills/demo/SKILL.md",
+                    "kind": "file",
+                    "state": "created_incomplete",
+                    "bytesWritten": 0,
+                    "writeCalls": 0,
+                    "shortWriteResults": 0,
+                    "identity": {
+                      "dev": "16777230",
+                      "ino": "122737405"
+                    }
+                  }
+                ],
+                "checkpoints": 26,
+                "durability": "not_confirmed"
+              }
+            ],
+            "extraction": {
+              "removed": true,
+              "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-ILMsOU"
+            },
+            "artifactSha256": "739b23bca8adf032a6db6f08e25b1fe2b34703aa33c6c02e4650ae132d33b7fb",
+            "nativeExit": {
+              "code": 1,
+              "signal": null
+            }
+          },
+          "foreignBefore": {
+            "dev": "16777230",
+            "ino": "122737404",
+            "mode": 416,
+            "size": "19",
+            "sha256": "576e75a98c0a069ab7b639d1a1df4e743f8d2d002e51ddc04ced417616410c89"
+          },
+          "foreignAfter": {
+            "dev": "16777230",
+            "ino": "122737404",
+            "mode": 416,
+            "size": "19",
+            "sha256": "576e75a98c0a069ab7b639d1a1df4e743f8d2d002e51ddc04ced417616410c89"
+          },
+          "detachedFile": {
+            "dev": "16777230",
+            "ino": "122737405",
+            "mode": 384,
+            "size": "0",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      ]
+    },
+    {
+      "name": "symlink-ancestor-redirection-refused",
+      "pass": true,
+      "outcome": {
+        "result": {
+          "event": "result",
+          "protocol": 1,
+          "version": "m4.3-fixture.1",
+          "phase": "failed_before_write",
+          "code": "linkage_changed",
+          "targetMutated": false,
+          "ledger": [
+            {
+              "destination": ".agents/skills/demo/SKILL.md",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "writeCalls": 0,
+              "shortWriteResults": 0
+            }
+          ],
+          "checkpoints": 21,
+          "durability": "not_confirmed"
+        },
+        "events": [
+          {
+            "event": "environment",
+            "filesystem": "apfs",
+            "local": true,
+            "caseMode": "insensitive",
+            "macOS": "27.2.1",
+            "arch": "arm64",
+            "fixtureOnly": true,
+            "pid": 24916
+          },
+          {
+            "event": "barrier",
+            "point": "before_create",
+            "destination": ".agents/skills/demo/SKILL.md",
+            "sequence": 1,
+            "pid": 24916
+          },
+          {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "failed_before_write",
+            "code": "linkage_changed",
+            "targetMutated": false,
+            "ledger": [
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "not_attempted",
+                "bytesWritten": 0,
+                "writeCalls": 0,
+                "shortWriteResults": 0
+              }
+            ],
+            "checkpoints": 21,
+            "durability": "not_confirmed"
+          }
+        ],
+        "extraction": {
+          "removed": true,
+          "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-GBvggQ"
+        },
+        "artifactSha256": "739b23bca8adf032a6db6f08e25b1fe2b34703aa33c6c02e4650ae132d33b7fb",
+        "nativeExit": {
+          "code": 1,
+          "signal": null
+        }
+      },
+      "foreign": {
+        "dev": "16777230",
+        "ino": "122737413",
+        "mode": 384,
+        "size": "16",
+        "sha256": "41f88c640190c6aa656b240a9bddd5bb2a38ac146e968f9048f2c9b7c9322a34"
+      }
+    },
+    {
+      "name": "mkdir-collision-and-replacement-never-chmod-foreign",
+      "pass": true,
+      "variants": [
+        {
+          "point": "after_mkdir_check",
+          "outcome": {
+            "result": {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "failed_before_write",
+              "code": "destination_exists",
+              "targetMutated": false,
+              "ledger": [
+                {
+                  "destination": ".agents",
+                  "kind": "directory",
+                  "state": "not_attempted"
+                },
+                {
+                  "destination": ".agents/skills",
+                  "kind": "directory",
+                  "state": "not_attempted"
+                },
+                {
+                  "destination": ".agents/skills/demo",
+                  "kind": "directory",
+                  "state": "not_attempted"
+                },
+                {
+                  "destination": ".agents/skills/demo/SKILL.md",
+                  "kind": "file",
+                  "state": "not_attempted",
+                  "bytesWritten": 0,
+                  "writeCalls": 0,
+                  "shortWriteResults": 0
+                }
+              ],
+              "checkpoints": 23,
+              "durability": "not_confirmed"
+            },
+            "events": [
+              {
+                "event": "environment",
+                "filesystem": "apfs",
+                "local": true,
+                "caseMode": "insensitive",
+                "macOS": "27.2.1",
+                "arch": "arm64",
+                "fixtureOnly": true,
+                "pid": 24918
+              },
+              {
+                "event": "barrier",
+                "point": "after_mkdir_check",
+                "destination": ".agents",
+                "sequence": 1,
+                "pid": 24918
+              },
+              {
+                "event": "mutation_intent",
+                "operation": "mkdirat",
+                "destination": ".agents"
+              },
+              {
+                "event": "result",
+                "protocol": 1,
+                "version": "m4.3-fixture.1",
+                "phase": "failed_before_write",
+                "code": "destination_exists",
+                "targetMutated": false,
+                "ledger": [
+                  {
+                    "destination": ".agents",
+                    "kind": "directory",
+                    "state": "not_attempted"
+                  },
+                  {
+                    "destination": ".agents/skills",
+                    "kind": "directory",
+                    "state": "not_attempted"
+                  },
+                  {
+                    "destination": ".agents/skills/demo",
+                    "kind": "directory",
+                    "state": "not_attempted"
+                  },
+                  {
+                    "destination": ".agents/skills/demo/SKILL.md",
+                    "kind": "file",
+                    "state": "not_attempted",
+                    "bytesWritten": 0,
+                    "writeCalls": 0,
+                    "shortWriteResults": 0
+                  }
+                ],
+                "checkpoints": 23,
+                "durability": "not_confirmed"
+              }
+            ],
+            "extraction": {
+              "removed": true,
+              "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-6u0tMg"
+            },
+            "artifactSha256": "739b23bca8adf032a6db6f08e25b1fe2b34703aa33c6c02e4650ae132d33b7fb",
+            "nativeExit": {
+              "code": 1,
+              "signal": null
+            }
+          },
+          "foreignBefore": {
+            "dev": "16777230",
+            "ino": "122737422",
+            "mode": 448,
+            "size": "64",
+            "sha256": null
+          },
+          "foreignAfter": {
+            "dev": "16777230",
+            "ino": "122737422",
+            "mode": 448,
+            "size": "64",
+            "sha256": null
+          }
+        },
+        {
+          "point": "after_mkdir",
+          "outcome": {
+            "result": {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "uncertain",
+              "code": "ownership_unknown",
+              "targetMutated": true,
+              "ledger": [
+                {
+                  "destination": ".agents",
+                  "kind": "directory",
+                  "state": "ownership_unknown"
+                },
+                {
+                  "destination": ".agents/skills",
+                  "kind": "directory",
+                  "state": "not_attempted"
+                },
+                {
+                  "destination": ".agents/skills/demo",
+                  "kind": "directory",
+                  "state": "not_attempted"
+                },
+                {
+                  "destination": ".agents/skills/demo/SKILL.md",
+                  "kind": "file",
+                  "state": "not_attempted",
+                  "bytesWritten": 0,
+                  "writeCalls": 0,
+                  "shortWriteResults": 0
+                }
+              ],
+              "checkpoints": 24,
+              "durability": "not_confirmed"
+            },
+            "events": [
+              {
+                "event": "environment",
+                "filesystem": "apfs",
+                "local": true,
+                "caseMode": "insensitive",
+                "macOS": "27.2.1",
+                "arch": "arm64",
+                "fixtureOnly": true,
+                "pid": 24920
+              },
+              {
+                "event": "mutation_intent",
+                "operation": "mkdirat",
+                "destination": ".agents"
+              },
+              {
+                "event": "barrier",
+                "point": "after_mkdir",
+                "destination": ".agents",
+                "sequence": 1,
+                "pid": 24920
+              },
+              {
+                "event": "result",
+                "protocol": 1,
+                "version": "m4.3-fixture.1",
+                "phase": "uncertain",
+                "code": "ownership_unknown",
+                "targetMutated": true,
+                "ledger": [
+                  {
+                    "destination": ".agents",
+                    "kind": "directory",
+                    "state": "ownership_unknown"
+                  },
+                  {
+                    "destination": ".agents/skills",
+                    "kind": "directory",
+                    "state": "not_attempted"
+                  },
+                  {
+                    "destination": ".agents/skills/demo",
+                    "kind": "directory",
+                    "state": "not_attempted"
+                  },
+                  {
+                    "destination": ".agents/skills/demo/SKILL.md",
+                    "kind": "file",
+                    "state": "not_attempted",
+                    "bytesWritten": 0,
+                    "writeCalls": 0,
+                    "shortWriteResults": 0
+                  }
+                ],
+                "checkpoints": 24,
+                "durability": "not_confirmed"
+              }
+            ],
+            "extraction": {
+              "removed": true,
+              "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-xyar2E"
+            },
+            "artifactSha256": "739b23bca8adf032a6db6f08e25b1fe2b34703aa33c6c02e4650ae132d33b7fb",
+            "nativeExit": {
+              "code": 1,
+              "signal": null
+            }
+          },
+          "foreignBefore": {
+            "dev": "16777230",
+            "ino": "122737429",
+            "mode": 448,
+            "size": "64",
+            "sha256": null
+          },
+          "foreignAfter": {
+            "dev": "16777230",
+            "ino": "122737429",
+            "mode": 448,
+            "size": "64",
+            "sha256": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "partial-write-and-not-attempted-ledger",
+      "pass": true,
+      "outcome": {
+        "result": {
+          "event": "result",
+          "protocol": 1,
+          "version": "m4.3-fixture.1",
+          "phase": "partial_failure",
+          "code": "write_failed",
+          "targetMutated": true,
+          "ledger": [
+            {
+              "destination": ".agents",
+              "kind": "directory",
+              "state": "created_verified",
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737435"
+              }
+            },
+            {
+              "destination": ".agents/skills",
+              "kind": "directory",
+              "state": "created_verified",
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737436"
+              }
+            },
+            {
+              "destination": ".agents/skills/demo",
+              "kind": "directory",
+              "state": "created_verified",
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737437"
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/a-good",
+              "kind": "file",
+              "state": "created_verified",
+              "bytesWritten": 4,
+              "writeCalls": 1,
+              "shortWriteResults": 0,
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737438"
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/b-broken.bin",
+              "kind": "file",
+              "state": "created_incomplete",
+              "bytesWritten": 8195,
+              "writeCalls": 2,
+              "shortWriteResults": 0,
+              "systemErrno": 28,
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737439"
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/z-not-attempted",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "writeCalls": 0,
+              "shortWriteResults": 0
+            },
+            {
+              "destination": ".agents/skills/demo/SKILL.md",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "writeCalls": 0,
+              "shortWriteResults": 0
+            }
+          ],
+          "checkpoints": 68,
+          "durability": "not_confirmed"
+        },
+        "events": [
+          {
+            "event": "environment",
+            "filesystem": "apfs",
+            "local": true,
+            "caseMode": "insensitive",
+            "macOS": "27.2.1",
+            "arch": "arm64",
+            "fixtureOnly": true,
+            "pid": 24922
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "mkdirat",
+            "destination": ".agents"
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "mkdirat",
+            "destination": ".agents/skills"
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "mkdirat",
+            "destination": ".agents/skills/demo"
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "openat_exclusive",
+            "destination": ".agents/skills/demo/a-good"
+          },
+          {
+            "event": "file_verified",
+            "destination": ".agents/skills/demo/a-good",
+            "identity": {
+              "dev": "16777230",
+              "ino": "122737438"
+            }
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "openat_exclusive",
+            "destination": ".agents/skills/demo/b-broken.bin"
+          },
+          {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "partial_failure",
+            "code": "write_failed",
+            "targetMutated": true,
+            "ledger": [
+              {
+                "destination": ".agents",
+                "kind": "directory",
+                "state": "created_verified",
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737435"
+                }
+              },
+              {
+                "destination": ".agents/skills",
+                "kind": "directory",
+                "state": "created_verified",
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737436"
+                }
+              },
+              {
+                "destination": ".agents/skills/demo",
+                "kind": "directory",
+                "state": "created_verified",
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737437"
+                }
+              },
+              {
+                "destination": ".agents/skills/demo/a-good",
+                "kind": "file",
+                "state": "created_verified",
+                "bytesWritten": 4,
+                "writeCalls": 1,
+                "shortWriteResults": 0,
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737438"
+                }
+              },
+              {
+                "destination": ".agents/skills/demo/b-broken.bin",
+                "kind": "file",
+                "state": "created_incomplete",
+                "bytesWritten": 8195,
+                "writeCalls": 2,
+                "shortWriteResults": 0,
+                "systemErrno": 28,
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737439"
+                }
+              },
+              {
+                "destination": ".agents/skills/demo/z-not-attempted",
+                "kind": "file",
+                "state": "not_attempted",
+                "bytesWritten": 0,
+                "writeCalls": 0,
+                "shortWriteResults": 0
+              },
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "not_attempted",
+                "bytesWritten": 0,
+                "writeCalls": 0,
+                "shortWriteResults": 0
+              }
+            ],
+            "checkpoints": 68,
+            "durability": "not_confirmed"
+          }
+        ],
+        "extraction": {
+          "removed": true,
+          "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-oOBuIy"
+        },
+        "artifactSha256": "739b23bca8adf032a6db6f08e25b1fe2b34703aa33c6c02e4650ae132d33b7fb",
+        "nativeExit": {
+          "code": 1,
+          "signal": null
+        }
+      },
+      "snapshot": [
+        {
+          "path": ".",
+          "type": "directory",
+          "mode": 448
+        },
+        {
+          "path": "./.agents",
+          "type": "directory",
+          "mode": 493
+        },
+        {
+          "path": "./.agents/skills",
+          "type": "directory",
+          "mode": 493
+        },
+        {
+          "path": "./.agents/skills/demo",
+          "type": "directory",
+          "mode": 493
+        },
+        {
+          "path": "./.agents/skills/demo/a-good",
+          "type": "file",
+          "mode": 420,
+          "sha256": "770e607624d689265ca6c44884d0807d9b054d23c473c106c72be9de08b7376c"
+        },
+        {
+          "path": "./.agents/skills/demo/b-broken.bin",
+          "type": "file",
+          "mode": 384,
+          "sha256": "5355e5fd60f195c03575ff51278b5235f0340bbe9d74d724c5b7479c187685bf"
+        }
+      ]
+    },
+    {
+      "name": "sync-close-chmod-zero-write-readback-failures",
+      "pass": true,
+      "variants": [
+        {
+          "point": "sync",
+          "outcome": {
+            "result": {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "partial_failure",
+              "code": "sync_failed",
+              "targetMutated": true,
+              "ledger": [
+                {
+                  "destination": ".agents/skills/demo/SKILL.md",
+                  "kind": "file",
+                  "state": "created_incomplete",
+                  "bytesWritten": 45,
+                  "writeCalls": 1,
+                  "shortWriteResults": 0,
+                  "identity": {
+                    "dev": "16777230",
+                    "ino": "122737448"
+                  }
+                }
+              ],
+              "checkpoints": 28,
+              "durability": "not_confirmed"
+            },
+            "events": [
+              {
+                "event": "environment",
+                "filesystem": "apfs",
+                "local": true,
+                "caseMode": "insensitive",
+                "macOS": "27.2.1",
+                "arch": "arm64",
+                "fixtureOnly": true,
+                "pid": 24924
+              },
+              {
+                "event": "mutation_intent",
+                "operation": "openat_exclusive",
+                "destination": ".agents/skills/demo/SKILL.md"
+              },
+              {
+                "event": "result",
+                "protocol": 1,
+                "version": "m4.3-fixture.1",
+                "phase": "partial_failure",
+                "code": "sync_failed",
+                "targetMutated": true,
+                "ledger": [
+                  {
+                    "destination": ".agents/skills/demo/SKILL.md",
+                    "kind": "file",
+                    "state": "created_incomplete",
+                    "bytesWritten": 45,
+                    "writeCalls": 1,
+                    "shortWriteResults": 0,
+                    "identity": {
+                      "dev": "16777230",
+                      "ino": "122737448"
+                    }
+                  }
+                ],
+                "checkpoints": 28,
+                "durability": "not_confirmed"
+              }
+            ],
+            "extraction": {
+              "removed": true,
+              "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-vDHafQ"
+            },
+            "artifactSha256": "739b23bca8adf032a6db6f08e25b1fe2b34703aa33c6c02e4650ae132d33b7fb",
+            "nativeExit": {
+              "code": 1,
+              "signal": null
+            }
+          },
+          "file": {
+            "dev": "16777230",
+            "ino": "122737448",
+            "mode": 420,
+            "size": "45",
+            "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a"
+          }
+        },
+        {
+          "point": "directory_sync",
+          "outcome": {
+            "result": {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "partial_failure",
+              "code": "sync_failed",
+              "targetMutated": true,
+              "ledger": [
+                {
+                  "destination": ".agents/skills/demo/SKILL.md",
+                  "kind": "file",
+                  "state": "created_incomplete",
+                  "bytesWritten": 45,
+                  "writeCalls": 1,
+                  "shortWriteResults": 0,
+                  "identity": {
+                    "dev": "16777230",
+                    "ino": "122737457"
+                  }
+                }
+              ],
+              "checkpoints": 30,
+              "durability": "not_confirmed"
+            },
+            "events": [
+              {
+                "event": "environment",
+                "filesystem": "apfs",
+                "local": true,
+                "caseMode": "insensitive",
+                "macOS": "27.2.1",
+                "arch": "arm64",
+                "fixtureOnly": true,
+                "pid": 24926
+              },
+              {
+                "event": "mutation_intent",
+                "operation": "openat_exclusive",
+                "destination": ".agents/skills/demo/SKILL.md"
+              },
+              {
+                "event": "result",
+                "protocol": 1,
+                "version": "m4.3-fixture.1",
+                "phase": "partial_failure",
+                "code": "sync_failed",
+                "targetMutated": true,
+                "ledger": [
+                  {
+                    "destination": ".agents/skills/demo/SKILL.md",
+                    "kind": "file",
+                    "state": "created_incomplete",
+                    "bytesWritten": 45,
+                    "writeCalls": 1,
+                    "shortWriteResults": 0,
+                    "identity": {
+                      "dev": "16777230",
+                      "ino": "122737457"
+                    }
+                  }
+                ],
+                "checkpoints": 30,
+                "durability": "not_confirmed"
+              }
+            ],
+            "extraction": {
+              "removed": true,
+              "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-0QxDmm"
+            },
+            "artifactSha256": "739b23bca8adf032a6db6f08e25b1fe2b34703aa33c6c02e4650ae132d33b7fb",
+            "nativeExit": {
+              "code": 1,
+              "signal": null
+            }
+          },
+          "file": {
+            "dev": "16777230",
+            "ino": "122737457",
+            "mode": 420,
+            "size": "45",
+            "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a"
+          }
+        },
+        {
+          "point": "close",
+          "outcome": {
+            "result": {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "partial_failure",
+              "code": "close_failed",
+              "targetMutated": true,
+              "ledger": [
+                {
+                  "destination": ".agents/skills/demo/SKILL.md",
+                  "kind": "file",
+                  "state": "created_incomplete",
+                  "bytesWritten": 45,
+                  "writeCalls": 1,
+                  "shortWriteResults": 0,
+                  "identity": {
+                    "dev": "16777230",
+                    "ino": "122737466"
+                  }
+                }
+              ],
+              "checkpoints": 30,
+              "durability": "not_confirmed"
+            },
+            "events": [
+              {
+                "event": "environment",
+                "filesystem": "apfs",
+                "local": true,
+                "caseMode": "insensitive",
+                "macOS": "27.2.1",
+                "arch": "arm64",
+                "fixtureOnly": true,
+                "pid": 24928
+              },
+              {
+                "event": "mutation_intent",
+                "operation": "openat_exclusive",
+                "destination": ".agents/skills/demo/SKILL.md"
+              },
+              {
+                "event": "result",
+                "protocol": 1,
+                "version": "m4.3-fixture.1",
+                "phase": "partial_failure",
+                "code": "close_failed",
+                "targetMutated": true,
+                "ledger": [
+                  {
+                    "destination": ".agents/skills/demo/SKILL.md",
+                    "kind": "file",
+                    "state": "created_incomplete",
+                    "bytesWritten": 45,
+                    "writeCalls": 1,
+                    "shortWriteResults": 0,
+                    "identity": {
+                      "dev": "16777230",
+                      "ino": "122737466"
+                    }
+                  }
+                ],
+                "checkpoints": 30,
+                "durability": "not_confirmed"
+              }
+            ],
+            "extraction": {
+              "removed": true,
+              "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-fgoWMh"
+            },
+            "artifactSha256": "739b23bca8adf032a6db6f08e25b1fe2b34703aa33c6c02e4650ae132d33b7fb",
+            "nativeExit": {
+              "code": 1,
+              "signal": null
+            }
+          },
+          "file": {
+            "dev": "16777230",
+            "ino": "122737466",
+            "mode": 420,
+            "size": "45",
+            "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a"
+          }
+        },
+        {
+          "point": "chmod",
+          "outcome": {
+            "result": {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "partial_failure",
+              "code": "chmod_failed",
+              "targetMutated": true,
+              "ledger": [
+                {
+                  "destination": ".agents/skills/demo/SKILL.md",
+                  "kind": "file",
+                  "state": "created_incomplete",
+                  "bytesWritten": 45,
+                  "writeCalls": 1,
+                  "shortWriteResults": 0,
+                  "identity": {
+                    "dev": "16777230",
+                    "ino": "122737475"
+                  }
+                }
+              ],
+              "checkpoints": 28,
+              "durability": "not_confirmed"
+            },
+            "events": [
+              {
+                "event": "environment",
+                "filesystem": "apfs",
+                "local": true,
+                "caseMode": "insensitive",
+                "macOS": "27.2.1",
+                "arch": "arm64",
+                "fixtureOnly": true,
+                "pid": 24930
+              },
+              {
+                "event": "mutation_intent",
+                "operation": "openat_exclusive",
+                "destination": ".agents/skills/demo/SKILL.md"
+              },
+              {
+                "event": "result",
+                "protocol": 1,
+                "version": "m4.3-fixture.1",
+                "phase": "partial_failure",
+                "code": "chmod_failed",
+                "targetMutated": true,
+                "ledger": [
+                  {
+                    "destination": ".agents/skills/demo/SKILL.md",
+                    "kind": "file",
+                    "state": "created_incomplete",
+                    "bytesWritten": 45,
+                    "writeCalls": 1,
+                    "shortWriteResults": 0,
+                    "identity": {
+                      "dev": "16777230",
+                      "ino": "122737475"
+                    }
+                  }
+                ],
+                "checkpoints": 28,
+                "durability": "not_confirmed"
+              }
+            ],
+            "extraction": {
+              "removed": true,
+              "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-BpLhKU"
+            },
+            "artifactSha256": "739b23bca8adf032a6db6f08e25b1fe2b34703aa33c6c02e4650ae132d33b7fb",
+            "nativeExit": {
+              "code": 1,
+              "signal": null
+            }
+          },
+          "file": {
+            "dev": "16777230",
+            "ino": "122737475",
+            "mode": 384,
+            "size": "45",
+            "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a"
+          }
+        },
+        {
+          "point": "zero_write",
+          "outcome": {
+            "result": {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "partial_failure",
+              "code": "write_failed",
+              "targetMutated": true,
+              "ledger": [
+                {
+                  "destination": ".agents/skills/demo/SKILL.md",
+                  "kind": "file",
+                  "state": "created_incomplete",
+                  "bytesWritten": 0,
+                  "writeCalls": 1,
+                  "shortWriteResults": 0,
+                  "systemErrno": 5,
+                  "identity": {
+                    "dev": "16777230",
+                    "ino": "122737484"
+                  }
+                }
+              ],
+              "checkpoints": 26,
+              "durability": "not_confirmed"
+            },
+            "events": [
+              {
+                "event": "environment",
+                "filesystem": "apfs",
+                "local": true,
+                "caseMode": "insensitive",
+                "macOS": "27.2.1",
+                "arch": "arm64",
+                "fixtureOnly": true,
+                "pid": 24932
+              },
+              {
+                "event": "mutation_intent",
+                "operation": "openat_exclusive",
+                "destination": ".agents/skills/demo/SKILL.md"
+              },
+              {
+                "event": "result",
+                "protocol": 1,
+                "version": "m4.3-fixture.1",
+                "phase": "partial_failure",
+                "code": "write_failed",
+                "targetMutated": true,
+                "ledger": [
+                  {
+                    "destination": ".agents/skills/demo/SKILL.md",
+                    "kind": "file",
+                    "state": "created_incomplete",
+                    "bytesWritten": 0,
+                    "writeCalls": 1,
+                    "shortWriteResults": 0,
+                    "systemErrno": 5,
+                    "identity": {
+                      "dev": "16777230",
+                      "ino": "122737484"
+                    }
+                  }
+                ],
+                "checkpoints": 26,
+                "durability": "not_confirmed"
+              }
+            ],
+            "extraction": {
+              "removed": true,
+              "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-Jgsd1H"
+            },
+            "artifactSha256": "739b23bca8adf032a6db6f08e25b1fe2b34703aa33c6c02e4650ae132d33b7fb",
+            "nativeExit": {
+              "code": 1,
+              "signal": null
+            }
+          },
+          "file": {
+            "dev": "16777230",
+            "ino": "122737484",
+            "mode": 384,
+            "size": "0",
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        },
+        {
+          "point": "readback",
+          "outcome": {
+            "result": {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "partial_failure",
+              "code": "verification_failed",
+              "targetMutated": true,
+              "ledger": [
+                {
+                  "destination": ".agents/skills/demo/SKILL.md",
+                  "kind": "file",
+                  "state": "created_incomplete",
+                  "bytesWritten": 45,
+                  "writeCalls": 1,
+                  "shortWriteResults": 0,
+                  "identity": {
+                    "dev": "16777230",
+                    "ino": "122737493"
+                  }
+                }
+              ],
+              "checkpoints": 28,
+              "durability": "not_confirmed"
+            },
+            "events": [
+              {
+                "event": "environment",
+                "filesystem": "apfs",
+                "local": true,
+                "caseMode": "insensitive",
+                "macOS": "27.2.1",
+                "arch": "arm64",
+                "fixtureOnly": true,
+                "pid": 24934
+              },
+              {
+                "event": "mutation_intent",
+                "operation": "openat_exclusive",
+                "destination": ".agents/skills/demo/SKILL.md"
+              },
+              {
+                "event": "result",
+                "protocol": 1,
+                "version": "m4.3-fixture.1",
+                "phase": "partial_failure",
+                "code": "verification_failed",
+                "targetMutated": true,
+                "ledger": [
+                  {
+                    "destination": ".agents/skills/demo/SKILL.md",
+                    "kind": "file",
+                    "state": "created_incomplete",
+                    "bytesWritten": 45,
+                    "writeCalls": 1,
+                    "shortWriteResults": 0,
+                    "identity": {
+                      "dev": "16777230",
+                      "ino": "122737493"
+                    }
+                  }
+                ],
+                "checkpoints": 28,
+                "durability": "not_confirmed"
+              }
+            ],
+            "extraction": {
+              "removed": true,
+              "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-Thy7jT"
+            },
+            "artifactSha256": "739b23bca8adf032a6db6f08e25b1fe2b34703aa33c6c02e4650ae132d33b7fb",
+            "nativeExit": {
+              "code": 1,
+              "signal": null
+            }
+          },
+          "file": {
+            "dev": "16777230",
+            "ino": "122737493",
+            "mode": 420,
+            "size": "45",
+            "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a"
+          }
+        }
+      ]
+    },
+    {
+      "name": "foreign-swap-after-create-no-rollback",
+      "pass": true,
+      "outcome": {
+        "result": {
+          "event": "result",
+          "protocol": 1,
+          "version": "m4.3-fixture.1",
+          "phase": "partial_failure",
+          "code": "observation_changed",
+          "targetMutated": true,
+          "ledger": [
+            {
+              "destination": ".agents/skills/demo/SKILL.md",
+              "kind": "file",
+              "state": "created_incomplete",
+              "bytesWritten": 0,
+              "writeCalls": 0,
+              "shortWriteResults": 0,
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737503"
+              }
+            }
+          ],
+          "checkpoints": 26,
+          "durability": "not_confirmed"
+        },
+        "events": [
+          {
+            "event": "environment",
+            "filesystem": "apfs",
+            "local": true,
+            "caseMode": "insensitive",
+            "macOS": "27.2.1",
+            "arch": "arm64",
+            "fixtureOnly": true,
+            "pid": 24936
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "openat_exclusive",
+            "destination": ".agents/skills/demo/SKILL.md"
+          },
+          {
+            "event": "barrier",
+            "point": "after_create",
+            "destination": ".agents/skills/demo/SKILL.md",
+            "sequence": 1,
+            "pid": 24936
+          },
+          {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "partial_failure",
+            "code": "observation_changed",
+            "targetMutated": true,
+            "ledger": [
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "created_incomplete",
+                "bytesWritten": 0,
+                "writeCalls": 0,
+                "shortWriteResults": 0,
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737503"
+                }
+              }
+            ],
+            "checkpoints": 26,
+            "durability": "not_confirmed"
+          }
+        ],
+        "extraction": {
+          "removed": true,
+          "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-HwzCUk"
+        },
+        "artifactSha256": "739b23bca8adf032a6db6f08e25b1fe2b34703aa33c6c02e4650ae132d33b7fb",
+        "nativeExit": {
+          "code": 1,
+          "signal": null
+        }
+      },
+      "foreignBefore": {
+        "dev": "16777230",
+        "ino": "122737504",
+        "mode": 416,
+        "size": "20",
+        "sha256": "a3df214f1c503d90830542da652c45eaae2f22fb5240441134f5c9b7cc0b3b7c"
+      },
+      "foreignAfter": {
+        "dev": "16777230",
+        "ino": "122737504",
+        "mode": 416,
+        "size": "20",
+        "sha256": "a3df214f1c503d90830542da652c45eaae2f22fb5240441134f5c9b7cc0b3b7c"
+      },
+      "ownCreatedStillPresent": {
+        "dev": "16777230",
+        "ino": "122737503",
+        "mode": 384,
+        "size": "0",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "coordinator-busy-helper-exit-and-stable-inode",
+      "pass": true,
+      "busy": {
+        "result": {
+          "event": "result",
+          "protocol": 1,
+          "version": "m4.3-fixture.1",
+          "phase": "failed_before_write",
+          "code": "busy",
+          "targetMutated": false,
+          "ledger": [
+            {
+              "destination": ".agents/skills/demo/SKILL.md",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "writeCalls": 0,
+              "shortWriteResults": 0
+            }
+          ],
+          "checkpoints": 12,
+          "durability": "not_confirmed"
+        },
+        "events": [
+          {
+            "event": "environment",
+            "filesystem": "apfs",
+            "local": true,
+            "caseMode": "insensitive",
+            "macOS": "27.2.1",
+            "arch": "arm64",
+            "fixtureOnly": true,
+            "pid": 24940
+          },
+          {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "failed_before_write",
+            "code": "busy",
+            "targetMutated": false,
+            "ledger": [
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "not_attempted",
+                "bytesWritten": 0,
+                "writeCalls": 0,
+                "shortWriteResults": 0
+              }
+            ],
+            "checkpoints": 12,
+            "durability": "not_confirmed"
+          }
+        ],
+        "extraction": {
+          "removed": true,
+          "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-FMtLj8"
+        },
+        "artifactSha256": "48cc178ca0e5cd2b7bfdefbe5e23b27c1c9df7bbaa3f4766edacd4adc1a72d19",
+        "nativeExit": {
+          "code": 1,
+          "signal": null
+        }
+      },
+      "killed": {
+        "result": {
+          "event": "result",
+          "protocol": 1,
+          "version": "m4.3-fixture.1",
+          "phase": "failed_before_write",
+          "code": "helper_exit",
+          "targetMutated": false,
+          "ledger": [
+            {
+              "destination": ".agents/skills/demo/SKILL.md",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0
+            }
+          ],
+          "checkpoints": 0,
+          "durability": "not_confirmed"
+        },
+        "events": [
+          {
+            "event": "environment",
+            "filesystem": "apfs",
+            "local": true,
+            "caseMode": "insensitive",
+            "macOS": "27.2.1",
+            "arch": "arm64",
+            "fixtureOnly": true,
+            "pid": 24938
+          },
+          {
+            "event": "lock_acquired",
+            "pid": 24938,
+            "identity": {
+              "dev": "16777230",
+              "ino": "122737516"
+            }
+          },
+          {
+            "event": "barrier",
+            "point": "after_preflight",
+            "destination": "",
+            "sequence": 1,
+            "pid": 24938
+          }
+        ],
+        "extraction": {
+          "removed": true,
+          "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-e9MgwM"
+        },
+        "artifactSha256": "739b23bca8adf032a6db6f08e25b1fe2b34703aa33c6c02e4650ae132d33b7fb",
+        "nativeExit": {
+          "code": null,
+          "signal": "SIGKILL"
+        }
+      },
+      "afterHelperExit": {
+        "result": {
+          "event": "result",
+          "protocol": 1,
+          "version": "m4.3-fixture.1",
+          "phase": "completed",
+          "code": "none",
+          "targetMutated": true,
+          "ledger": [
+            {
+              "destination": ".agents/skills/demo/SKILL.md",
+              "kind": "file",
+              "state": "created_verified",
+              "bytesWritten": 45,
+              "writeCalls": 1,
+              "shortWriteResults": 0,
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737521"
+              }
+            }
+          ],
+          "checkpoints": 36,
+          "durability": "fsync_completed"
+        },
+        "events": [
+          {
+            "event": "environment",
+            "filesystem": "apfs",
+            "local": true,
+            "caseMode": "insensitive",
+            "macOS": "27.2.1",
+            "arch": "arm64",
+            "fixtureOnly": true,
+            "pid": 24942
+          },
+          {
+            "event": "lock_acquired",
+            "pid": 24942,
+            "identity": {
+              "dev": "16777230",
+              "ino": "122737516"
+            }
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "openat_exclusive",
+            "destination": ".agents/skills/demo/SKILL.md"
+          },
+          {
+            "event": "file_verified",
+            "destination": ".agents/skills/demo/SKILL.md",
+            "identity": {
+              "dev": "16777230",
+              "ino": "122737521"
+            }
+          },
+          {
+            "event": "ready_to_finalize",
+            "result": {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "completed",
+              "code": "none",
+              "targetMutated": true,
+              "ledger": [
+                {
+                  "destination": ".agents/skills/demo/SKILL.md",
+                  "kind": "file",
+                  "state": "created_verified",
+                  "bytesWritten": 45,
+                  "writeCalls": 1,
+                  "shortWriteResults": 0,
+                  "identity": {
+                    "dev": "16777230",
+                    "ino": "122737521"
+                  }
+                }
+              ],
+              "checkpoints": 34,
+              "durability": "fsync_completed"
+            },
+            "lockHeld": true
+          },
+          {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "completed",
+            "code": "none",
+            "targetMutated": true,
+            "ledger": [
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "created_verified",
+                "bytesWritten": 45,
+                "writeCalls": 1,
+                "shortWriteResults": 0,
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737521"
+                }
+              }
+            ],
+            "checkpoints": 36,
+            "durability": "fsync_completed"
+          }
+        ],
+        "extraction": {
+          "removed": true,
+          "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-lBZMAq"
+        },
+        "artifactSha256": "48cc178ca0e5cd2b7bfdefbe5e23b27c1c9df7bbaa3f4766edacd4adc1a72d19",
+        "nativeExit": {
+          "code": 0,
+          "signal": null
+        }
+      },
+      "lockBefore": {
+        "dev": "16777230",
+        "ino": "122737516",
+        "mode": 384,
+        "size": "0",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "lockAfter": {
+        "dev": "16777230",
+        "ino": "122737516",
+        "mode": 384,
+        "size": "0",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "name": "coordinator-held-through-parent-finalization",
+      "pass": true,
+      "outcome": {
+        "result": {
+          "event": "result",
+          "protocol": 1,
+          "version": "m4.3-fixture.1",
+          "phase": "completed",
+          "code": "none",
+          "targetMutated": true,
+          "ledger": [
+            {
+              "destination": ".agents/skills/demo/SKILL.md",
+              "kind": "file",
+              "state": "created_verified",
+              "bytesWritten": 45,
+              "writeCalls": 1,
+              "shortWriteResults": 0,
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737531"
+              }
+            }
+          ],
+          "checkpoints": 36,
+          "durability": "fsync_completed"
+        },
+        "events": [
+          {
+            "event": "environment",
+            "filesystem": "apfs",
+            "local": true,
+            "caseMode": "insensitive",
+            "macOS": "27.2.1",
+            "arch": "arm64",
+            "fixtureOnly": true,
+            "pid": 24944
+          },
+          {
+            "event": "lock_acquired",
+            "pid": 24944,
+            "identity": {
+              "dev": "16777230",
+              "ino": "122737530"
+            }
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "openat_exclusive",
+            "destination": ".agents/skills/demo/SKILL.md"
+          },
+          {
+            "event": "file_verified",
+            "destination": ".agents/skills/demo/SKILL.md",
+            "identity": {
+              "dev": "16777230",
+              "ino": "122737531"
+            }
+          },
+          {
+            "event": "ready_to_finalize",
+            "result": {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "completed",
+              "code": "none",
+              "targetMutated": true,
+              "ledger": [
+                {
+                  "destination": ".agents/skills/demo/SKILL.md",
+                  "kind": "file",
+                  "state": "created_verified",
+                  "bytesWritten": 45,
+                  "writeCalls": 1,
+                  "shortWriteResults": 0,
+                  "identity": {
+                    "dev": "16777230",
+                    "ino": "122737531"
+                  }
+                }
+              ],
+              "checkpoints": 34,
+              "durability": "fsync_completed"
+            },
+            "lockHeld": true
+          },
+          {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "completed",
+            "code": "none",
+            "targetMutated": true,
+            "ledger": [
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "created_verified",
+                "bytesWritten": 45,
+                "writeCalls": 1,
+                "shortWriteResults": 0,
+                "identity": {
+                  "dev": "16777230",
+                  "ino": "122737531"
+                }
+              }
+            ],
+            "checkpoints": 36,
+            "durability": "fsync_completed"
+          }
+        ],
+        "extraction": {
+          "removed": true,
+          "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-WUryUJ"
+        },
+        "artifactSha256": "48cc178ca0e5cd2b7bfdefbe5e23b27c1c9df7bbaa3f4766edacd4adc1a72d19",
+        "nativeExit": {
+          "code": 0,
+          "signal": null
+        }
+      },
+      "busyDuringFinalization": {
+        "result": {
+          "event": "result",
+          "protocol": 1,
+          "version": "m4.3-fixture.1",
+          "phase": "failed_before_write",
+          "code": "busy",
+          "targetMutated": false,
+          "ledger": [
+            {
+              "destination": ".agents/skills/demo/SKILL.md",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "writeCalls": 0,
+              "shortWriteResults": 0
+            }
+          ],
+          "checkpoints": 12,
+          "durability": "not_confirmed"
+        },
+        "events": [
+          {
+            "event": "environment",
+            "filesystem": "apfs",
+            "local": true,
+            "caseMode": "insensitive",
+            "macOS": "27.2.1",
+            "arch": "arm64",
+            "fixtureOnly": true,
+            "pid": 24946
+          },
+          {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "failed_before_write",
+            "code": "busy",
+            "targetMutated": false,
+            "ledger": [
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "not_attempted",
+                "bytesWritten": 0,
+                "writeCalls": 0,
+                "shortWriteResults": 0
+              }
+            ],
+            "checkpoints": 12,
+            "durability": "not_confirmed"
+          }
+        ],
+        "extraction": {
+          "removed": true,
+          "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-EaaL6T"
+        },
+        "artifactSha256": "48cc178ca0e5cd2b7bfdefbe5e23b27c1c9df7bbaa3f4766edacd4adc1a72d19",
+        "nativeExit": {
+          "code": 1,
+          "signal": null
+        }
+      }
+    },
+    {
+      "name": "helper-death-after-create-reports-uncertainty",
+      "pass": true,
+      "outcome": {
+        "result": {
+          "event": "result",
+          "protocol": 1,
+          "version": "m4.3-fixture.1",
+          "phase": "uncertain",
+          "code": "helper_exit",
+          "targetMutated": "unknown",
+          "ledger": [
+            {
+              "destination": ".agents/skills/demo/a-first",
+              "kind": "file",
+              "state": "created_verified",
+              "bytesWritten": 8,
+              "identity": {
+                "dev": "16777230",
+                "ino": "122737543"
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/SKILL.md",
+              "kind": "file",
+              "state": "ownership_unknown",
+              "bytesWritten": 0
+            }
+          ],
+          "checkpoints": 0,
+          "durability": "not_confirmed"
+        },
+        "events": [
+          {
+            "event": "environment",
+            "filesystem": "apfs",
+            "local": true,
+            "caseMode": "insensitive",
+            "macOS": "27.2.1",
+            "arch": "arm64",
+            "fixtureOnly": true,
+            "pid": 24948
+          },
+          {
+            "event": "lock_acquired",
+            "pid": 24948,
+            "identity": {
+              "dev": "16777230",
+              "ino": "122737542"
+            }
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "openat_exclusive",
+            "destination": ".agents/skills/demo/a-first"
+          },
+          {
+            "event": "file_verified",
+            "destination": ".agents/skills/demo/a-first",
+            "identity": {
+              "dev": "16777230",
+              "ino": "122737543"
+            }
+          },
+          {
+            "event": "mutation_intent",
+            "operation": "openat_exclusive",
+            "destination": ".agents/skills/demo/SKILL.md"
+          },
+          {
+            "event": "barrier",
+            "point": "after_create",
+            "destination": ".agents/skills/demo/SKILL.md",
+            "sequence": 1,
+            "pid": 24948
+          }
+        ],
+        "extraction": {
+          "removed": true,
+          "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-vOJf7q"
+        },
+        "artifactSha256": "739b23bca8adf032a6db6f08e25b1fe2b34703aa33c6c02e4650ae132d33b7fb",
+        "nativeExit": {
+          "code": null,
+          "signal": "SIGKILL"
+        }
+      },
+      "leftover": {
+        "dev": "16777230",
+        "ino": "122737544",
+        "mode": 384,
+        "size": "0",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "afterExit": {
+        "result": {
+          "event": "result",
+          "protocol": 1,
+          "version": "m4.3-fixture.1",
+          "phase": "failed_before_write",
+          "code": "observation_changed",
+          "targetMutated": false,
+          "ledger": [
+            {
+              "destination": ".agents/skills/demo/a-first",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "writeCalls": 0,
+              "shortWriteResults": 0
+            },
+            {
+              "destination": ".agents/skills/demo/SKILL.md",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "writeCalls": 0,
+              "shortWriteResults": 0
+            }
+          ],
+          "checkpoints": 17,
+          "durability": "not_confirmed"
+        },
+        "events": [
+          {
+            "event": "environment",
+            "filesystem": "apfs",
+            "local": true,
+            "caseMode": "insensitive",
+            "macOS": "27.2.1",
+            "arch": "arm64",
+            "fixtureOnly": true,
+            "pid": 24950
+          },
+          {
+            "event": "lock_acquired",
+            "pid": 24950,
+            "identity": {
+              "dev": "16777230",
+              "ino": "122737542"
+            }
+          },
+          {
+            "event": "ready_to_finalize",
+            "result": {
+              "event": "result",
+              "protocol": 1,
+              "version": "m4.3-fixture.1",
+              "phase": "failed_before_write",
+              "code": "observation_changed",
+              "targetMutated": false,
+              "ledger": [
+                {
+                  "destination": ".agents/skills/demo/a-first",
+                  "kind": "file",
+                  "state": "not_attempted",
+                  "bytesWritten": 0,
+                  "writeCalls": 0,
+                  "shortWriteResults": 0
+                },
+                {
+                  "destination": ".agents/skills/demo/SKILL.md",
+                  "kind": "file",
+                  "state": "not_attempted",
+                  "bytesWritten": 0,
+                  "writeCalls": 0,
+                  "shortWriteResults": 0
+                }
+              ],
+              "checkpoints": 15,
+              "durability": "not_confirmed"
+            },
+            "lockHeld": true
+          },
+          {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "failed_before_write",
+            "code": "observation_changed",
+            "targetMutated": false,
+            "ledger": [
+              {
+                "destination": ".agents/skills/demo/a-first",
+                "kind": "file",
+                "state": "not_attempted",
+                "bytesWritten": 0,
+                "writeCalls": 0,
+                "shortWriteResults": 0
+              },
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "not_attempted",
+                "bytesWritten": 0,
+                "writeCalls": 0,
+                "shortWriteResults": 0
+              }
+            ],
+            "checkpoints": 17,
+            "durability": "not_confirmed"
+          }
+        ],
+        "extraction": {
+          "removed": true,
+          "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-SACx95"
+        },
+        "artifactSha256": "48cc178ca0e5cd2b7bfdefbe5e23b27c1c9df7bbaa3f4766edacd4adc1a72d19",
+        "nativeExit": {
+          "code": 1,
+          "signal": null
+        }
+      }
+    },
+    {
+      "name": "unsafe-coordinator-link-refused",
+      "pass": true,
+      "outcome": {
+        "result": {
+          "event": "result",
+          "protocol": 1,
+          "version": "m4.3-fixture.1",
+          "phase": "failed_before_write",
+          "code": "invalid_coordinator",
+          "targetMutated": false,
+          "ledger": [
+            {
+              "destination": ".agents/skills/demo/SKILL.md",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "writeCalls": 0,
+              "shortWriteResults": 0
+            }
+          ],
+          "checkpoints": 12,
+          "durability": "not_confirmed"
+        },
+        "events": [
+          {
+            "event": "environment",
+            "filesystem": "apfs",
+            "local": true,
+            "caseMode": "insensitive",
+            "macOS": "27.2.1",
+            "arch": "arm64",
+            "fixtureOnly": true,
+            "pid": 24952
+          },
+          {
+            "event": "result",
+            "protocol": 1,
+            "version": "m4.3-fixture.1",
+            "phase": "failed_before_write",
+            "code": "invalid_coordinator",
+            "targetMutated": false,
+            "ledger": [
+              {
+                "destination": ".agents/skills/demo/SKILL.md",
+                "kind": "file",
+                "state": "not_attempted",
+                "bytesWritten": 0,
+                "writeCalls": 0,
+                "shortWriteResults": 0
+              }
+            ],
+            "checkpoints": 12,
+            "durability": "not_confirmed"
+          }
+        ],
+        "extraction": {
+          "removed": true,
+          "directory": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-helper-m43-KDMkAM"
+        },
+        "artifactSha256": "48cc178ca0e5cd2b7bfdefbe5e23b27c1c9df7bbaa3f4766edacd4adc1a72d19",
+        "nativeExit": {
+          "code": 1,
+          "signal": null
+        }
+      },
+      "foreign": {
+        "dev": "16777230",
+        "ino": "122737558",
+        "mode": 384,
+        "size": "12",
+        "sha256": "916fc076eb816fd82884f1d663bf8b017929ef654aa8d316e964746dd1fdaa1e"
+      }
+    }
+  ]
+}

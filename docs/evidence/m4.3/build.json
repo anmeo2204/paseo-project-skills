@@ -1,0 +1,19 @@
+{
+  "sourceHash": "cc9e46725044ce028571af2091935e03e512813169d3762d6b9b35d02f8aa4d2",
+  "standard": {
+    "version": "m4.3-fixture.1",
+    "protocol": 1,
+    "arch": "arm64",
+    "fixtureOnly": true,
+    "testing": false,
+    "sha256": "48cc178ca0e5cd2b7bfdefbe5e23b27c1c9df7bbaa3f4766edacd4adc1a72d19"
+  },
+  "testing": {
+    "version": "m4.3-fixture.1",
+    "protocol": 1,
+    "arch": "arm64",
+    "fixtureOnly": true,
+    "testing": true,
+    "sha256": "739b23bca8adf032a6db6f08e25b1fe2b34703aa33c6c02e4650ae132d33b7fb"
+  }
+}

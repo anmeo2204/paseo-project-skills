@@ -1,0 +1,962 @@
+
+> paseo-project-skills@0.1.0 typecheck
+> tsc --noEmit
+
+
+> paseo-project-skills@0.1.0 test
+> node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./tests/register.mjs --test tests/*.test.mjs
+
+TAP version 13
+# Subtest: registry distinguishes daemon availability from verified execution profiles across all providers
+ok 1 - registry distinguishes daemon availability from verified execution profiles across all providers
+  ---
+  duration_ms: 1.654792
+  type: 'test'
+  ...
+# Subtest: provider-specific hooks, Cursor preferences and Antigravity default modes fail before resource creation
+ok 2 - provider-specific hooks, Cursor preferences and Antigravity default modes fail before resource creation
+  ---
+  duration_ms: 14.3625
+  type: 'test'
+  ...
+# Subtest: default executor denies evidence and synthetic use without approved profiles
+ok 3 - default executor denies evidence and synthetic use without approved profiles
+  ---
+  duration_ms: 0.38875
+  type: 'test'
+  ...
+# Subtest: provider unavailable, model not listed and Cursor non-default never create an agent
+ok 4 - provider unavailable, model not listed and Cursor non-default never create an agent
+  ---
+  duration_ms: 23.596125
+  type: 'test'
+  ...
+# Subtest: Codex forwards native schema exactly once and archives only owned resources
+ok 5 - Codex forwards native schema exactly once and archives only owned resources
+  ---
+  duration_ms: 4.017667
+  type: 'test'
+  ...
+# Subtest: ACP routes send one JSON-text turn after checking live model and mode
+ok 6 - ACP routes send one JSON-text turn after checking live model and mode
+  ---
+  duration_ms: 12.448958
+  type: 'test'
+  ...
+# Subtest: projection retains allowlisted evidence and treats injection strings as data only
+ok 7 - projection retains allowlisted evidence and treats injection strings as data only
+  ---
+  duration_ms: 7.371166
+  type: 'test'
+  ...
+# Subtest: production staging uses a private directory outside target and refuses a temp-parent target
+ok 8 - production staging uses a private directory outside target and refuses a temp-parent target
+  ---
+  duration_ms: 16.157708
+  type: 'test'
+  ...
+# Subtest: strict JSON rejects prose, malformed data, extra fields, truncated values and oversize without retries
+ok 9 - strict JSON rejects prose, malformed data, extra fields, truncated values and oversize without retries
+  ---
+  duration_ms: 31.662917
+  type: 'test'
+  ...
+# Subtest: permissions and timeout stop using archive without allow or automatic fallback
+ok 10 - permissions and timeout stop using archive without allow or automatic fallback
+  ---
+  duration_ms: 75.263292
+  type: 'test'
+  ...
+# Subtest: cancellation and disposal suppress late results, isolate request IDs and archive active agents
+ok 11 - cancellation and disposal suppress late results, isolate request IDs and archive active agents
+  ---
+  duration_ms: 13.05175
+  type: 'test'
+  ...
+# Subtest: late workspace acknowledgment cleans only that workspace and does not start an agent
+ok 12 - late workspace acknowledgment cleans only that workspace and does not start an agent
+  ---
+  duration_ms: 13.830875
+  type: 'test'
+  ...
+# Subtest: after cleanup grace expires a late owned agent ACK is still reconciled
+ok 13 - after cleanup grace expires a late owned agent ACK is still reconciled
+  ---
+  duration_ms: 37.038125
+  type: 'test'
+  ...
+# Subtest: ambiguous create failure uses exact owned handle and cleanup failure retains recoverable resources
+ok 14 - ambiguous create failure uses exact owned handle and cleanup failure retains recoverable resources
+  ---
+  duration_ms: 10.425834
+  type: 'test'
+  ...
+# Subtest: non-owned resource is never archived on label, workspace or host mismatch
+ok 15 - non-owned resource is never archived on label, workspace or host mismatch
+  ---
+  duration_ms: 19.564666
+  type: 'test'
+  ...
+# Subtest: known hook conflict blocks even a matching approved profile
+ok 16 - known hook conflict blocks even a matching approved profile
+  ---
+  duration_ms: 0.734667
+  type: 'test'
+  ...
+# Subtest: a late discovery response holds the temporary directory until the probe settles
+ok 17 - a late discovery response holds the temporary directory until the probe settles
+  ---
+  duration_ms: 22.256208
+  type: 'test'
+  ...
+# Subtest: SelectionIntentV1 runtime contract is strict and preserves the existing wire shape
+ok 18 - SelectionIntentV1 runtime contract is strict and preserves the existing wire shape
+  ---
+  duration_ms: 3.5895
+  type: 'test'
+  ...
+# Subtest: production CatalogLoader previews every legacy package file, binary and executable, read-only without providers
+ok 19 - production CatalogLoader previews every legacy package file, binary and executable, read-only without providers
+  ---
+  duration_ms: 967.882333
+  type: 'test'
+  ...
+# Subtest: fresh destinations report unchanged, byte/mode conflicts and binary summaries without changing tree/hashes/modes
+ok 20 - fresh destinations report unchanged, byte/mode conflicts and binary summaries without changing tree/hashes/modes
+  ---
+  duration_ms: 81.571167
+  type: 'test'
+  ...
+# Subtest: text patches are deterministic unified diffs, preserve CRLF and missing final newline, and pass git apply --check
+ok 21 - text patches are deterministic unified diffs, preserve CRLF and missing final newline, and pass git apply --check
+  ---
+  duration_ms: 333.562167
+  type: 'test'
+  ...
+# Subtest: stable ordering ignores catalog/selection/provider order and includes applicability sidecars as ordinary data
+ok 22 - stable ordering ignores catalog/selection/provider order and includes applicability sidecars as ordinary data
+  ---
+  duration_ms: 8.196209
+  type: 'test'
+  ...
+# Subtest: host, settings, catalog provenance and all selected IDs are revalidated before destination reads
+ok 23 - host, settings, catalog provenance and all selected IDs are revalidated before destination reads
+  ---
+  duration_ms: 5.658833
+  type: 'test'
+  ...
+# Subtest: malicious catalog descriptors, aliases, duplicates and blob corruption never reach filesystem reads
+ok 24 - malicious catalog descriptors, aliases, duplicates and blob corruption never reach filesystem reads
+  ---
+  duration_ms: 12.159
+  type: 'test'
+  ...
+# Subtest: symlink ancestors/leaves, wrong file types, hardlinks and FIFO destinations are blocked without reading outside
+ok 25 - symlink ancestors/leaves, wrong file types, hardlinks and FIFO destinations are blocked without reading outside
+  ---
+  duration_ms: 36.615584
+  type: 'test'
+  ...
+# Subtest: supporting-file symlinks are blocked individually and never borrowed from scanner inventory
+ok 26 - supporting-file symlinks are blocked individually and never borrowed from scanner inventory
+  ---
+  duration_ms: 27.08725
+  type: 'test'
+  ...
+# Subtest: Preview re-reads post-scan changes and rejects missing, aliased and non-directory targets
+ok 27 - Preview re-reads post-scan changes and rejects missing, aliased and non-directory targets
+  ---
+  duration_ms: 28.10175
+  type: 'test'
+  ...
+# Subtest: root replacement during catalog loading fails and file changes during final settings read invalidate the entry
+ok 28 - root replacement during catalog loading fails and file changes during final settings read invalidate the entry
+  ---
+  duration_ms: 10.25025
+  type: 'test'
+  ...
+# Subtest: controlled ancestor replacement is detected before external file bytes can be read
+ok 29 - controlled ancestor replacement is detected before external file bytes can be read
+  ---
+  duration_ms: 8.390708
+  type: 'test'
+  ...
+# Subtest: missing destination created while settings yield becomes blocked instead of stale create
+ok 30 - missing destination created while settings yield becomes blocked instead of stale create
+  ---
+  duration_ms: 6.834291
+  type: 'test'
+  ...
+# Subtest: resource budgets block oversized reads/diffs and return bounded typed errors without truncated plans
+ok 31 - resource budgets block oversized reads/diffs and return bounded typed errors without truncated plans
+  ---
+  duration_ms: 17.717209
+  type: 'test'
+  ...
+# Subtest: settings changes, catalog errors, busy slots and dispose fail closed without agent/model calls
+ok 32 - settings changes, catalog errors, busy slots and dispose fail closed without agent/model calls
+  ---
+  duration_ms: 5.184666
+  type: 'test'
+  ...
+# Subtest: permission denied and cross-device destinations are blocked without leaking raw errors
+ok 33 - permission denied and cross-device destinations are blocked without leaking raw errors
+  ---
+  duration_ms: 8.898542
+  type: 'test'
+  ...
+# Subtest: a nested selected target plans inside that exact directory and never uses ancestor installations
+ok 34 - a nested selected target plans inside that exact directory and never uses ancestor installations
+  ---
+  duration_ms: 15.061167
+  type: 'test'
+  ...
+# Subtest: a file mutated while its handle is read is blocked and its bytes are discarded
+ok 35 - a file mutated while its handle is read is blocked and its bytes are discarded
+  ---
+  duration_ms: 9.694959
+  type: 'test'
+  ...
+# Subtest: full SHA, lightweight and nested annotated tags resolve without branch fallback
+ok 36 - full SHA, lightweight and nested annotated tags resolve without branch fallback
+  ---
+  duration_ms: 2213.661208
+  type: 'test'
+  ...
+# Subtest: mutable tags re-resolve and deleted tags never serve old cached snapshots
+ok 37 - mutable tags re-resolve and deleted tags never serve old cached snapshots
+  ---
+  duration_ms: 588.7805
+  type: 'test'
+  ...
+# Subtest: discovery is dynamic and retains raw nested binaries, source notices and modes
+ok 38 - discovery is dynamic and retains raw nested binaries, source notices and modes
+  ---
+  duration_ms: 382.15025
+  type: 'test'
+  ...
+# Subtest: one malformed skill rejects the snapshot and reports bounded diagnostics
+ok 39 - one malformed skill rejects the snapshot and reports bounded diagnostics
+  ---
+  duration_ms: 2656.400834
+  type: 'test'
+  ...
+# Subtest: symlinks, gitlinks and unsafe repository paths reject the full snapshot
+ok 40 - symlinks, gitlinks and unsafe repository paths reject the full snapshot
+  ---
+  duration_ms: 664.766167
+  type: 'test'
+  ...
+# Subtest: same-SHA concurrent requests share work, snapshots stay isolated, and LRU evicts
+ok 41 - same-SHA concurrent requests share work, snapshots stay isolated, and LRU evicts
+  ---
+  duration_ms: 758.561875
+  type: 'test'
+  ...
+# Subtest: failed loads are retried and staging is removed after timeout, limit or disposal
+ok 42 - failed loads are retried and staging is removed after timeout, limit or disposal
+  ---
+  duration_ms: 362.097916
+  type: 'test'
+  ...
+# Subtest: catalog RPC reads each host setting once and sends only the descriptor projection
+ok 43 - catalog RPC reads each host setting once and sends only the descriptor projection
+  ---
+  duration_ms: 275.48975
+  type: 'test'
+  ...
+# Subtest: catalog limits and truncated tree records fail before reading blobs
+ok 44 - catalog limits and truncated tree records fail before reading blobs
+  ---
+  duration_ms: 4.480334
+  type: 'test'
+  ...
+# Subtest: Git missing, auth failure and network failure are sanitized and tag failure cannot use a cached SHA
+ok 45 - Git missing, auth failure and network failure are sanitized and tag failure cannot use a cached SHA
+  ---
+  duration_ms: 328.97975
+  type: 'test'
+  ...
+# Subtest: timeout kills a running Git process group and bounds simultaneous staging
+ok 46 - timeout kills a running Git process group and bounds simultaneous staging
+  ---
+  duration_ms: 614.763667
+  type: 'test'
+  ...
+# Subtest: directory validation accepts Git and non-Git directories and canonicalizes a link
+ok 47 - directory validation accepts Git and non-Git directories and canonicalizes a link
+  ---
+  duration_ms: 6.18075
+  type: 'test'
+  ...
+# Subtest: directory validation rejects relative, nonexistent, file and NUL-containing paths
+ok 48 - directory validation rejects relative, nonexistent, file and NUL-containing paths
+  ---
+  duration_ms: 3.712
+  type: 'test'
+  ...
+# Subtest: directory validation maps real permission errors
+ok 49 - directory validation maps real permission errors
+  ---
+  duration_ms: 2.403084
+  type: 'test'
+  ...
+# Subtest: catalog settings default to unset and accept full SHAs and tag names
+ok 50 - catalog settings default to unset and accept full SHAs and tag names
+  ---
+  duration_ms: 1.263666
+  type: 'test'
+  ...
+# Subtest: catalog settings reject abbreviated SHAs, revision expressions and explicit branches
+ok 51 - catalog settings reject abbreviated SHAs, revision expressions and explicit branches
+  ---
+  duration_ms: 0.969292
+  type: 'test'
+  ...
+# Subtest: server contribution registers the expected typed contracts and host settings
+ok 52 - server contribution registers the expected typed contracts and host settings
+  ---
+  duration_ms: 3.406542
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: real screen renders provider states and allows several target selections independently of runtime status
+ok 53 - real screen renders provider states and allows several target selections independently of runtime status
+  ---
+  duration_ms: 44.861583
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: late provider results for target A cannot replace B
+ok 54 - late provider results for target A cannot replace B
+  ---
+  duration_ms: 16.219
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: late directory validation cannot change the active target or trigger discovery
+ok 55 - late directory validation cannot change the active target or trigger discovery
+  ---
+  duration_ms: 16.108417
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: host switch isolates in-flight requests, visible ref, draft and save destination
+ok 56 - host switch isolates in-flight requests, visible ref, draft and save destination
+  ---
+  duration_ms: 18.289875
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: offline then reconnect discards old validation for the same host and path
+ok 57 - offline then reconnect discards old validation for the same host and path
+  ---
+  duration_ms: 14.203958
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: unmount and replacement installation ignore outstanding discovery
+ok 58 - unmount and replacement installation ignore outstanding discovery
+  ---
+  duration_ms: 14.702417
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: provider transport failure surfaces an error and retry can recover
+ok 59 - provider transport failure surfaces an error and retry can recover
+  ---
+  duration_ms: 9.545
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: reopening the picker after reconnect does not display the previous project list
+ok 60 - reopening the picker after reconnect does not display the previous project list
+  ---
+  duration_ms: 15.758459
+  type: 'test'
+  ...
+# Subtest: discovery polls only while an enabled supported provider is loading
+ok 61 - discovery polls only while an enabled supported provider is loading
+  ---
+  duration_ms: 13.156416
+  type: 'test'
+  ...
+# Subtest: packaged native artifact records the current native source hash
+ok 62 - packaged native artifact records the current native source hash
+  ---
+  duration_ms: 4.049625
+  type: 'test'
+  ...
+# Subtest: anchored native fixture acceptance
+ok 63 - anchored native fixture acceptance
+  ---
+  duration_ms: 4307.98475
+  type: 'test'
+  ...
+# PASS packaging-private-extraction
+# PASS helper-fail-closed
+# PASS environment-and-scope-gate
+# PASS bytes-modes-binary-empty-and-short-writes
+# PASS kiro-derived-pinned-bytes-and-read-only-git
+# PASS changed-canonical-dependency-stops-derived-create
+# PASS full-preflight-conflict-source-collision-and-budget
+# PASS late-leaf-no-clobber
+# PASS two-writers-exclusive-leaf
+# PASS replacement-before-and-after-linkage-check
+# PASS symlink-ancestor-redirection-refused
+# PASS mkdir-collision-and-replacement-never-chmod-foreign
+# PASS partial-write-and-not-attempted-ledger
+# PASS sync-close-chmod-zero-write-readback-failures
+# PASS foreign-swap-after-create-no-rollback
+# PASS coordinator-busy-helper-exit-and-stable-inode
+# PASS coordinator-held-through-parent-finalization
+# PASS helper-death-after-create-reports-uncertainty
+# PASS unsafe-coordinator-link-refused
+# Subtest: parent death closes the native coordinator lease and leaves only a private extraction orphan
+ok 64 - parent death closes the native coordinator lease and leaves only a private extraction orphan
+  ---
+  duration_ms: 630.745792
+  type: 'test'
+  ...
+# Subtest: v2 is strict and additive, retains exact M3 projection, directory effects and read-only bytes/modes
+ok 65 - v2 is strict and additive, retains exact M3 projection, directory effects and read-only bytes/modes
+  ---
+  duration_ms: 104.67275
+  type: 'test'
+  ...
+# Subtest: canonical serialization is independent of property insertion, rejects ambiguous non-JSON values
+ok 66 - canonical serialization is independent of property insertion, rejects ambiguous non-JSON values
+  ---
+  duration_ms: 0.663792
+  type: 'test'
+  ...
+# Subtest: manifest digest binds nonce, SHA, intent, plan, sources, directory effects, read-set and policy
+ok 67 - manifest digest binds nonce, SHA, intent, plan, sources, directory effects, read-set and policy
+  ---
+  duration_ms: 50.735125
+  type: 'test'
+  ...
+# Subtest: source buffers have immutable ownership and read-outs are copies, including executable/binary
+ok 68 - source buffers have immutable ownership and read-outs are copies, including executable/binary
+  ---
+  duration_ms: 30.252958
+  type: 'test'
+  ...
+# Subtest: same scope and reordered selections/catalog produce same manifest digest, new Preview gets new opaque ID
+ok 69 - same scope and reordered selections/catalog produce same manifest digest, new Preview gets new opaque ID
+  ---
+  duration_ms: 44.688291
+  type: 'test'
+  ...
+# Subtest: v2 destination/source arrays use deterministic UTF-8 byte order for non-ASCII package names
+ok 70 - v2 destination/source arrays use deterministic UTF-8 byte order for non-ASCII package names
+  ---
+  duration_ms: 12.760166
+  type: 'test'
+  ...
+# Subtest: TTL uses monotonic time, not wall-clock changes or lookup; restart epoch and dispose invalidate
+ok 71 - TTL uses monotonic time, not wall-clock changes or lookup; restart epoch and dispose invalidate
+  ---
+  duration_ms: 12.38725
+  type: 'test'
+  ...
+# Subtest: count eviction is FIFO and lookups do not refresh TTL/order
+ok 72 - count eviction is FIFO and lookups do not refresh TTL/order
+  ---
+  duration_ms: 34.147041
+  type: 'test'
+  ...
+# Subtest: root, anchor and descendant identities use exact bigint decimals and file version ns
+ok 73 - root, anchor and descendant identities use exact bigint decimals and file version ns
+  ---
+  duration_ms: 28.12975
+  type: 'test'
+  ...
+# Subtest: conflict and symlink-blocked plans have receipts with whole-plan ineligible reasons, no writes
+ok 74 - conflict and symlink-blocked plans have receipts with whole-plan ineligible reasons, no writes
+  ---
+  duration_ms: 98.489083
+  type: 'test'
+  ...
+# Subtest: Kiro Git root records full derived sources, directory effects and metadata proof; nested/non-Git stay canonical
+ok 75 - Kiro Git root records full derived sources, directory effects and metadata proof; nested/non-Git stay canonical
+  ---
+  duration_ms: 387.070959
+  type: 'test'
+  ...
+# Subtest: Kiro linked worktree records gitfile content hash and external directory identities without touching metadata
+ok 76 - Kiro linked worktree records gitfile content hash and external directory identities without touching metadata
+  ---
+  duration_ms: 362.707666
+  type: 'test'
+  ...
+# Subtest: all unchanged reports no_changes without touching modes and all writes remain unavailable
+ok 77 - all unchanged reports no_changes without touching modes and all writes remain unavailable
+  ---
+  duration_ms: 37.620459
+  type: 'test'
+  ...
+# Subtest: stale host/settings/SHA and source integrity are rejected without publishing receipts
+ok 78 - stale host/settings/SHA and source integrity are rejected without publishing receipts
+  ---
+  duration_ms: 11.019792
+  type: 'test'
+  ...
+# Subtest: settings changes or root/ancestor/absent destination changes during final settings yield prevent receipt publication
+    # Subtest: settings
+    ok 1 - settings
+      ---
+      duration_ms: 5.897167
+      type: 'test'
+      ...
+    # Subtest: root
+    ok 2 - root
+      ---
+      duration_ms: 7.143875
+      type: 'test'
+      ...
+    # Subtest: ancestor
+    ok 3 - ancestor
+      ---
+      duration_ms: 27.716833
+      type: 'test'
+      ...
+    # Subtest: absent
+    ok 4 - absent
+      ---
+      duration_ms: 10.852084
+      type: 'test'
+      ...
+    # Subtest: file
+    ok 5 - file
+      ---
+      duration_ms: 22.657042
+      type: 'test'
+      ...
+    1..5
+ok 79 - settings changes or root/ancestor/absent destination changes during final settings yield prevent receipt publication
+  ---
+  duration_ms: 75.356917
+  type: 'test'
+  ...
+# Subtest: response/read/check/deadline budgets fail closed and preserve target
+ok 80 - response/read/check/deadline budgets fail closed and preserve target
+  ---
+  duration_ms: 23.016083
+  type: 'test'
+  ...
+# Subtest: source budget counts canonical plus derived, retained-byte eviction and failed issue does not evict valid receipt
+ok 81 - source budget counts canonical plus derived, retained-byte eviction and failed issue does not evict valid receipt
+  ---
+  duration_ms: 218.273375
+  type: 'test'
+  ...
+# Subtest: read-only I/O seam refuses writable opens and source retention survives loader-buffer mutation during final yield
+ok 82 - read-only I/O seam refuses writable opens and source retention survives loader-buffer mutation during final yield
+  ---
+  duration_ms: 21.083208
+  type: 'test'
+  ...
+# Subtest: Git root proof lost during final yield invalidates v2 instead of silently approving a smaller provider plan
+ok 83 - Git root proof lost during final yield invalidates v2 instead of silently approving a smaller provider plan
+  ---
+  duration_ms: 82.334333
+  type: 'test'
+  ...
+# Subtest: unrelated directory membership changes do not invalidate v2 named observations or digest
+ok 84 - unrelated directory membership changes do not invalidate v2 named observations or digest
+  ---
+  duration_ms: 32.198792
+  type: 'test'
+  ...
+# Subtest: v2 and M3 endpoints share busy/dispose and never expose writer/status methods
+ok 85 - v2 and M3 endpoints share busy/dispose and never expose writer/status methods
+  ---
+  duration_ms: 2.672125
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: Preview requires a current nonempty intent; one click sends exactly one provider RPC and an empty provider selection works
+ok 86 - Preview requires a current nonempty intent; one click sends exactly one provider RPC and an empty provider selection works
+  ---
+  duration_ms: 69.939292
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: Preview renders canonical/derived provenance, text diff, binary metadata, conflicts, blocked paths and historical provider evidence
+ok 87 - Preview renders canonical/derived provenance, text diff, binary metadata, conflicts, blocked paths and historical provider evidence
+  ---
+  duration_ms: 40.137375
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: no-op is explicit and Kiro limitations/deferred packages remain visible
+ok 88 - no-op is explicit and Kiro limitations/deferred packages remain visible
+  ---
+  duration_ms: 21.685708
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: skill A to B to A invalidates pending/completed Preview even when the final intent equals the original
+ok 89 - skill A to B to A invalidates pending/completed Preview even when the final intent equals the original
+  ---
+  duration_ms: 23.983792
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: provider A to B to A discards old replies without rescanning or reusing the old preview
+ok 90 - provider A to B to A discards old replies without rescanning or reusing the old preview
+  ---
+  duration_ms: 27.686292
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: Cancel stops UI waiting only, suppresses late replies and lets the current scope retry
+ok 91 - Cancel stops UI waiting only, suppresses late replies and lets the current scope retry
+  ---
+  duration_ms: 16.305625
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: all typed errors and transport/invalid-result errors are safe and retry uses only the current scope
+ok 92 - all typed errors and transport/invalid-result errors are safe and retry uses only the current scope
+  ---
+  duration_ms: 42.875709
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: rescan, target and saved settings changes invalidate Preview; saving and empty selection disable it
+ok 93 - rescan, target and saved settings changes invalidate Preview; saving and empty selection disable it
+  ---
+  duration_ms: 49.3125
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: host switch, offline/reconnect and unmount suppress outstanding Preview and never auto-retry
+ok 94 - host switch, offline/reconnect and unmount suppress outstanding Preview and never auto-retry
+  ---
+  duration_ms: 39.875083
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: batched selection/provider A to B to A changes still advance scope generations
+ok 95 - batched selection/provider A to B to A changes still advance scope generations
+  ---
+  duration_ms: 19.772333
+  type: 'test'
+  ...
+# Subtest: a host missing from the directory is unavailable and cannot retain a pending preview
+ok 96 - a host missing from the directory is unavailable and cannot retain a pending preview
+  ---
+  duration_ms: 11.806542
+  type: 'test'
+  ...
+# Subtest: mixed technology evidence covers Go, React, Next.js, Laravel and generic files without cross-boundary leakage
+ok 97 - mixed technology evidence covers Go, React, Next.js, Laravel and generic files without cross-boundary leakage
+  ---
+  duration_ms: 249.213916
+  type: 'test'
+  ...
+# Subtest: Angular projects inherit only Angular declarations from the identified workspace and expose builder tooling
+ok 98 - Angular projects inherit only Angular declarations from the identified workspace and expose builder tooling
+  ---
+  duration_ms: 52.408583
+  type: 'test'
+  ...
+# Subtest: pnpm exclusions, Go workspaces and unsupported patterns obey separate membership evidence
+ok 99 - pnpm exclusions, Go workspaces and unsupported patterns obey separate membership evidence
+  ---
+  duration_ms: 75.501041
+  type: 'test'
+  ...
+# Subtest: WordPress site components and standalone classic theme use headers, not folder-only cues
+ok 100 - WordPress site components and standalone classic theme use headers, not folder-only cues
+  ---
+  duration_ms: 75.566
+  type: 'test'
+  ...
+# Subtest: non-Git unknown technology and a new detector run through the same core
+ok 101 - non-Git unknown technology and a new detector run through the same core
+  ---
+  duration_ms: 13.455375
+  type: 'test'
+  ...
+# Subtest: inventory preserves duplicate skill occurrences across documented layouts and scoped rules
+ok 102 - inventory preserves duplicate skill occurrences across documented layouts and scoped rules
+  ---
+  duration_ms: 145.095542
+  type: 'test'
+  ...
+# Preparing worktree (detached HEAD 967214e)
+# Subtest: Git root and worktree are marker-only and remain unchanged
+ok 103 - Git root and worktree are marker-only and remain unchanged
+  ---
+  duration_ms: 327.355917
+  type: 'test'
+  ...
+# Subtest: malformed and inaccessible manifests yield partial evidence and credential files are never opened
+ok 104 - malformed and inaccessible manifests yield partial evidence and credential files are never opened
+  ---
+  duration_ms: 47.275542
+  type: 'test'
+  ...
+# Subtest: reader rejects symlink, hardlink and FIFO and discards a controlled file replacement
+ok 105 - reader rejects symlink, hardlink and FIFO and discards a controlled file replacement
+  ---
+  duration_ms: 37.729125
+  type: 'test'
+  ...
+# Subtest: root replacement invalidates the scan and initial symlink is rejected as a noncanonical target
+ok 106 - root replacement invalidates the scan and initial symlink is rejected as a noncanonical target
+  ---
+  duration_ms: 10.741
+  type: 'test'
+  ...
+# Subtest: filesystem and response budgets produce structured partial results
+ok 107 - filesystem and response budgets produce structured partial results
+  ---
+  duration_ms: 67.672625
+  type: 'test'
+  ...
+# Subtest: cancellation suppresses terminal results, releases slots and isolates an A to B to A request sequence
+ok 108 - cancellation suppresses terminal results, releases slots and isolates an A to B to A request sequence
+  ---
+  duration_ms: 12.901084
+  type: 'test'
+  ...
+# Subtest: subscription contract sends one validated terminal event and cleanup aborts pending work
+ok 109 - subscription contract sends one validated terminal event and cleanup aborts pending work
+  ---
+  duration_ms: 11.445958
+  type: 'test'
+  ...
+# Subtest: controlled ancestor replacement closes the directory before reading external entries
+ok 110 - controlled ancestor replacement closes the directory before reading external entries
+  ---
+  duration_ms: 9.880916
+  type: 'test'
+  ...
+# Subtest: deterministic evidence ignores file creation order and unknown project metadata fields
+ok 111 - deterministic evidence ignores file creation order and unknown project metadata fields
+  ---
+  duration_ms: 28.681875
+  type: 'test'
+  ...
+# Subtest: real permission denial retains evidence from readable siblings
+ok 112 - real permission denial retains evidence from readable siblings
+  ---
+  duration_ms: 12.008084
+  type: 'test'
+  ...
+# Subtest: Next Pages Router needs a matching package declaration in its own application
+ok 113 - Next Pages Router needs a matching package declaration in its own application
+  ---
+  duration_ms: 14.621083
+  type: 'test'
+  ...
+# Subtest: a scan slot is local to its installation and recovers when a request is cancelled
+ok 114 - a scan slot is local to its installation and recovers when a request is cancelled
+  ---
+  duration_ms: 9.393667
+  type: 'test'
+  ...
+# Subtest: provider endpoint is additive: empty selection preserves canonical output and performs no Git/provider probe
+ok 115 - provider endpoint is additive: empty selection preserves canonical output and performs no Git/provider probe
+  ---
+  duration_ms: 21.341917
+  type: 'test'
+  ...
+# Subtest: Codex, Cursor ACP and Antigravity each plan zero extra files with exact historical version/mode scope
+ok 116 - Codex, Cursor ACP and Antigravity each plan zero extra files with exact historical version/mode scope
+  ---
+  duration_ms: 112.911042
+  type: 'test'
+  ...
+# Subtest: all four providers at Git root share the canonical package bytes, modes, supporting files and diff engine
+ok 117 - all four providers at Git root share the canonical package bytes, modes, supporting files and diff engine
+  ---
+  duration_ms: 160.835333
+  type: 'test'
+  ...
+# Subtest: linked worktree root is confirmed by Git and preview preserves both worktree and repository metadata
+ok 118 - linked worktree root is confirmed by Git and preview preserves both worktree and repository metadata
+  ---
+  duration_ms: 301.102666
+  type: 'test'
+  ...
+# Subtest: nested workspace and non-Git targets retain canonical preview with limited Kiro compatibility
+ok 119 - nested workspace and non-Git targets retain canonical preview with limited Kiro compatibility
+  ---
+  duration_ms: 79.530541
+  type: 'test'
+  ...
+# Subtest: fake .git markers, malformed gitfiles and symlinked Git metadata never grant Kiro root eligibility
+ok 120 - fake .git markers, malformed gitfiles and symlinked Git metadata never grant Kiro root eligibility
+  ---
+  duration_ms: 142.762125
+  type: 'test'
+  ...
+# Subtest: every canonical conflict or block defers its complete Kiro package while other skills still plan
+ok 121 - every canonical conflict or block defers its complete Kiro package while other skills still plan
+  ---
+  duration_ms: 139.237125
+  type: 'test'
+  ...
+# Subtest: Kiro destinations use M3.2 unchanged/bytes conflict/mode conflict/create/binary/blocked semantics directly
+ok 122 - Kiro destinations use M3.2 unchanged/bytes conflict/mode conflict/create/binary/blocked semantics directly
+  ---
+  duration_ms: 157.850458
+  type: 'test'
+  ...
+# Subtest: existing same-ID occurrences across root layouts produce deterministic diagnostics without changing files
+ok 123 - existing same-ID occurrences across root layouts produce deterministic diagnostics without changing files
+  ---
+  duration_ms: 85.463
+  type: 'test'
+  ...
+# Subtest: provider/canonical output is deterministic across selection and catalog order
+ok 124 - provider/canonical output is deterministic across selection and catalog order
+  ---
+  duration_ms: 137.142834
+  type: 'test'
+  ...
+# Subtest: canonical mutation during final settings read withdraws all derived files of that skill
+ok 125 - canonical mutation during final settings read withdraws all derived files of that skill
+  ---
+  duration_ms: 73.069666
+  type: 'test'
+  ...
+# Subtest: derived destination mutation and lost Git root are revalidated before publish
+ok 126 - derived destination mutation and lost Git root are revalidated before publish
+  ---
+  duration_ms: 93.953291
+  type: 'test'
+  ...
+# Subtest: combined file/read/diff/response budgets apply to derived plans too, without truncation
+ok 127 - combined file/read/diff/response budgets apply to derived plans too, without truncation
+  ---
+  duration_ms: 134.425042
+  type: 'test'
+  ...
+# Subtest: both endpoints share a busy/disposal slot and provider requests retain host/settings validation
+ok 128 - both endpoints share a busy/disposal slot and provider requests retain host/settings validation
+  ---
+  duration_ms: 29.345375
+  type: 'test'
+  ...
+# Subtest: all 19 authoring rules evaluate against scanner evidence with traceable provenance
+ok 129 - all 19 authoring rules evaluate against scanner evidence with traceable provenance
+  ---
+  duration_ms: 167.028458
+  type: 'test'
+  ...
+# Subtest: strict ingestion isolates malformed, missing and future sidecars
+ok 130 - strict ingestion isolates malformed, missing and future sidecars
+  ---
+  duration_ms: 2.918583
+  type: 'test'
+  ...
+# Subtest: AND groups and source selectors cannot borrow facts across boundaries
+ok 131 - AND groups and source selectors cannot borrow facts across boundaries
+  ---
+  duration_ms: 1.87875
+  type: 'test'
+  ...
+# Subtest: response and input budgets return typed errors without shortening the result
+ok 132 - response and input budgets return typed errors without shortening the result
+  ---
+  duration_ms: 13.052291
+  type: 'test'
+  ...
+# Subtest: RPC validates input and pins catalog and settings through a fresh host scan
+ok 133 - RPC validates input and pins catalog and settings through a fresh host scan
+  ---
+  duration_ms: 4.100084
+  type: 'test'
+  ...
+# Subtest: RPC cancellation suppresses terminal events and holds the slot until work settles
+ok 134 - RPC cancellation suppresses terminal events and holds the slot until work settles
+  ---
+  duration_ms: 0.779667
+  type: 'test'
+  ...
+# Subtest: RPC attempts a terminal event once even when push rejects
+ok 135 - RPC attempts a terminal event once even when push rejects
+  ---
+  duration_ms: 0.3635
+  type: 'test'
+  ...
+# Subtest: selector and file limits are inclusive and dependency filters remain exact
+ok 136 - selector and file limits are inclusive and dependency filters remain exact
+  ---
+  duration_ms: 1.514375
+  type: 'test'
+  ...
+# Subtest: inventory preserves multiple layouts and unreadable candidates without changing applicability
+ok 137 - inventory preserves multiple layouts and unreadable candidates without changing applicability
+  ---
+  duration_ms: 0.921667
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: click-only scan uses pinned catalog and one subscription, with no provider or extra scan
+ok 138 - click-only scan uses pinned catalog and one subscription, with no provider or extra scan
+  ---
+  duration_ms: 55.197292
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: partial details and bulk selection preserve manual choices and provider intent
+ok 139 - partial details and bulk selection preserve manual choices and provider intent
+  ---
+  duration_ms: 51.3785
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: cancel discards preflight and subscription events and supports recovery
+ok 140 - cancel discards preflight and subscription events and supports recovery
+  ---
+  duration_ms: 15.263958
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: A to B to A ignores old target and host results and releases on offline or unmount
+ok 141 - A to B to A ignores old target and host results and releases on offline or unmount
+  ---
+  duration_ms: 41.552791
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: saved settings changes invalidate in-flight and completed results without reusing old selection
+ok 142 - saved settings changes invalidate in-flight and completed results without reusing old selection
+  ---
+  duration_ms: 21.790625
+  type: 'test'
+  ...
+# react-test-renderer is deprecated. See https://react.dev/warnings/react-test-renderer
+# Subtest: typed catalog, mismatch and transport errors are safe and retryable
+ok 143 - typed catalog, mismatch and transport errors are safe and retryable
+  ---
+  duration_ms: 17.820666
+  type: 'test'
+  ...
+# Subtest: metadata-only partial keeps valid selections and exposes typed diagnostics
+ok 144 - metadata-only partial keeps valid selections and exposes typed diagnostics
+  ---
+  duration_ms: 20.586666
+  type: 'test'
+  ...
+1..144
+# tests 149
+# suites 0
+# pass 149
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 9922.660083
