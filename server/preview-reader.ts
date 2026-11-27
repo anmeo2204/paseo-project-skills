@@ -1,6 +1,6 @@
 import { constants, type Stats } from "node:fs";
 import * as fs from "node:fs/promises";
-import { checkProjectPath, rootMatches, sameFile } from "./filesystem-guards";
+import { checkProjectPath, rootMatches, sameFile, sameNode } from "./filesystem-guards";
 import type { PreviewEntry, PreviewErrorCode } from "../shared/preview";
 import { previewLimits } from "./preview-limits";
 
@@ -22,7 +22,7 @@ export class PreviewReader {
 
   constructor(private readonly root: string, private readonly identity: Stats, private readonly signal: AbortSignal,
     private readonly io: PreviewFs = fs, private readonly limits: typeof previewLimits = previewLimits,
-    private readonly now = () => performance.now()) {
+    private readonly now = () => performance.now(), private readonly directoryIdentityOnly = false) {
     this.expires = now() + limits.deadlineMs;
     this.guardedIo = { ...io, lstat: async (path, ...args) => {
       this.checkpoint();
@@ -51,6 +51,12 @@ export class PreviewReader {
     return checkProjectPath(this.root, this.identity, path, kind, this.guardedIo);
   }
 
+  private sameObservation(kind: "file" | "directory", a: Stats, b: Stats) {
+    return kind === "directory" && this.directoryIdentityOnly
+      ? sameNode(a, b) && a.mode === b.mode && a.uid === b.uid && a.gid === b.gid
+      : sameFile(a, b);
+  }
+
   private async locate(path: string, leafKind: "file" | "directory") {
     const parts = path.split("/");
     let leaf: Awaited<ReturnType<typeof checkProjectPath>>;
@@ -67,7 +73,7 @@ export class PreviewReader {
       }
       if (!leaf) throw new Blocked("unsafe_entry");
       const known = this.observations.get(prefix);
-      if (known && (!known.state || !sameFile(known.state, leaf.state))) throw new Blocked("entry_changed");
+      if (known && (!known.state || !this.sameObservation(kind, known.state, leaf.state))) throw new Blocked("entry_changed");
       this.observations.set(prefix, { kind, state: leaf.state });
     }
     if (!leaf) throw new Blocked("unsafe_entry");
@@ -122,7 +128,7 @@ export class PreviewReader {
     for (const [path, { state, kind }] of this.observations) {
       try {
         const current = await this.check(path, kind);
-        if (!current || !state || !sameFile(state, current.state)) changed.push(path);
+        if (!current || !state || !this.sameObservation(kind, state, current.state)) changed.push(path);
       } catch (error) {
         if (error instanceof PreviewError) throw error;
         if (state || (error as NodeJS.ErrnoException).code !== "ENOENT") changed.push(path);

@@ -1,0 +1,174 @@
+{
+  "helperSha256": "75f91ac0a5be8f327595a8655b8e0158c4fe4c9a2d7c2ce43ace1785af4d5876",
+  "helperPackaging": "base64 TypeScript module -> private mkdtemp -> executable 0700 -> execFile",
+  "a": {
+    "pid": 87907,
+    "ppid": 87816,
+    "node": "24.20.0",
+    "electron": "44.2.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "contextKeys": [
+      "paseo"
+    ],
+    "serverKeys": [
+      "addHook",
+      "before",
+      "handle",
+      "on",
+      "registerProvider",
+      "registerSettings",
+      "registerUsageSource",
+      "registerWorktreeManager"
+    ],
+    "globalCount": 1,
+    "moduleUrl": null,
+    "dirname": null,
+    "cwd": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/m42-runtime-2r1hZ3",
+    "cwdAssetError": "ENOENT",
+    "paseoHome": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/m42-runtime-2r1hZ3/daemon",
+    "result": "native-ok pid=87909"
+  },
+  "b": {
+    "pid": 87908,
+    "ppid": 87816,
+    "node": "24.20.0",
+    "electron": "44.2.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "contextKeys": [
+      "paseo"
+    ],
+    "serverKeys": [
+      "addHook",
+      "before",
+      "handle",
+      "on",
+      "registerProvider",
+      "registerSettings",
+      "registerUsageSource",
+      "registerWorktreeManager"
+    ],
+    "globalCount": 1,
+    "moduleUrl": null,
+    "dirname": null,
+    "cwd": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/m42-runtime-2r1hZ3",
+    "cwdAssetError": "ENOENT",
+    "paseoHome": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/m42-runtime-2r1hZ3/daemon",
+    "result": "native-ok pid=87911"
+  },
+  "secondCaller": {
+    "pid": 87907,
+    "ppid": 87816,
+    "node": "24.20.0",
+    "electron": "44.2.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "contextKeys": [
+      "paseo"
+    ],
+    "serverKeys": [
+      "addHook",
+      "before",
+      "handle",
+      "on",
+      "registerProvider",
+      "registerSettings",
+      "registerUsageSource",
+      "registerWorktreeManager"
+    ],
+    "globalCount": 1,
+    "moduleUrl": null,
+    "dirname": null,
+    "cwd": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/m42-runtime-2r1hZ3",
+    "cwdAssetError": "ENOENT",
+    "paseoHome": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/m42-runtime-2r1hZ3/daemon",
+    "result": "native-ok pid=87913"
+  },
+  "concurrent": [
+    {
+      "pid": 87907,
+      "ppid": 87816,
+      "node": "24.20.0",
+      "electron": "44.2.0",
+      "platform": "darwin",
+      "arch": "arm64",
+      "contextKeys": [
+        "paseo"
+      ],
+      "serverKeys": [
+        "addHook",
+        "before",
+        "handle",
+        "on",
+        "registerProvider",
+        "registerSettings",
+        "registerUsageSource",
+        "registerWorktreeManager"
+      ],
+      "globalCount": 1,
+      "moduleUrl": null,
+      "dirname": null,
+      "cwd": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/m42-runtime-2r1hZ3",
+      "cwdAssetError": "ENOENT",
+      "paseoHome": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/m42-runtime-2r1hZ3/daemon",
+      "result": "acquired"
+    },
+    {
+      "pid": 87908,
+      "ppid": 87816,
+      "node": "24.20.0",
+      "electron": "44.2.0",
+      "platform": "darwin",
+      "arch": "arm64",
+      "contextKeys": [
+        "paseo"
+      ],
+      "serverKeys": [
+        "addHook",
+        "before",
+        "handle",
+        "on",
+        "registerProvider",
+        "registerSettings",
+        "registerUsageSource",
+        "registerWorktreeManager"
+      ],
+      "globalCount": 1,
+      "moduleUrl": null,
+      "dirname": null,
+      "cwd": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/m42-runtime-2r1hZ3",
+      "cwdAssetError": "ENOENT",
+      "paseoHome": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/m42-runtime-2r1hZ3/daemon",
+      "result": "busy"
+    }
+  ],
+  "afterRelease": {
+    "pid": 87908,
+    "ppid": 87816,
+    "node": "24.20.0",
+    "electron": "44.2.0",
+    "platform": "darwin",
+    "arch": "arm64",
+    "contextKeys": [
+      "paseo"
+    ],
+    "serverKeys": [
+      "addHook",
+      "before",
+      "handle",
+      "on",
+      "registerProvider",
+      "registerSettings",
+      "registerUsageSource",
+      "registerWorktreeManager"
+    ],
+    "globalCount": 1,
+    "moduleUrl": null,
+    "dirname": null,
+    "cwd": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/m42-runtime-2r1hZ3",
+    "cwdAssetError": "ENOENT",
+    "paseoHome": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/m42-runtime-2r1hZ3/daemon",
+    "result": "acquired"
+  }
+}

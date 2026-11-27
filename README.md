@@ -106,6 +106,10 @@ Rescanning, changing host/target/saved settings or skill/provider selection disc
 
 **Cancel Preview** stops waiting on the UI and ignores late replies. The SDK RPC cannot be cancelled through this control, so the daemon may still finish and a quick retry can return Busy. Retry explicitly in the current scope. There is no Apply action, target write, model call or provider execution in Preview. See [the M3.4 completion report](M3.4-completion-report.md).
 
+M4.2 adds the separate read-only **`preview.providers.v2`** RPC, accepting `{ intent, viewNonce }`. Its strict versioned response contains an immutable-plan manifest and daemon-retained receipt. The manifest binds the M3 provider projection, pinned source fingerprints, proposed directory effects, exact bigint filesystem observations, Git/worktree proof, installation-instance/epoch scope and policy/budgets. The M3 endpoints and UI keep their existing contracts.
+
+Receipts expire after 10 minutes using the daemon's monotonic clock. The installation retains at most 8 receipts and 32 MiB of source bytes, with an 8 MiB combined canonical/derived source limit per receipt; oldest receipts are evicted first. No source bytes travel in the response. All v2 responses explicitly report **write capability unavailable** and **Apply ineligible**, including no-op plans. There is no Apply/status RPC or Apply button. Receipt integrity/lifetime checks do not replace future filesystem/settings/catalog revalidation. See [the M4.2 report](M4.2-completion-report.md) for runtime-spike findings and remaining Apply blockers.
+
 ## Optional AI capability
 
 M2.3 provides a server-side structured agent executor through the public Paseo SDK. It ships with no verified execution profiles, so provider availability alone cannot start a run. The executor is internal to the plugin and will be connected to the optional AI-assisted recommendation flow separately. Catalog and project evidence remain available independently. See [the M2.3 completion report](M2.3-completion-report.md) for the local preflight and provider limitations.

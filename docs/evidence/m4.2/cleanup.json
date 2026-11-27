@@ -1,0 +1,19 @@
+{
+  "previewDaemon": {
+    "home": "/private/tmp/m42-spike-43otpswg/daemon",
+    "pid": null,
+    "startedAt": null,
+    "listen": null,
+    "hostname": null,
+    "configuredListen": "127.0.0.1:17692",
+    "localDaemon": "stopped",
+    "desktopManaged": false,
+    "logPath": "/private/tmp/m42-spike-43otpswg/daemon/daemon.log",
+    "connectedDaemon": "not_probed"
+  },
+  "reproducedSpike": {
+    "daemonStopRequested": true,
+    "temporaryHome": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/m42-runtime-2r1hZ3/daemon"
+  },
+  "reproducedSpikeVerifiedStopped": true
+}

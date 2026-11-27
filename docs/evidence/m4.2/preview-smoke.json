@@ -1,0 +1,2788 @@
+{
+  "paseoVersion": "0.17.5",
+  "sdkVersion": "0.17.4",
+  "agents": 0,
+  "oldContractsUnchanged": true,
+  "results": {
+    "root": {
+      "status": "ready",
+      "schemaVersion": 2,
+      "manifest": {
+        "schemaVersion": 1,
+        "hostId": "srv_Sm2YsMgGy-KK",
+        "installationInstanceId": "eaa99016d64788f78d2ddafbd55ac80313bb6cbe36e00ea79fd0f437d157ddcd",
+        "epoch": "1443064baae508bab436ddc169df15c4e2b64cae98ea2f7cf59c8bb6348c57a2",
+        "viewNonce": "smoke-view",
+        "savedCatalogRef": "4044fbf0545f4be1da51dbc10f1327f0a3da0017",
+        "plan": {
+          "status": "ready",
+          "intent": {
+            "schemaVersion": 1,
+            "hostId": "srv_Sm2YsMgGy-KK",
+            "canonicalDirectory": "/private/tmp/m42-spike-43otpswg/target",
+            "catalogSource": "https://github.com/anmeo2204/project-skills",
+            "catalogCommitSha": "4044fbf0545f4be1da51dbc10f1327f0a3da0017",
+            "settingsRevision": "420eba798a50f0f8fb1ba5e7e815fafc31d6fd4b2354ebf12b4f6a2717a67fe9",
+            "selectedSkillIds": [
+              "debug-regression",
+              "react-ui-change"
+            ],
+            "targetProviderIds": [
+              "codex",
+              "kiro"
+            ],
+            "recommendationRequestId": "m42-smoke"
+          },
+          "entries": [
+            {
+              "skillId": "debug-regression",
+              "destination": ".agents/skills/debug-regression/SKILL.md",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 3639,
+                "sha256": "a09e1842c31849c449d678cb87d9c83bb10559f70ad1df7ba943868d8c98fc30",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/debug-regression/SKILL.md\" \"b/.agents/skills/debug-regression/SKILL.md\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.agents/skills/debug-regression/SKILL.md\"\n@@ -0,0 +1,40 @@\n+---\n+name: debug-regression\n+description: Reproduces a regression, verifies its cause, and makes and validates a minimal fix. Use when previously working behavior changes unexpectedly or an existing check starts failing.\n+---\n+\n+# Debug Regression\n+\n+## Workflow\n+\n+### 1. Tái hiện lỗi\n+\n+- Đọc hướng dẫn và test policy của dự án để chọn môi trường và cách chạy phù hợp.\n+- Xác định hành vi mong đợi từ contract, test hiện có hoặc phiên bản đã chạy đúng. Ghi hành vi thực tế và dấu hiệu nhận biết lỗi.\n+- Tìm điểm vào bị ảnh hưởng và chọn cách tái hiện nhỏ nhất còn quan sát được lỗi. Ghi đầu vào, trạng thái ban đầu, cấu hình liên quan và các bước chạy.\n+- Chạy trước khi sửa để xác nhận lỗi phù hợp với báo cáo. Nếu lỗi chập chờn, ghi điều kiện và tần suất quan sát được. Nếu chưa tái hiện được, ghi những gì đã thử và tiếp tục thu thập bằng chứng.\n+\n+### 2. Xác minh nguyên nhân\n+\n+- Theo luồng từ điểm vào đến nơi hành vi bắt đầu sai lệch. Dùng kết quả test, log, trace hoặc giá trị quan sát được để khoanh vùng.\n+- Nêu giả thuyết cụ thể và kết quả dự đoán. Kiểm tra bằng cách cô lập điều kiện nghi vấn, thay đổi một yếu tố mỗi lần hoặc đối chiếu với phiên bản đã chạy đúng trong điều kiện tương đương.\n+- Ghi quan sát nối nguyên nhân với triệu chứng. Chỉ chuyển sang bước sửa khi bằng chứng đủ xác nhận nguyên nhân. Nếu chưa đủ, dừng trước bước sửa, tiếp tục điều tra nếu còn cách kiểm tra và ghi rõ phần chưa xác minh.\n+\n+### 3. Sửa tối thiểu\n+\n+- Sửa tại nơi phát sinh sai lệch, dùng cách xử lý hiện có nếu phù hợp. Giữ contract của các trường hợp hợp lệ và giới hạn diff trong phạm vi lỗi đã xác minh.\n+- Tái sử dụng kiểm tra hiện có nếu nó bắt được lỗi. Khi test policy cho phép và còn thiếu bao phủ, thêm hoặc điều chỉnh một test tập trung xác nhận hành vi mong đợi. Dùng test đó để kiểm tra trước và sau bản sửa khi khả thi.\n+- Gỡ các thay đổi tạm dùng để chẩn đoán trước khi kiểm tra lần cuối.\n+\n+## Verification\n+\n+- Chạy lại ca tái hiện với cùng điều kiện và xác nhận kết quả đáp ứng contract. Với lỗi chập chờn, lặp lại trong điều kiện từng kích hoạt lỗi và ghi số lần chạy cùng kết quả.\n+- Chạy các kiểm tra liên quan theo test policy của dự án, gồm luồng hợp lệ và các trường hợp biên chịu ảnh hưởng trực tiếp của bản sửa.\n+- Review diff để xác nhận phạm vi sửa và kiểm tra khớp với nguyên nhân đã xác minh.\n+- Báo cách tái hiện, bằng chứng nguyên nhân, phạm vi sửa, lệnh hoặc thao tác kiểm tra cùng kết quả trước và sau. Ghi rõ phần chưa kiểm tra được và lý do.\n+\n+## Ví dụ\n+\n+- Một bộ lọc trả về toàn bộ kết quả khi nhận giá trị `0` hợp lệ. Tái hiện qua điểm vào đang lỗi và đối chiếu với ca bỏ trống bộ lọc.\n+- Kiểm tra tại bước chuẩn hóa đầu vào xem `0` có bị chuyển thành giá trị biểu thị bộ lọc vắng mặt hay không.\n+- Nếu xác nhận bước đó làm mất giá trị `0`, sửa quy tắc nhận diện bộ lọc vắng mặt rồi kiểm tra lại cả hai ca.\n"
+              }
+            },
+            {
+              "skillId": "debug-regression",
+              "destination": ".agents/skills/debug-regression/applicability.json",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 67,
+                "sha256": "a0cc6e49e3f53754580914558afd68220af1e4883c8d27d9e6245b3475490b29",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/debug-regression/applicability.json\" \"b/.agents/skills/debug-regression/applicability.json\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.agents/skills/debug-regression/applicability.json\"\n@@ -0,0 +1,1 @@\n+{ \"schemaVersion\": 1, \"scope\": \"project\", \"level\": \"recommended\" }\n"
+              }
+            },
+            {
+              "skillId": "react-ui-change",
+              "destination": ".agents/skills/react-ui-change/SKILL.md",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 2439,
+                "sha256": "784cde83bc57c868d87ef9f6af8cddc23e942c458762470e0b23ab4463434222",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/react-ui-change/SKILL.md\" \"b/.agents/skills/react-ui-change/SKILL.md\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.agents/skills/react-ui-change/SKILL.md\"\n@@ -0,0 +1,36 @@\n+---\n+name: react-ui-change\n+description: Changes React component presentation or interaction and verifies visible behavior. Use when changing composition, shared UI state, focus, or keyboard interaction.\n+---\n+\n+# React UI Change\n+\n+## Workflow\n+\n+### 1. Xác định hành vi giao diện\n+\n+- Xác định component được render ở luồng bị ảnh hưởng và đọc các caller. Ghi các trạng thái và tương tác mà người dùng cần quan sát được.\n+- Đọc component tương tự để nhận diện quy ước props, composition, design token và primitive accessibility đang dùng.\n+- Nếu UI có trường nhập hoặc dữ liệu từ API, xác định phần việc riêng của vòng đời form hoặc request trước khi thay đổi chúng.\n+\n+### 2. Chọn ranh giới component và state\n+\n+- Đặt state ở component sở hữu hành vi. Khi nhiều component phải đồng bộ, chọn tổ tiên chung phù hợp và truyền giá trị cùng callback theo pattern hiện có.\n+- Tính giá trị suy ra từ props/state trong render khi phù hợp. Kiểm tra key và vị trí component nếu thay đổi cấu trúc có thể reset state đang cần giữ.\n+- Dùng composition khi caller cần ghép các phần giao diện độc lập. Giữ props tương thích với caller ngoài phạm vi task.\n+\n+### 3. Giữ khả năng tương tác\n+\n+- Tái sử dụng control có semantics và hành vi bàn phím phù hợp. Giữ tên truy cập, trạng thái disabled/expanded và thứ tự focus theo tương tác thực tế.\n+- Với UI mở/đóng hoặc thay nội dung, xác định focus đi đâu khi xuất hiện, biến mất hoặc thao tác bị hủy.\n+\n+## Verification\n+\n+- Qua điểm vào thực tế, kiểm tra giao diện ở các trạng thái liên quan và chuyển đổi giữa chúng.\n+- Khi diff chạm tương tác bàn phím hoặc focus, kiểm tra thao tác tương ứng. Nếu UI mở hoặc đóng, kiểm tra focus ban đầu và nơi focus trở về.\n+- Kiểm tra một caller có sẵn nếu thay đổi component dùng chung. Xác nhận state được giữ hoặc reset theo thiết kế.\n+- Báo tình huống đã thử, môi trường và lý do cho ca phù hợp chưa xác minh được.\n+\n+## Ví dụ\n+\n+- Nếu tách nút mở hộp thoại khỏi nội dung hộp thoại, kiểm tra mở bằng bàn phím, focus vào nội dung, đóng và trả focus về nút mở.\n"
+              }
+            },
+            {
+              "skillId": "react-ui-change",
+              "destination": ".agents/skills/react-ui-change/SOURCES.md",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 598,
+                "sha256": "cc98e4974f35026fd9da66580d9a8f75d02e9462a753f32a5249399bda51ed37",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/react-ui-change/SOURCES.md\" \"b/.agents/skills/react-ui-change/SOURCES.md\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.agents/skills/react-ui-change/SOURCES.md\"\n@@ -0,0 +1,9 @@\n+# Nguồn\n+\n+Chỉ dùng khi người dùng yêu cầu đối chiếu nguồn, SHA hoặc license.\n+\n+## Chỉ tham khảo\n+\n+- [React Sharing State](https://react.dev/learn/sharing-state-between-components)\n+- [Quyền sở hữu và chia sẻ UI state](https://github.com/vercel-labs/agent-skills/blob/5a37a6329fbad3666c3207392a6a7c0110e92efb/skills/composition-patterns/rules/state-lift-state.md).\n+- [Composition cho component dùng chung](https://github.com/vercel-labs/agent-skills/blob/5a37a6329fbad3666c3207392a6a7c0110e92efb/skills/composition-patterns/rules/architecture-compound-components.md).\n"
+              }
+            },
+            {
+              "skillId": "react-ui-change",
+              "destination": ".agents/skills/react-ui-change/applicability.json",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 162,
+                "sha256": "1f65c07eae5daab2c9b7e47262d5149219a0df87b7d74bf8708dd85791341145",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/react-ui-change/applicability.json\" \"b/.agents/skills/react-ui-change/applicability.json\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.agents/skills/react-ui-change/applicability.json\"\n@@ -0,0 +1,6 @@\n+{\n+  \"schemaVersion\": 1,\n+  \"scope\": \"boundary\",\n+  \"appliesWhen\": [[{ \"kind\": \"framework\", \"basis\": \"inferred\", \"key\": \"react\" }]],\n+  \"recommendWhen\": \"on_match\"\n+}\n"
+              }
+            }
+          ],
+          "providers": [
+            {
+              "providerId": "codex",
+              "strategy": "canonical_only",
+              "status": "canonical_only",
+              "verification": {
+                "basis": "historical_m3_1",
+                "report": "M3.1-completion-report.md",
+                "paseoVersion": "0.17.5",
+                "binaryVersion": "0.167.0",
+                "transport": "app-server",
+                "loadMode": "auto; read-only; approval never; web search disabled",
+                "cwdScope": "root_and_nested",
+                "note": "M3.1 model gpt-6.1-sol. Historical discovery/load evidence; not a live runtime attestation."
+              },
+              "skills": []
+            },
+            {
+              "providerId": "kiro",
+              "strategy": "kiro_derived",
+              "status": "ready",
+              "rootStatus": "git_root",
+              "verification": {
+                "basis": "historical_m3_1",
+                "report": "M3.1-completion-report.md",
+                "paseoVersion": "0.17.5",
+                "binaryVersion": "2.34.2",
+                "transport": "kiro-cli acp",
+                "loadMode": "kiro_default",
+                "cwdScope": "git_root",
+                "note": "M3.1 model reported auto. Derived .kiro/skills discovery/load verified only with session CWD at root; custom agents and nested sessions are not covered."
+              },
+              "skills": [
+                {
+                  "skillId": "debug-regression",
+                  "status": "planned"
+                },
+                {
+                  "skillId": "react-ui-change",
+                  "status": "planned"
+                }
+              ]
+            }
+          ],
+          "derivedEntries": [
+            {
+              "skillId": "debug-regression",
+              "destination": ".kiro/skills/debug-regression/SKILL.md",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 3639,
+                "sha256": "a09e1842c31849c449d678cb87d9c83bb10559f70ad1df7ba943868d8c98fc30",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.kiro/skills/debug-regression/SKILL.md\" \"b/.kiro/skills/debug-regression/SKILL.md\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.kiro/skills/debug-regression/SKILL.md\"\n@@ -0,0 +1,40 @@\n+---\n+name: debug-regression\n+description: Reproduces a regression, verifies its cause, and makes and validates a minimal fix. Use when previously working behavior changes unexpectedly or an existing check starts failing.\n+---\n+\n+# Debug Regression\n+\n+## Workflow\n+\n+### 1. Tái hiện lỗi\n+\n+- Đọc hướng dẫn và test policy của dự án để chọn môi trường và cách chạy phù hợp.\n+- Xác định hành vi mong đợi từ contract, test hiện có hoặc phiên bản đã chạy đúng. Ghi hành vi thực tế và dấu hiệu nhận biết lỗi.\n+- Tìm điểm vào bị ảnh hưởng và chọn cách tái hiện nhỏ nhất còn quan sát được lỗi. Ghi đầu vào, trạng thái ban đầu, cấu hình liên quan và các bước chạy.\n+- Chạy trước khi sửa để xác nhận lỗi phù hợp với báo cáo. Nếu lỗi chập chờn, ghi điều kiện và tần suất quan sát được. Nếu chưa tái hiện được, ghi những gì đã thử và tiếp tục thu thập bằng chứng.\n+\n+### 2. Xác minh nguyên nhân\n+\n+- Theo luồng từ điểm vào đến nơi hành vi bắt đầu sai lệch. Dùng kết quả test, log, trace hoặc giá trị quan sát được để khoanh vùng.\n+- Nêu giả thuyết cụ thể và kết quả dự đoán. Kiểm tra bằng cách cô lập điều kiện nghi vấn, thay đổi một yếu tố mỗi lần hoặc đối chiếu với phiên bản đã chạy đúng trong điều kiện tương đương.\n+- Ghi quan sát nối nguyên nhân với triệu chứng. Chỉ chuyển sang bước sửa khi bằng chứng đủ xác nhận nguyên nhân. Nếu chưa đủ, dừng trước bước sửa, tiếp tục điều tra nếu còn cách kiểm tra và ghi rõ phần chưa xác minh.\n+\n+### 3. Sửa tối thiểu\n+\n+- Sửa tại nơi phát sinh sai lệch, dùng cách xử lý hiện có nếu phù hợp. Giữ contract của các trường hợp hợp lệ và giới hạn diff trong phạm vi lỗi đã xác minh.\n+- Tái sử dụng kiểm tra hiện có nếu nó bắt được lỗi. Khi test policy cho phép và còn thiếu bao phủ, thêm hoặc điều chỉnh một test tập trung xác nhận hành vi mong đợi. Dùng test đó để kiểm tra trước và sau bản sửa khi khả thi.\n+- Gỡ các thay đổi tạm dùng để chẩn đoán trước khi kiểm tra lần cuối.\n+\n+## Verification\n+\n+- Chạy lại ca tái hiện với cùng điều kiện và xác nhận kết quả đáp ứng contract. Với lỗi chập chờn, lặp lại trong điều kiện từng kích hoạt lỗi và ghi số lần chạy cùng kết quả.\n+- Chạy các kiểm tra liên quan theo test policy của dự án, gồm luồng hợp lệ và các trường hợp biên chịu ảnh hưởng trực tiếp của bản sửa.\n+- Review diff để xác nhận phạm vi sửa và kiểm tra khớp với nguyên nhân đã xác minh.\n+- Báo cách tái hiện, bằng chứng nguyên nhân, phạm vi sửa, lệnh hoặc thao tác kiểm tra cùng kết quả trước và sau. Ghi rõ phần chưa kiểm tra được và lý do.\n+\n+## Ví dụ\n+\n+- Một bộ lọc trả về toàn bộ kết quả khi nhận giá trị `0` hợp lệ. Tái hiện qua điểm vào đang lỗi và đối chiếu với ca bỏ trống bộ lọc.\n+- Kiểm tra tại bước chuẩn hóa đầu vào xem `0` có bị chuyển thành giá trị biểu thị bộ lọc vắng mặt hay không.\n+- Nếu xác nhận bước đó làm mất giá trị `0`, sửa quy tắc nhận diện bộ lọc vắng mặt rồi kiểm tra lại cả hai ca.\n"
+              },
+              "providerId": "kiro",
+              "canonicalDestination": ".agents/skills/debug-regression/SKILL.md"
+            },
+            {
+              "skillId": "debug-regression",
+              "destination": ".kiro/skills/debug-regression/applicability.json",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 67,
+                "sha256": "a0cc6e49e3f53754580914558afd68220af1e4883c8d27d9e6245b3475490b29",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.kiro/skills/debug-regression/applicability.json\" \"b/.kiro/skills/debug-regression/applicability.json\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.kiro/skills/debug-regression/applicability.json\"\n@@ -0,0 +1,1 @@\n+{ \"schemaVersion\": 1, \"scope\": \"project\", \"level\": \"recommended\" }\n"
+              },
+              "providerId": "kiro",
+              "canonicalDestination": ".agents/skills/debug-regression/applicability.json"
+            },
+            {
+              "skillId": "react-ui-change",
+              "destination": ".kiro/skills/react-ui-change/SKILL.md",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 2439,
+                "sha256": "784cde83bc57c868d87ef9f6af8cddc23e942c458762470e0b23ab4463434222",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.kiro/skills/react-ui-change/SKILL.md\" \"b/.kiro/skills/react-ui-change/SKILL.md\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.kiro/skills/react-ui-change/SKILL.md\"\n@@ -0,0 +1,36 @@\n+---\n+name: react-ui-change\n+description: Changes React component presentation or interaction and verifies visible behavior. Use when changing composition, shared UI state, focus, or keyboard interaction.\n+---\n+\n+# React UI Change\n+\n+## Workflow\n+\n+### 1. Xác định hành vi giao diện\n+\n+- Xác định component được render ở luồng bị ảnh hưởng và đọc các caller. Ghi các trạng thái và tương tác mà người dùng cần quan sát được.\n+- Đọc component tương tự để nhận diện quy ước props, composition, design token và primitive accessibility đang dùng.\n+- Nếu UI có trường nhập hoặc dữ liệu từ API, xác định phần việc riêng của vòng đời form hoặc request trước khi thay đổi chúng.\n+\n+### 2. Chọn ranh giới component và state\n+\n+- Đặt state ở component sở hữu hành vi. Khi nhiều component phải đồng bộ, chọn tổ tiên chung phù hợp và truyền giá trị cùng callback theo pattern hiện có.\n+- Tính giá trị suy ra từ props/state trong render khi phù hợp. Kiểm tra key và vị trí component nếu thay đổi cấu trúc có thể reset state đang cần giữ.\n+- Dùng composition khi caller cần ghép các phần giao diện độc lập. Giữ props tương thích với caller ngoài phạm vi task.\n+\n+### 3. Giữ khả năng tương tác\n+\n+- Tái sử dụng control có semantics và hành vi bàn phím phù hợp. Giữ tên truy cập, trạng thái disabled/expanded và thứ tự focus theo tương tác thực tế.\n+- Với UI mở/đóng hoặc thay nội dung, xác định focus đi đâu khi xuất hiện, biến mất hoặc thao tác bị hủy.\n+\n+## Verification\n+\n+- Qua điểm vào thực tế, kiểm tra giao diện ở các trạng thái liên quan và chuyển đổi giữa chúng.\n+- Khi diff chạm tương tác bàn phím hoặc focus, kiểm tra thao tác tương ứng. Nếu UI mở hoặc đóng, kiểm tra focus ban đầu và nơi focus trở về.\n+- Kiểm tra một caller có sẵn nếu thay đổi component dùng chung. Xác nhận state được giữ hoặc reset theo thiết kế.\n+- Báo tình huống đã thử, môi trường và lý do cho ca phù hợp chưa xác minh được.\n+\n+## Ví dụ\n+\n+- Nếu tách nút mở hộp thoại khỏi nội dung hộp thoại, kiểm tra mở bằng bàn phím, focus vào nội dung, đóng và trả focus về nút mở.\n"
+              },
+              "providerId": "kiro",
+              "canonicalDestination": ".agents/skills/react-ui-change/SKILL.md"
+            },
+            {
+              "skillId": "react-ui-change",
+              "destination": ".kiro/skills/react-ui-change/SOURCES.md",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 598,
+                "sha256": "cc98e4974f35026fd9da66580d9a8f75d02e9462a753f32a5249399bda51ed37",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.kiro/skills/react-ui-change/SOURCES.md\" \"b/.kiro/skills/react-ui-change/SOURCES.md\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.kiro/skills/react-ui-change/SOURCES.md\"\n@@ -0,0 +1,9 @@\n+# Nguồn\n+\n+Chỉ dùng khi người dùng yêu cầu đối chiếu nguồn, SHA hoặc license.\n+\n+## Chỉ tham khảo\n+\n+- [React Sharing State](https://react.dev/learn/sharing-state-between-components)\n+- [Quyền sở hữu và chia sẻ UI state](https://github.com/vercel-labs/agent-skills/blob/5a37a6329fbad3666c3207392a6a7c0110e92efb/skills/composition-patterns/rules/state-lift-state.md).\n+- [Composition cho component dùng chung](https://github.com/vercel-labs/agent-skills/blob/5a37a6329fbad3666c3207392a6a7c0110e92efb/skills/composition-patterns/rules/architecture-compound-components.md).\n"
+              },
+              "providerId": "kiro",
+              "canonicalDestination": ".agents/skills/react-ui-change/SOURCES.md"
+            },
+            {
+              "skillId": "react-ui-change",
+              "destination": ".kiro/skills/react-ui-change/applicability.json",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 162,
+                "sha256": "1f65c07eae5daab2c9b7e47262d5149219a0df87b7d74bf8708dd85791341145",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.kiro/skills/react-ui-change/applicability.json\" \"b/.kiro/skills/react-ui-change/applicability.json\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.kiro/skills/react-ui-change/applicability.json\"\n@@ -0,0 +1,6 @@\n+{\n+  \"schemaVersion\": 1,\n+  \"scope\": \"boundary\",\n+  \"appliesWhen\": [[{ \"kind\": \"framework\", \"basis\": \"inferred\", \"key\": \"react\" }]],\n+  \"recommendWhen\": \"on_match\"\n+}\n"
+              },
+              "providerId": "kiro",
+              "canonicalDestination": ".agents/skills/react-ui-change/applicability.json"
+            }
+          ],
+          "diagnostics": []
+        },
+        "directoryEffects": [
+          {
+            "destination": ".agents",
+            "status": "create",
+            "mode": 493,
+            "absentAncestor": ".agents"
+          },
+          {
+            "destination": ".kiro",
+            "status": "create",
+            "mode": 493,
+            "absentAncestor": ".kiro"
+          },
+          {
+            "destination": ".agents/skills",
+            "status": "create",
+            "mode": 493,
+            "absentAncestor": ".agents"
+          },
+          {
+            "destination": ".kiro/skills",
+            "status": "create",
+            "mode": 493,
+            "absentAncestor": ".kiro"
+          },
+          {
+            "destination": ".agents/skills/debug-regression",
+            "status": "create",
+            "mode": 493,
+            "absentAncestor": ".agents"
+          },
+          {
+            "destination": ".agents/skills/react-ui-change",
+            "status": "create",
+            "mode": 493,
+            "absentAncestor": ".agents"
+          },
+          {
+            "destination": ".kiro/skills/debug-regression",
+            "status": "create",
+            "mode": 493,
+            "absentAncestor": ".kiro"
+          },
+          {
+            "destination": ".kiro/skills/react-ui-change",
+            "status": "create",
+            "mode": 493,
+            "absentAncestor": ".kiro"
+          }
+        ],
+        "readSet": [
+          {
+            "scope": "anchor",
+            "path": "/",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "2",
+              "mode": "16877",
+              "uid": "0",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "anchor",
+            "path": "/private",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "110816932",
+              "mode": "16877",
+              "uid": "0",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "anchor",
+            "path": "/private/tmp",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "110832738",
+              "mode": "17407",
+              "uid": "0",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "anchor",
+            "path": "/private/tmp/m42-spike-43otpswg",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "122675188",
+              "mode": "16832",
+              "uid": "501",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "122685013",
+              "mode": "16877",
+              "uid": "501",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.agents",
+            "observation": {
+              "state": "absent"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.cursor",
+            "observation": {
+              "state": "absent"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.git",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "122685016",
+              "mode": "16877",
+              "uid": "501",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.kiro",
+            "observation": {
+              "state": "absent"
+            }
+          }
+        ],
+        "sources": [
+          {
+            "destination": ".agents/skills/debug-regression/SKILL.md",
+            "canonicalDestination": ".agents/skills/debug-regression/SKILL.md",
+            "blobSha": "755cf302d9eb0b31838ad52e8ab9a79aa66a5e30",
+            "sizeBytes": 3639,
+            "sha256": "a09e1842c31849c449d678cb87d9c83bb10559f70ad1df7ba943868d8c98fc30",
+            "mode": 420
+          },
+          {
+            "destination": ".agents/skills/debug-regression/applicability.json",
+            "canonicalDestination": ".agents/skills/debug-regression/applicability.json",
+            "blobSha": "738357a179cc2f554459cf54307a5f66c65fa880",
+            "sizeBytes": 67,
+            "sha256": "a0cc6e49e3f53754580914558afd68220af1e4883c8d27d9e6245b3475490b29",
+            "mode": 420
+          },
+          {
+            "destination": ".agents/skills/react-ui-change/SKILL.md",
+            "canonicalDestination": ".agents/skills/react-ui-change/SKILL.md",
+            "blobSha": "1fe2c9a97d3d2c8dd6e9ed4c7af2f35469a0a847",
+            "sizeBytes": 2439,
+            "sha256": "784cde83bc57c868d87ef9f6af8cddc23e942c458762470e0b23ab4463434222",
+            "mode": 420
+          },
+          {
+            "destination": ".agents/skills/react-ui-change/SOURCES.md",
+            "canonicalDestination": ".agents/skills/react-ui-change/SOURCES.md",
+            "blobSha": "6eab09a5bf41d8cea7319e49a1d5f249179d71b2",
+            "sizeBytes": 598,
+            "sha256": "cc98e4974f35026fd9da66580d9a8f75d02e9462a753f32a5249399bda51ed37",
+            "mode": 420
+          },
+          {
+            "destination": ".agents/skills/react-ui-change/applicability.json",
+            "canonicalDestination": ".agents/skills/react-ui-change/applicability.json",
+            "blobSha": "52cd4e9b39c4f64ac86e639d481787ea1d449e1b",
+            "sizeBytes": 162,
+            "sha256": "1f65c07eae5daab2c9b7e47262d5149219a0df87b7d74bf8708dd85791341145",
+            "mode": 420
+          },
+          {
+            "destination": ".kiro/skills/debug-regression/SKILL.md",
+            "canonicalDestination": ".agents/skills/debug-regression/SKILL.md",
+            "blobSha": "755cf302d9eb0b31838ad52e8ab9a79aa66a5e30",
+            "sizeBytes": 3639,
+            "sha256": "a09e1842c31849c449d678cb87d9c83bb10559f70ad1df7ba943868d8c98fc30",
+            "mode": 420
+          },
+          {
+            "destination": ".kiro/skills/debug-regression/applicability.json",
+            "canonicalDestination": ".agents/skills/debug-regression/applicability.json",
+            "blobSha": "738357a179cc2f554459cf54307a5f66c65fa880",
+            "sizeBytes": 67,
+            "sha256": "a0cc6e49e3f53754580914558afd68220af1e4883c8d27d9e6245b3475490b29",
+            "mode": 420
+          },
+          {
+            "destination": ".kiro/skills/react-ui-change/SKILL.md",
+            "canonicalDestination": ".agents/skills/react-ui-change/SKILL.md",
+            "blobSha": "1fe2c9a97d3d2c8dd6e9ed4c7af2f35469a0a847",
+            "sizeBytes": 2439,
+            "sha256": "784cde83bc57c868d87ef9f6af8cddc23e942c458762470e0b23ab4463434222",
+            "mode": 420
+          },
+          {
+            "destination": ".kiro/skills/react-ui-change/SOURCES.md",
+            "canonicalDestination": ".agents/skills/react-ui-change/SOURCES.md",
+            "blobSha": "6eab09a5bf41d8cea7319e49a1d5f249179d71b2",
+            "sizeBytes": 598,
+            "sha256": "cc98e4974f35026fd9da66580d9a8f75d02e9462a753f32a5249399bda51ed37",
+            "mode": 420
+          },
+          {
+            "destination": ".kiro/skills/react-ui-change/applicability.json",
+            "canonicalDestination": ".agents/skills/react-ui-change/applicability.json",
+            "blobSha": "52cd4e9b39c4f64ac86e639d481787ea1d449e1b",
+            "sizeBytes": 162,
+            "sha256": "1f65c07eae5daab2c9b7e47262d5149219a0df87b7d74bf8708dd85791341145",
+            "mode": 420
+          }
+        ],
+        "gitProof": {
+          "status": "confirmed",
+          "rootStatus": "git_root",
+          "gitDirectory": "/private/tmp/m42-spike-43otpswg/target/.git",
+          "commonDirectory": "/private/tmp/m42-spike-43otpswg/target/.git"
+        },
+        "policy": {
+          "manifestVersion": 1,
+          "plannerVersion": "m4.2-v1",
+          "adapterVersion": "m3.3-v1",
+          "writerPolicyVersion": "create-only-v1-unavailable",
+          "serializationVersion": "sorted-json-utf8-v1",
+          "observationVersion": "bigint-lstat-v1",
+          "ttlMs": 600000,
+          "maxReceipts": 8,
+          "maxSourceBytes": 8388608,
+          "maxRetainedSourceBytes": 33554432,
+          "callerBinding": "host-installation-instance-only",
+          "writeCapability": "unavailable_m4_2",
+          "previewBudgets": {
+            "files": 2048,
+            "pathBytes": 1024,
+            "pathDepth": 32,
+            "fileBytes": 1048576,
+            "readBytes": 8388608,
+            "filesystemChecks": 32768,
+            "diffBytes": 131072,
+            "responseBytes": 1048576,
+            "deadlineMs": 8000
+          }
+        }
+      },
+      "receipt": {
+        "planDigest": "c920d064deca8d877d175e3473620c84d4eb41eb1f432dc90959d759753dda9c",
+        "epoch": "1443064baae508bab436ddc169df15c4e2b64cae98ea2f7cf59c8bb6348c57a2",
+        "viewNonce": "smoke-view",
+        "issuedAt": 1795765366196,
+        "expiresAt": 1795765966196,
+        "previewId": "[redacted]"
+      },
+      "applyEligibility": {
+        "status": "ineligible",
+        "reasons": [
+          "write_capability_unavailable"
+        ]
+      },
+      "plannedEffect": "create_only",
+      "readOnlySnapshotMatch": true,
+      "snapshotBeforeSha256": "4c0632c367c96949e1721c7ff26efa652c66e105bd73967e3cdbbc361551b692",
+      "snapshotAfterSha256": "4c0632c367c96949e1721c7ff26efa652c66e105bd73967e3cdbbc361551b692"
+    },
+    "repeat": {
+      "status": "ready",
+      "schemaVersion": 2,
+      "manifest": {
+        "schemaVersion": 1,
+        "hostId": "srv_Sm2YsMgGy-KK",
+        "installationInstanceId": "eaa99016d64788f78d2ddafbd55ac80313bb6cbe36e00ea79fd0f437d157ddcd",
+        "epoch": "1443064baae508bab436ddc169df15c4e2b64cae98ea2f7cf59c8bb6348c57a2",
+        "viewNonce": "smoke-view",
+        "savedCatalogRef": "4044fbf0545f4be1da51dbc10f1327f0a3da0017",
+        "plan": {
+          "status": "ready",
+          "intent": {
+            "schemaVersion": 1,
+            "hostId": "srv_Sm2YsMgGy-KK",
+            "canonicalDirectory": "/private/tmp/m42-spike-43otpswg/target",
+            "catalogSource": "https://github.com/anmeo2204/project-skills",
+            "catalogCommitSha": "4044fbf0545f4be1da51dbc10f1327f0a3da0017",
+            "settingsRevision": "420eba798a50f0f8fb1ba5e7e815fafc31d6fd4b2354ebf12b4f6a2717a67fe9",
+            "selectedSkillIds": [
+              "debug-regression",
+              "react-ui-change"
+            ],
+            "targetProviderIds": [
+              "codex",
+              "kiro"
+            ],
+            "recommendationRequestId": "m42-smoke"
+          },
+          "entries": [
+            {
+              "skillId": "debug-regression",
+              "destination": ".agents/skills/debug-regression/SKILL.md",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 3639,
+                "sha256": "a09e1842c31849c449d678cb87d9c83bb10559f70ad1df7ba943868d8c98fc30",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/debug-regression/SKILL.md\" \"b/.agents/skills/debug-regression/SKILL.md\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.agents/skills/debug-regression/SKILL.md\"\n@@ -0,0 +1,40 @@\n+---\n+name: debug-regression\n+description: Reproduces a regression, verifies its cause, and makes and validates a minimal fix. Use when previously working behavior changes unexpectedly or an existing check starts failing.\n+---\n+\n+# Debug Regression\n+\n+## Workflow\n+\n+### 1. Tái hiện lỗi\n+\n+- Đọc hướng dẫn và test policy của dự án để chọn môi trường và cách chạy phù hợp.\n+- Xác định hành vi mong đợi từ contract, test hiện có hoặc phiên bản đã chạy đúng. Ghi hành vi thực tế và dấu hiệu nhận biết lỗi.\n+- Tìm điểm vào bị ảnh hưởng và chọn cách tái hiện nhỏ nhất còn quan sát được lỗi. Ghi đầu vào, trạng thái ban đầu, cấu hình liên quan và các bước chạy.\n+- Chạy trước khi sửa để xác nhận lỗi phù hợp với báo cáo. Nếu lỗi chập chờn, ghi điều kiện và tần suất quan sát được. Nếu chưa tái hiện được, ghi những gì đã thử và tiếp tục thu thập bằng chứng.\n+\n+### 2. Xác minh nguyên nhân\n+\n+- Theo luồng từ điểm vào đến nơi hành vi bắt đầu sai lệch. Dùng kết quả test, log, trace hoặc giá trị quan sát được để khoanh vùng.\n+- Nêu giả thuyết cụ thể và kết quả dự đoán. Kiểm tra bằng cách cô lập điều kiện nghi vấn, thay đổi một yếu tố mỗi lần hoặc đối chiếu với phiên bản đã chạy đúng trong điều kiện tương đương.\n+- Ghi quan sát nối nguyên nhân với triệu chứng. Chỉ chuyển sang bước sửa khi bằng chứng đủ xác nhận nguyên nhân. Nếu chưa đủ, dừng trước bước sửa, tiếp tục điều tra nếu còn cách kiểm tra và ghi rõ phần chưa xác minh.\n+\n+### 3. Sửa tối thiểu\n+\n+- Sửa tại nơi phát sinh sai lệch, dùng cách xử lý hiện có nếu phù hợp. Giữ contract của các trường hợp hợp lệ và giới hạn diff trong phạm vi lỗi đã xác minh.\n+- Tái sử dụng kiểm tra hiện có nếu nó bắt được lỗi. Khi test policy cho phép và còn thiếu bao phủ, thêm hoặc điều chỉnh một test tập trung xác nhận hành vi mong đợi. Dùng test đó để kiểm tra trước và sau bản sửa khi khả thi.\n+- Gỡ các thay đổi tạm dùng để chẩn đoán trước khi kiểm tra lần cuối.\n+\n+## Verification\n+\n+- Chạy lại ca tái hiện với cùng điều kiện và xác nhận kết quả đáp ứng contract. Với lỗi chập chờn, lặp lại trong điều kiện từng kích hoạt lỗi và ghi số lần chạy cùng kết quả.\n+- Chạy các kiểm tra liên quan theo test policy của dự án, gồm luồng hợp lệ và các trường hợp biên chịu ảnh hưởng trực tiếp của bản sửa.\n+- Review diff để xác nhận phạm vi sửa và kiểm tra khớp với nguyên nhân đã xác minh.\n+- Báo cách tái hiện, bằng chứng nguyên nhân, phạm vi sửa, lệnh hoặc thao tác kiểm tra cùng kết quả trước và sau. Ghi rõ phần chưa kiểm tra được và lý do.\n+\n+## Ví dụ\n+\n+- Một bộ lọc trả về toàn bộ kết quả khi nhận giá trị `0` hợp lệ. Tái hiện qua điểm vào đang lỗi và đối chiếu với ca bỏ trống bộ lọc.\n+- Kiểm tra tại bước chuẩn hóa đầu vào xem `0` có bị chuyển thành giá trị biểu thị bộ lọc vắng mặt hay không.\n+- Nếu xác nhận bước đó làm mất giá trị `0`, sửa quy tắc nhận diện bộ lọc vắng mặt rồi kiểm tra lại cả hai ca.\n"
+              }
+            },
+            {
+              "skillId": "debug-regression",
+              "destination": ".agents/skills/debug-regression/applicability.json",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 67,
+                "sha256": "a0cc6e49e3f53754580914558afd68220af1e4883c8d27d9e6245b3475490b29",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/debug-regression/applicability.json\" \"b/.agents/skills/debug-regression/applicability.json\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.agents/skills/debug-regression/applicability.json\"\n@@ -0,0 +1,1 @@\n+{ \"schemaVersion\": 1, \"scope\": \"project\", \"level\": \"recommended\" }\n"
+              }
+            },
+            {
+              "skillId": "react-ui-change",
+              "destination": ".agents/skills/react-ui-change/SKILL.md",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 2439,
+                "sha256": "784cde83bc57c868d87ef9f6af8cddc23e942c458762470e0b23ab4463434222",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/react-ui-change/SKILL.md\" \"b/.agents/skills/react-ui-change/SKILL.md\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.agents/skills/react-ui-change/SKILL.md\"\n@@ -0,0 +1,36 @@\n+---\n+name: react-ui-change\n+description: Changes React component presentation or interaction and verifies visible behavior. Use when changing composition, shared UI state, focus, or keyboard interaction.\n+---\n+\n+# React UI Change\n+\n+## Workflow\n+\n+### 1. Xác định hành vi giao diện\n+\n+- Xác định component được render ở luồng bị ảnh hưởng và đọc các caller. Ghi các trạng thái và tương tác mà người dùng cần quan sát được.\n+- Đọc component tương tự để nhận diện quy ước props, composition, design token và primitive accessibility đang dùng.\n+- Nếu UI có trường nhập hoặc dữ liệu từ API, xác định phần việc riêng của vòng đời form hoặc request trước khi thay đổi chúng.\n+\n+### 2. Chọn ranh giới component và state\n+\n+- Đặt state ở component sở hữu hành vi. Khi nhiều component phải đồng bộ, chọn tổ tiên chung phù hợp và truyền giá trị cùng callback theo pattern hiện có.\n+- Tính giá trị suy ra từ props/state trong render khi phù hợp. Kiểm tra key và vị trí component nếu thay đổi cấu trúc có thể reset state đang cần giữ.\n+- Dùng composition khi caller cần ghép các phần giao diện độc lập. Giữ props tương thích với caller ngoài phạm vi task.\n+\n+### 3. Giữ khả năng tương tác\n+\n+- Tái sử dụng control có semantics và hành vi bàn phím phù hợp. Giữ tên truy cập, trạng thái disabled/expanded và thứ tự focus theo tương tác thực tế.\n+- Với UI mở/đóng hoặc thay nội dung, xác định focus đi đâu khi xuất hiện, biến mất hoặc thao tác bị hủy.\n+\n+## Verification\n+\n+- Qua điểm vào thực tế, kiểm tra giao diện ở các trạng thái liên quan và chuyển đổi giữa chúng.\n+- Khi diff chạm tương tác bàn phím hoặc focus, kiểm tra thao tác tương ứng. Nếu UI mở hoặc đóng, kiểm tra focus ban đầu và nơi focus trở về.\n+- Kiểm tra một caller có sẵn nếu thay đổi component dùng chung. Xác nhận state được giữ hoặc reset theo thiết kế.\n+- Báo tình huống đã thử, môi trường và lý do cho ca phù hợp chưa xác minh được.\n+\n+## Ví dụ\n+\n+- Nếu tách nút mở hộp thoại khỏi nội dung hộp thoại, kiểm tra mở bằng bàn phím, focus vào nội dung, đóng và trả focus về nút mở.\n"
+              }
+            },
+            {
+              "skillId": "react-ui-change",
+              "destination": ".agents/skills/react-ui-change/SOURCES.md",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 598,
+                "sha256": "cc98e4974f35026fd9da66580d9a8f75d02e9462a753f32a5249399bda51ed37",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/react-ui-change/SOURCES.md\" \"b/.agents/skills/react-ui-change/SOURCES.md\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.agents/skills/react-ui-change/SOURCES.md\"\n@@ -0,0 +1,9 @@\n+# Nguồn\n+\n+Chỉ dùng khi người dùng yêu cầu đối chiếu nguồn, SHA hoặc license.\n+\n+## Chỉ tham khảo\n+\n+- [React Sharing State](https://react.dev/learn/sharing-state-between-components)\n+- [Quyền sở hữu và chia sẻ UI state](https://github.com/vercel-labs/agent-skills/blob/5a37a6329fbad3666c3207392a6a7c0110e92efb/skills/composition-patterns/rules/state-lift-state.md).\n+- [Composition cho component dùng chung](https://github.com/vercel-labs/agent-skills/blob/5a37a6329fbad3666c3207392a6a7c0110e92efb/skills/composition-patterns/rules/architecture-compound-components.md).\n"
+              }
+            },
+            {
+              "skillId": "react-ui-change",
+              "destination": ".agents/skills/react-ui-change/applicability.json",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 162,
+                "sha256": "1f65c07eae5daab2c9b7e47262d5149219a0df87b7d74bf8708dd85791341145",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/react-ui-change/applicability.json\" \"b/.agents/skills/react-ui-change/applicability.json\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.agents/skills/react-ui-change/applicability.json\"\n@@ -0,0 +1,6 @@\n+{\n+  \"schemaVersion\": 1,\n+  \"scope\": \"boundary\",\n+  \"appliesWhen\": [[{ \"kind\": \"framework\", \"basis\": \"inferred\", \"key\": \"react\" }]],\n+  \"recommendWhen\": \"on_match\"\n+}\n"
+              }
+            }
+          ],
+          "providers": [
+            {
+              "providerId": "codex",
+              "strategy": "canonical_only",
+              "status": "canonical_only",
+              "verification": {
+                "basis": "historical_m3_1",
+                "report": "M3.1-completion-report.md",
+                "paseoVersion": "0.17.5",
+                "binaryVersion": "0.167.0",
+                "transport": "app-server",
+                "loadMode": "auto; read-only; approval never; web search disabled",
+                "cwdScope": "root_and_nested",
+                "note": "M3.1 model gpt-6.1-sol. Historical discovery/load evidence; not a live runtime attestation."
+              },
+              "skills": []
+            },
+            {
+              "providerId": "kiro",
+              "strategy": "kiro_derived",
+              "status": "ready",
+              "rootStatus": "git_root",
+              "verification": {
+                "basis": "historical_m3_1",
+                "report": "M3.1-completion-report.md",
+                "paseoVersion": "0.17.5",
+                "binaryVersion": "2.34.2",
+                "transport": "kiro-cli acp",
+                "loadMode": "kiro_default",
+                "cwdScope": "git_root",
+                "note": "M3.1 model reported auto. Derived .kiro/skills discovery/load verified only with session CWD at root; custom agents and nested sessions are not covered."
+              },
+              "skills": [
+                {
+                  "skillId": "debug-regression",
+                  "status": "planned"
+                },
+                {
+                  "skillId": "react-ui-change",
+                  "status": "planned"
+                }
+              ]
+            }
+          ],
+          "derivedEntries": [
+            {
+              "skillId": "debug-regression",
+              "destination": ".kiro/skills/debug-regression/SKILL.md",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 3639,
+                "sha256": "a09e1842c31849c449d678cb87d9c83bb10559f70ad1df7ba943868d8c98fc30",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.kiro/skills/debug-regression/SKILL.md\" \"b/.kiro/skills/debug-regression/SKILL.md\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.kiro/skills/debug-regression/SKILL.md\"\n@@ -0,0 +1,40 @@\n+---\n+name: debug-regression\n+description: Reproduces a regression, verifies its cause, and makes and validates a minimal fix. Use when previously working behavior changes unexpectedly or an existing check starts failing.\n+---\n+\n+# Debug Regression\n+\n+## Workflow\n+\n+### 1. Tái hiện lỗi\n+\n+- Đọc hướng dẫn và test policy của dự án để chọn môi trường và cách chạy phù hợp.\n+- Xác định hành vi mong đợi từ contract, test hiện có hoặc phiên bản đã chạy đúng. Ghi hành vi thực tế và dấu hiệu nhận biết lỗi.\n+- Tìm điểm vào bị ảnh hưởng và chọn cách tái hiện nhỏ nhất còn quan sát được lỗi. Ghi đầu vào, trạng thái ban đầu, cấu hình liên quan và các bước chạy.\n+- Chạy trước khi sửa để xác nhận lỗi phù hợp với báo cáo. Nếu lỗi chập chờn, ghi điều kiện và tần suất quan sát được. Nếu chưa tái hiện được, ghi những gì đã thử và tiếp tục thu thập bằng chứng.\n+\n+### 2. Xác minh nguyên nhân\n+\n+- Theo luồng từ điểm vào đến nơi hành vi bắt đầu sai lệch. Dùng kết quả test, log, trace hoặc giá trị quan sát được để khoanh vùng.\n+- Nêu giả thuyết cụ thể và kết quả dự đoán. Kiểm tra bằng cách cô lập điều kiện nghi vấn, thay đổi một yếu tố mỗi lần hoặc đối chiếu với phiên bản đã chạy đúng trong điều kiện tương đương.\n+- Ghi quan sát nối nguyên nhân với triệu chứng. Chỉ chuyển sang bước sửa khi bằng chứng đủ xác nhận nguyên nhân. Nếu chưa đủ, dừng trước bước sửa, tiếp tục điều tra nếu còn cách kiểm tra và ghi rõ phần chưa xác minh.\n+\n+### 3. Sửa tối thiểu\n+\n+- Sửa tại nơi phát sinh sai lệch, dùng cách xử lý hiện có nếu phù hợp. Giữ contract của các trường hợp hợp lệ và giới hạn diff trong phạm vi lỗi đã xác minh.\n+- Tái sử dụng kiểm tra hiện có nếu nó bắt được lỗi. Khi test policy cho phép và còn thiếu bao phủ, thêm hoặc điều chỉnh một test tập trung xác nhận hành vi mong đợi. Dùng test đó để kiểm tra trước và sau bản sửa khi khả thi.\n+- Gỡ các thay đổi tạm dùng để chẩn đoán trước khi kiểm tra lần cuối.\n+\n+## Verification\n+\n+- Chạy lại ca tái hiện với cùng điều kiện và xác nhận kết quả đáp ứng contract. Với lỗi chập chờn, lặp lại trong điều kiện từng kích hoạt lỗi và ghi số lần chạy cùng kết quả.\n+- Chạy các kiểm tra liên quan theo test policy của dự án, gồm luồng hợp lệ và các trường hợp biên chịu ảnh hưởng trực tiếp của bản sửa.\n+- Review diff để xác nhận phạm vi sửa và kiểm tra khớp với nguyên nhân đã xác minh.\n+- Báo cách tái hiện, bằng chứng nguyên nhân, phạm vi sửa, lệnh hoặc thao tác kiểm tra cùng kết quả trước và sau. Ghi rõ phần chưa kiểm tra được và lý do.\n+\n+## Ví dụ\n+\n+- Một bộ lọc trả về toàn bộ kết quả khi nhận giá trị `0` hợp lệ. Tái hiện qua điểm vào đang lỗi và đối chiếu với ca bỏ trống bộ lọc.\n+- Kiểm tra tại bước chuẩn hóa đầu vào xem `0` có bị chuyển thành giá trị biểu thị bộ lọc vắng mặt hay không.\n+- Nếu xác nhận bước đó làm mất giá trị `0`, sửa quy tắc nhận diện bộ lọc vắng mặt rồi kiểm tra lại cả hai ca.\n"
+              },
+              "providerId": "kiro",
+              "canonicalDestination": ".agents/skills/debug-regression/SKILL.md"
+            },
+            {
+              "skillId": "debug-regression",
+              "destination": ".kiro/skills/debug-regression/applicability.json",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 67,
+                "sha256": "a0cc6e49e3f53754580914558afd68220af1e4883c8d27d9e6245b3475490b29",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.kiro/skills/debug-regression/applicability.json\" \"b/.kiro/skills/debug-regression/applicability.json\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.kiro/skills/debug-regression/applicability.json\"\n@@ -0,0 +1,1 @@\n+{ \"schemaVersion\": 1, \"scope\": \"project\", \"level\": \"recommended\" }\n"
+              },
+              "providerId": "kiro",
+              "canonicalDestination": ".agents/skills/debug-regression/applicability.json"
+            },
+            {
+              "skillId": "react-ui-change",
+              "destination": ".kiro/skills/react-ui-change/SKILL.md",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 2439,
+                "sha256": "784cde83bc57c868d87ef9f6af8cddc23e942c458762470e0b23ab4463434222",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.kiro/skills/react-ui-change/SKILL.md\" \"b/.kiro/skills/react-ui-change/SKILL.md\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.kiro/skills/react-ui-change/SKILL.md\"\n@@ -0,0 +1,36 @@\n+---\n+name: react-ui-change\n+description: Changes React component presentation or interaction and verifies visible behavior. Use when changing composition, shared UI state, focus, or keyboard interaction.\n+---\n+\n+# React UI Change\n+\n+## Workflow\n+\n+### 1. Xác định hành vi giao diện\n+\n+- Xác định component được render ở luồng bị ảnh hưởng và đọc các caller. Ghi các trạng thái và tương tác mà người dùng cần quan sát được.\n+- Đọc component tương tự để nhận diện quy ước props, composition, design token và primitive accessibility đang dùng.\n+- Nếu UI có trường nhập hoặc dữ liệu từ API, xác định phần việc riêng của vòng đời form hoặc request trước khi thay đổi chúng.\n+\n+### 2. Chọn ranh giới component và state\n+\n+- Đặt state ở component sở hữu hành vi. Khi nhiều component phải đồng bộ, chọn tổ tiên chung phù hợp và truyền giá trị cùng callback theo pattern hiện có.\n+- Tính giá trị suy ra từ props/state trong render khi phù hợp. Kiểm tra key và vị trí component nếu thay đổi cấu trúc có thể reset state đang cần giữ.\n+- Dùng composition khi caller cần ghép các phần giao diện độc lập. Giữ props tương thích với caller ngoài phạm vi task.\n+\n+### 3. Giữ khả năng tương tác\n+\n+- Tái sử dụng control có semantics và hành vi bàn phím phù hợp. Giữ tên truy cập, trạng thái disabled/expanded và thứ tự focus theo tương tác thực tế.\n+- Với UI mở/đóng hoặc thay nội dung, xác định focus đi đâu khi xuất hiện, biến mất hoặc thao tác bị hủy.\n+\n+## Verification\n+\n+- Qua điểm vào thực tế, kiểm tra giao diện ở các trạng thái liên quan và chuyển đổi giữa chúng.\n+- Khi diff chạm tương tác bàn phím hoặc focus, kiểm tra thao tác tương ứng. Nếu UI mở hoặc đóng, kiểm tra focus ban đầu và nơi focus trở về.\n+- Kiểm tra một caller có sẵn nếu thay đổi component dùng chung. Xác nhận state được giữ hoặc reset theo thiết kế.\n+- Báo tình huống đã thử, môi trường và lý do cho ca phù hợp chưa xác minh được.\n+\n+## Ví dụ\n+\n+- Nếu tách nút mở hộp thoại khỏi nội dung hộp thoại, kiểm tra mở bằng bàn phím, focus vào nội dung, đóng và trả focus về nút mở.\n"
+              },
+              "providerId": "kiro",
+              "canonicalDestination": ".agents/skills/react-ui-change/SKILL.md"
+            },
+            {
+              "skillId": "react-ui-change",
+              "destination": ".kiro/skills/react-ui-change/SOURCES.md",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 598,
+                "sha256": "cc98e4974f35026fd9da66580d9a8f75d02e9462a753f32a5249399bda51ed37",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.kiro/skills/react-ui-change/SOURCES.md\" \"b/.kiro/skills/react-ui-change/SOURCES.md\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.kiro/skills/react-ui-change/SOURCES.md\"\n@@ -0,0 +1,9 @@\n+# Nguồn\n+\n+Chỉ dùng khi người dùng yêu cầu đối chiếu nguồn, SHA hoặc license.\n+\n+## Chỉ tham khảo\n+\n+- [React Sharing State](https://react.dev/learn/sharing-state-between-components)\n+- [Quyền sở hữu và chia sẻ UI state](https://github.com/vercel-labs/agent-skills/blob/5a37a6329fbad3666c3207392a6a7c0110e92efb/skills/composition-patterns/rules/state-lift-state.md).\n+- [Composition cho component dùng chung](https://github.com/vercel-labs/agent-skills/blob/5a37a6329fbad3666c3207392a6a7c0110e92efb/skills/composition-patterns/rules/architecture-compound-components.md).\n"
+              },
+              "providerId": "kiro",
+              "canonicalDestination": ".agents/skills/react-ui-change/SOURCES.md"
+            },
+            {
+              "skillId": "react-ui-change",
+              "destination": ".kiro/skills/react-ui-change/applicability.json",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 162,
+                "sha256": "1f65c07eae5daab2c9b7e47262d5149219a0df87b7d74bf8708dd85791341145",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.kiro/skills/react-ui-change/applicability.json\" \"b/.kiro/skills/react-ui-change/applicability.json\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.kiro/skills/react-ui-change/applicability.json\"\n@@ -0,0 +1,6 @@\n+{\n+  \"schemaVersion\": 1,\n+  \"scope\": \"boundary\",\n+  \"appliesWhen\": [[{ \"kind\": \"framework\", \"basis\": \"inferred\", \"key\": \"react\" }]],\n+  \"recommendWhen\": \"on_match\"\n+}\n"
+              },
+              "providerId": "kiro",
+              "canonicalDestination": ".agents/skills/react-ui-change/applicability.json"
+            }
+          ],
+          "diagnostics": []
+        },
+        "directoryEffects": [
+          {
+            "destination": ".agents",
+            "status": "create",
+            "mode": 493,
+            "absentAncestor": ".agents"
+          },
+          {
+            "destination": ".kiro",
+            "status": "create",
+            "mode": 493,
+            "absentAncestor": ".kiro"
+          },
+          {
+            "destination": ".agents/skills",
+            "status": "create",
+            "mode": 493,
+            "absentAncestor": ".agents"
+          },
+          {
+            "destination": ".kiro/skills",
+            "status": "create",
+            "mode": 493,
+            "absentAncestor": ".kiro"
+          },
+          {
+            "destination": ".agents/skills/debug-regression",
+            "status": "create",
+            "mode": 493,
+            "absentAncestor": ".agents"
+          },
+          {
+            "destination": ".agents/skills/react-ui-change",
+            "status": "create",
+            "mode": 493,
+            "absentAncestor": ".agents"
+          },
+          {
+            "destination": ".kiro/skills/debug-regression",
+            "status": "create",
+            "mode": 493,
+            "absentAncestor": ".kiro"
+          },
+          {
+            "destination": ".kiro/skills/react-ui-change",
+            "status": "create",
+            "mode": 493,
+            "absentAncestor": ".kiro"
+          }
+        ],
+        "readSet": [
+          {
+            "scope": "anchor",
+            "path": "/",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "2",
+              "mode": "16877",
+              "uid": "0",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "anchor",
+            "path": "/private",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "110816932",
+              "mode": "16877",
+              "uid": "0",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "anchor",
+            "path": "/private/tmp",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "110832738",
+              "mode": "17407",
+              "uid": "0",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "anchor",
+            "path": "/private/tmp/m42-spike-43otpswg",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "122675188",
+              "mode": "16832",
+              "uid": "501",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "122685013",
+              "mode": "16877",
+              "uid": "501",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.agents",
+            "observation": {
+              "state": "absent"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.cursor",
+            "observation": {
+              "state": "absent"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.git",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "122685016",
+              "mode": "16877",
+              "uid": "501",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.kiro",
+            "observation": {
+              "state": "absent"
+            }
+          }
+        ],
+        "sources": [
+          {
+            "destination": ".agents/skills/debug-regression/SKILL.md",
+            "canonicalDestination": ".agents/skills/debug-regression/SKILL.md",
+            "blobSha": "755cf302d9eb0b31838ad52e8ab9a79aa66a5e30",
+            "sizeBytes": 3639,
+            "sha256": "a09e1842c31849c449d678cb87d9c83bb10559f70ad1df7ba943868d8c98fc30",
+            "mode": 420
+          },
+          {
+            "destination": ".agents/skills/debug-regression/applicability.json",
+            "canonicalDestination": ".agents/skills/debug-regression/applicability.json",
+            "blobSha": "738357a179cc2f554459cf54307a5f66c65fa880",
+            "sizeBytes": 67,
+            "sha256": "a0cc6e49e3f53754580914558afd68220af1e4883c8d27d9e6245b3475490b29",
+            "mode": 420
+          },
+          {
+            "destination": ".agents/skills/react-ui-change/SKILL.md",
+            "canonicalDestination": ".agents/skills/react-ui-change/SKILL.md",
+            "blobSha": "1fe2c9a97d3d2c8dd6e9ed4c7af2f35469a0a847",
+            "sizeBytes": 2439,
+            "sha256": "784cde83bc57c868d87ef9f6af8cddc23e942c458762470e0b23ab4463434222",
+            "mode": 420
+          },
+          {
+            "destination": ".agents/skills/react-ui-change/SOURCES.md",
+            "canonicalDestination": ".agents/skills/react-ui-change/SOURCES.md",
+            "blobSha": "6eab09a5bf41d8cea7319e49a1d5f249179d71b2",
+            "sizeBytes": 598,
+            "sha256": "cc98e4974f35026fd9da66580d9a8f75d02e9462a753f32a5249399bda51ed37",
+            "mode": 420
+          },
+          {
+            "destination": ".agents/skills/react-ui-change/applicability.json",
+            "canonicalDestination": ".agents/skills/react-ui-change/applicability.json",
+            "blobSha": "52cd4e9b39c4f64ac86e639d481787ea1d449e1b",
+            "sizeBytes": 162,
+            "sha256": "1f65c07eae5daab2c9b7e47262d5149219a0df87b7d74bf8708dd85791341145",
+            "mode": 420
+          },
+          {
+            "destination": ".kiro/skills/debug-regression/SKILL.md",
+            "canonicalDestination": ".agents/skills/debug-regression/SKILL.md",
+            "blobSha": "755cf302d9eb0b31838ad52e8ab9a79aa66a5e30",
+            "sizeBytes": 3639,
+            "sha256": "a09e1842c31849c449d678cb87d9c83bb10559f70ad1df7ba943868d8c98fc30",
+            "mode": 420
+          },
+          {
+            "destination": ".kiro/skills/debug-regression/applicability.json",
+            "canonicalDestination": ".agents/skills/debug-regression/applicability.json",
+            "blobSha": "738357a179cc2f554459cf54307a5f66c65fa880",
+            "sizeBytes": 67,
+            "sha256": "a0cc6e49e3f53754580914558afd68220af1e4883c8d27d9e6245b3475490b29",
+            "mode": 420
+          },
+          {
+            "destination": ".kiro/skills/react-ui-change/SKILL.md",
+            "canonicalDestination": ".agents/skills/react-ui-change/SKILL.md",
+            "blobSha": "1fe2c9a97d3d2c8dd6e9ed4c7af2f35469a0a847",
+            "sizeBytes": 2439,
+            "sha256": "784cde83bc57c868d87ef9f6af8cddc23e942c458762470e0b23ab4463434222",
+            "mode": 420
+          },
+          {
+            "destination": ".kiro/skills/react-ui-change/SOURCES.md",
+            "canonicalDestination": ".agents/skills/react-ui-change/SOURCES.md",
+            "blobSha": "6eab09a5bf41d8cea7319e49a1d5f249179d71b2",
+            "sizeBytes": 598,
+            "sha256": "cc98e4974f35026fd9da66580d9a8f75d02e9462a753f32a5249399bda51ed37",
+            "mode": 420
+          },
+          {
+            "destination": ".kiro/skills/react-ui-change/applicability.json",
+            "canonicalDestination": ".agents/skills/react-ui-change/applicability.json",
+            "blobSha": "52cd4e9b39c4f64ac86e639d481787ea1d449e1b",
+            "sizeBytes": 162,
+            "sha256": "1f65c07eae5daab2c9b7e47262d5149219a0df87b7d74bf8708dd85791341145",
+            "mode": 420
+          }
+        ],
+        "gitProof": {
+          "status": "confirmed",
+          "rootStatus": "git_root",
+          "gitDirectory": "/private/tmp/m42-spike-43otpswg/target/.git",
+          "commonDirectory": "/private/tmp/m42-spike-43otpswg/target/.git"
+        },
+        "policy": {
+          "manifestVersion": 1,
+          "plannerVersion": "m4.2-v1",
+          "adapterVersion": "m3.3-v1",
+          "writerPolicyVersion": "create-only-v1-unavailable",
+          "serializationVersion": "sorted-json-utf8-v1",
+          "observationVersion": "bigint-lstat-v1",
+          "ttlMs": 600000,
+          "maxReceipts": 8,
+          "maxSourceBytes": 8388608,
+          "maxRetainedSourceBytes": 33554432,
+          "callerBinding": "host-installation-instance-only",
+          "writeCapability": "unavailable_m4_2",
+          "previewBudgets": {
+            "files": 2048,
+            "pathBytes": 1024,
+            "pathDepth": 32,
+            "fileBytes": 1048576,
+            "readBytes": 8388608,
+            "filesystemChecks": 32768,
+            "diffBytes": 131072,
+            "responseBytes": 1048576,
+            "deadlineMs": 8000
+          }
+        }
+      },
+      "receipt": {
+        "planDigest": "c920d064deca8d877d175e3473620c84d4eb41eb1f432dc90959d759753dda9c",
+        "epoch": "1443064baae508bab436ddc169df15c4e2b64cae98ea2f7cf59c8bb6348c57a2",
+        "viewNonce": "smoke-view",
+        "issuedAt": 1795765366265,
+        "expiresAt": 1795765966265,
+        "previewId": "[redacted]"
+      },
+      "applyEligibility": {
+        "status": "ineligible",
+        "reasons": [
+          "write_capability_unavailable"
+        ]
+      },
+      "plannedEffect": "create_only",
+      "readOnlySnapshotMatch": true,
+      "snapshotBeforeSha256": "4c0632c367c96949e1721c7ff26efa652c66e105bd73967e3cdbbc361551b692",
+      "snapshotAfterSha256": "4c0632c367c96949e1721c7ff26efa652c66e105bd73967e3cdbbc361551b692"
+    },
+    "nested": {
+      "status": "ready",
+      "schemaVersion": 2,
+      "manifest": {
+        "schemaVersion": 1,
+        "hostId": "srv_Sm2YsMgGy-KK",
+        "installationInstanceId": "eaa99016d64788f78d2ddafbd55ac80313bb6cbe36e00ea79fd0f437d157ddcd",
+        "epoch": "1443064baae508bab436ddc169df15c4e2b64cae98ea2f7cf59c8bb6348c57a2",
+        "viewNonce": "smoke-view",
+        "savedCatalogRef": "4044fbf0545f4be1da51dbc10f1327f0a3da0017",
+        "plan": {
+          "status": "ready",
+          "intent": {
+            "schemaVersion": 1,
+            "hostId": "srv_Sm2YsMgGy-KK",
+            "canonicalDirectory": "/private/tmp/m42-spike-43otpswg/target/nested",
+            "catalogSource": "https://github.com/anmeo2204/project-skills",
+            "catalogCommitSha": "4044fbf0545f4be1da51dbc10f1327f0a3da0017",
+            "settingsRevision": "420eba798a50f0f8fb1ba5e7e815fafc31d6fd4b2354ebf12b4f6a2717a67fe9",
+            "selectedSkillIds": [
+              "debug-regression",
+              "react-ui-change"
+            ],
+            "targetProviderIds": [
+              "codex",
+              "kiro"
+            ],
+            "recommendationRequestId": "m42-smoke"
+          },
+          "entries": [
+            {
+              "skillId": "debug-regression",
+              "destination": ".agents/skills/debug-regression/SKILL.md",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 3639,
+                "sha256": "a09e1842c31849c449d678cb87d9c83bb10559f70ad1df7ba943868d8c98fc30",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/debug-regression/SKILL.md\" \"b/.agents/skills/debug-regression/SKILL.md\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.agents/skills/debug-regression/SKILL.md\"\n@@ -0,0 +1,40 @@\n+---\n+name: debug-regression\n+description: Reproduces a regression, verifies its cause, and makes and validates a minimal fix. Use when previously working behavior changes unexpectedly or an existing check starts failing.\n+---\n+\n+# Debug Regression\n+\n+## Workflow\n+\n+### 1. Tái hiện lỗi\n+\n+- Đọc hướng dẫn và test policy của dự án để chọn môi trường và cách chạy phù hợp.\n+- Xác định hành vi mong đợi từ contract, test hiện có hoặc phiên bản đã chạy đúng. Ghi hành vi thực tế và dấu hiệu nhận biết lỗi.\n+- Tìm điểm vào bị ảnh hưởng và chọn cách tái hiện nhỏ nhất còn quan sát được lỗi. Ghi đầu vào, trạng thái ban đầu, cấu hình liên quan và các bước chạy.\n+- Chạy trước khi sửa để xác nhận lỗi phù hợp với báo cáo. Nếu lỗi chập chờn, ghi điều kiện và tần suất quan sát được. Nếu chưa tái hiện được, ghi những gì đã thử và tiếp tục thu thập bằng chứng.\n+\n+### 2. Xác minh nguyên nhân\n+\n+- Theo luồng từ điểm vào đến nơi hành vi bắt đầu sai lệch. Dùng kết quả test, log, trace hoặc giá trị quan sát được để khoanh vùng.\n+- Nêu giả thuyết cụ thể và kết quả dự đoán. Kiểm tra bằng cách cô lập điều kiện nghi vấn, thay đổi một yếu tố mỗi lần hoặc đối chiếu với phiên bản đã chạy đúng trong điều kiện tương đương.\n+- Ghi quan sát nối nguyên nhân với triệu chứng. Chỉ chuyển sang bước sửa khi bằng chứng đủ xác nhận nguyên nhân. Nếu chưa đủ, dừng trước bước sửa, tiếp tục điều tra nếu còn cách kiểm tra và ghi rõ phần chưa xác minh.\n+\n+### 3. Sửa tối thiểu\n+\n+- Sửa tại nơi phát sinh sai lệch, dùng cách xử lý hiện có nếu phù hợp. Giữ contract của các trường hợp hợp lệ và giới hạn diff trong phạm vi lỗi đã xác minh.\n+- Tái sử dụng kiểm tra hiện có nếu nó bắt được lỗi. Khi test policy cho phép và còn thiếu bao phủ, thêm hoặc điều chỉnh một test tập trung xác nhận hành vi mong đợi. Dùng test đó để kiểm tra trước và sau bản sửa khi khả thi.\n+- Gỡ các thay đổi tạm dùng để chẩn đoán trước khi kiểm tra lần cuối.\n+\n+## Verification\n+\n+- Chạy lại ca tái hiện với cùng điều kiện và xác nhận kết quả đáp ứng contract. Với lỗi chập chờn, lặp lại trong điều kiện từng kích hoạt lỗi và ghi số lần chạy cùng kết quả.\n+- Chạy các kiểm tra liên quan theo test policy của dự án, gồm luồng hợp lệ và các trường hợp biên chịu ảnh hưởng trực tiếp của bản sửa.\n+- Review diff để xác nhận phạm vi sửa và kiểm tra khớp với nguyên nhân đã xác minh.\n+- Báo cách tái hiện, bằng chứng nguyên nhân, phạm vi sửa, lệnh hoặc thao tác kiểm tra cùng kết quả trước và sau. Ghi rõ phần chưa kiểm tra được và lý do.\n+\n+## Ví dụ\n+\n+- Một bộ lọc trả về toàn bộ kết quả khi nhận giá trị `0` hợp lệ. Tái hiện qua điểm vào đang lỗi và đối chiếu với ca bỏ trống bộ lọc.\n+- Kiểm tra tại bước chuẩn hóa đầu vào xem `0` có bị chuyển thành giá trị biểu thị bộ lọc vắng mặt hay không.\n+- Nếu xác nhận bước đó làm mất giá trị `0`, sửa quy tắc nhận diện bộ lọc vắng mặt rồi kiểm tra lại cả hai ca.\n"
+              }
+            },
+            {
+              "skillId": "debug-regression",
+              "destination": ".agents/skills/debug-regression/applicability.json",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 67,
+                "sha256": "a0cc6e49e3f53754580914558afd68220af1e4883c8d27d9e6245b3475490b29",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/debug-regression/applicability.json\" \"b/.agents/skills/debug-regression/applicability.json\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.agents/skills/debug-regression/applicability.json\"\n@@ -0,0 +1,1 @@\n+{ \"schemaVersion\": 1, \"scope\": \"project\", \"level\": \"recommended\" }\n"
+              }
+            },
+            {
+              "skillId": "react-ui-change",
+              "destination": ".agents/skills/react-ui-change/SKILL.md",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 2439,
+                "sha256": "784cde83bc57c868d87ef9f6af8cddc23e942c458762470e0b23ab4463434222",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/react-ui-change/SKILL.md\" \"b/.agents/skills/react-ui-change/SKILL.md\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.agents/skills/react-ui-change/SKILL.md\"\n@@ -0,0 +1,36 @@\n+---\n+name: react-ui-change\n+description: Changes React component presentation or interaction and verifies visible behavior. Use when changing composition, shared UI state, focus, or keyboard interaction.\n+---\n+\n+# React UI Change\n+\n+## Workflow\n+\n+### 1. Xác định hành vi giao diện\n+\n+- Xác định component được render ở luồng bị ảnh hưởng và đọc các caller. Ghi các trạng thái và tương tác mà người dùng cần quan sát được.\n+- Đọc component tương tự để nhận diện quy ước props, composition, design token và primitive accessibility đang dùng.\n+- Nếu UI có trường nhập hoặc dữ liệu từ API, xác định phần việc riêng của vòng đời form hoặc request trước khi thay đổi chúng.\n+\n+### 2. Chọn ranh giới component và state\n+\n+- Đặt state ở component sở hữu hành vi. Khi nhiều component phải đồng bộ, chọn tổ tiên chung phù hợp và truyền giá trị cùng callback theo pattern hiện có.\n+- Tính giá trị suy ra từ props/state trong render khi phù hợp. Kiểm tra key và vị trí component nếu thay đổi cấu trúc có thể reset state đang cần giữ.\n+- Dùng composition khi caller cần ghép các phần giao diện độc lập. Giữ props tương thích với caller ngoài phạm vi task.\n+\n+### 3. Giữ khả năng tương tác\n+\n+- Tái sử dụng control có semantics và hành vi bàn phím phù hợp. Giữ tên truy cập, trạng thái disabled/expanded và thứ tự focus theo tương tác thực tế.\n+- Với UI mở/đóng hoặc thay nội dung, xác định focus đi đâu khi xuất hiện, biến mất hoặc thao tác bị hủy.\n+\n+## Verification\n+\n+- Qua điểm vào thực tế, kiểm tra giao diện ở các trạng thái liên quan và chuyển đổi giữa chúng.\n+- Khi diff chạm tương tác bàn phím hoặc focus, kiểm tra thao tác tương ứng. Nếu UI mở hoặc đóng, kiểm tra focus ban đầu và nơi focus trở về.\n+- Kiểm tra một caller có sẵn nếu thay đổi component dùng chung. Xác nhận state được giữ hoặc reset theo thiết kế.\n+- Báo tình huống đã thử, môi trường và lý do cho ca phù hợp chưa xác minh được.\n+\n+## Ví dụ\n+\n+- Nếu tách nút mở hộp thoại khỏi nội dung hộp thoại, kiểm tra mở bằng bàn phím, focus vào nội dung, đóng và trả focus về nút mở.\n"
+              }
+            },
+            {
+              "skillId": "react-ui-change",
+              "destination": ".agents/skills/react-ui-change/SOURCES.md",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 598,
+                "sha256": "cc98e4974f35026fd9da66580d9a8f75d02e9462a753f32a5249399bda51ed37",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/react-ui-change/SOURCES.md\" \"b/.agents/skills/react-ui-change/SOURCES.md\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.agents/skills/react-ui-change/SOURCES.md\"\n@@ -0,0 +1,9 @@\n+# Nguồn\n+\n+Chỉ dùng khi người dùng yêu cầu đối chiếu nguồn, SHA hoặc license.\n+\n+## Chỉ tham khảo\n+\n+- [React Sharing State](https://react.dev/learn/sharing-state-between-components)\n+- [Quyền sở hữu và chia sẻ UI state](https://github.com/vercel-labs/agent-skills/blob/5a37a6329fbad3666c3207392a6a7c0110e92efb/skills/composition-patterns/rules/state-lift-state.md).\n+- [Composition cho component dùng chung](https://github.com/vercel-labs/agent-skills/blob/5a37a6329fbad3666c3207392a6a7c0110e92efb/skills/composition-patterns/rules/architecture-compound-components.md).\n"
+              }
+            },
+            {
+              "skillId": "react-ui-change",
+              "destination": ".agents/skills/react-ui-change/applicability.json",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 162,
+                "sha256": "1f65c07eae5daab2c9b7e47262d5149219a0df87b7d74bf8708dd85791341145",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/react-ui-change/applicability.json\" \"b/.agents/skills/react-ui-change/applicability.json\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.agents/skills/react-ui-change/applicability.json\"\n@@ -0,0 +1,6 @@\n+{\n+  \"schemaVersion\": 1,\n+  \"scope\": \"boundary\",\n+  \"appliesWhen\": [[{ \"kind\": \"framework\", \"basis\": \"inferred\", \"key\": \"react\" }]],\n+  \"recommendWhen\": \"on_match\"\n+}\n"
+              }
+            }
+          ],
+          "providers": [
+            {
+              "providerId": "codex",
+              "strategy": "canonical_only",
+              "status": "canonical_only",
+              "verification": {
+                "basis": "historical_m3_1",
+                "report": "M3.1-completion-report.md",
+                "paseoVersion": "0.17.5",
+                "binaryVersion": "0.167.0",
+                "transport": "app-server",
+                "loadMode": "auto; read-only; approval never; web search disabled",
+                "cwdScope": "root_and_nested",
+                "note": "M3.1 model gpt-6.1-sol. Historical discovery/load evidence; not a live runtime attestation."
+              },
+              "skills": []
+            },
+            {
+              "providerId": "kiro",
+              "strategy": "kiro_derived",
+              "status": "limited",
+              "rootStatus": "unconfirmed",
+              "verification": {
+                "basis": "historical_m3_1",
+                "report": "M3.1-completion-report.md",
+                "paseoVersion": "0.17.5",
+                "binaryVersion": "2.34.2",
+                "transport": "kiro-cli acp",
+                "loadMode": "kiro_default",
+                "cwdScope": "git_root",
+                "note": "M3.1 model reported auto. Derived .kiro/skills discovery/load verified only with session CWD at root; custom agents and nested sessions are not covered."
+              },
+              "skills": [
+                {
+                  "skillId": "debug-regression",
+                  "status": "deferred",
+                  "reason": "kiro_root_unconfirmed"
+                },
+                {
+                  "skillId": "react-ui-change",
+                  "status": "deferred",
+                  "reason": "kiro_root_unconfirmed"
+                }
+              ]
+            }
+          ],
+          "derivedEntries": [],
+          "diagnostics": [
+            {
+              "code": "kiro_root_unconfirmed",
+              "providerId": "kiro",
+              "skillId": "debug-regression",
+              "paths": []
+            },
+            {
+              "code": "kiro_root_unconfirmed",
+              "providerId": "kiro",
+              "skillId": "react-ui-change",
+              "paths": []
+            }
+          ]
+        },
+        "directoryEffects": [
+          {
+            "destination": ".agents",
+            "status": "create",
+            "mode": 493,
+            "absentAncestor": ".agents"
+          },
+          {
+            "destination": ".agents/skills",
+            "status": "create",
+            "mode": 493,
+            "absentAncestor": ".agents"
+          },
+          {
+            "destination": ".agents/skills/debug-regression",
+            "status": "create",
+            "mode": 493,
+            "absentAncestor": ".agents"
+          },
+          {
+            "destination": ".agents/skills/react-ui-change",
+            "status": "create",
+            "mode": 493,
+            "absentAncestor": ".agents"
+          }
+        ],
+        "readSet": [
+          {
+            "scope": "anchor",
+            "path": "/",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "2",
+              "mode": "16877",
+              "uid": "0",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "anchor",
+            "path": "/private",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "110816932",
+              "mode": "16877",
+              "uid": "0",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "anchor",
+            "path": "/private/tmp",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "110832738",
+              "mode": "17407",
+              "uid": "0",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "anchor",
+            "path": "/private/tmp/m42-spike-43otpswg",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "122675188",
+              "mode": "16832",
+              "uid": "501",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "anchor",
+            "path": "/private/tmp/m42-spike-43otpswg/target",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "122685013",
+              "mode": "16877",
+              "uid": "501",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/nested",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "122685015",
+              "mode": "16877",
+              "uid": "501",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/nested/.agents",
+            "observation": {
+              "state": "absent"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/nested/.cursor",
+            "observation": {
+              "state": "absent"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/nested/.git",
+            "observation": {
+              "state": "absent"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/nested/.kiro",
+            "observation": {
+              "state": "absent"
+            }
+          }
+        ],
+        "sources": [
+          {
+            "destination": ".agents/skills/debug-regression/SKILL.md",
+            "canonicalDestination": ".agents/skills/debug-regression/SKILL.md",
+            "blobSha": "755cf302d9eb0b31838ad52e8ab9a79aa66a5e30",
+            "sizeBytes": 3639,
+            "sha256": "a09e1842c31849c449d678cb87d9c83bb10559f70ad1df7ba943868d8c98fc30",
+            "mode": 420
+          },
+          {
+            "destination": ".agents/skills/debug-regression/applicability.json",
+            "canonicalDestination": ".agents/skills/debug-regression/applicability.json",
+            "blobSha": "738357a179cc2f554459cf54307a5f66c65fa880",
+            "sizeBytes": 67,
+            "sha256": "a0cc6e49e3f53754580914558afd68220af1e4883c8d27d9e6245b3475490b29",
+            "mode": 420
+          },
+          {
+            "destination": ".agents/skills/react-ui-change/SKILL.md",
+            "canonicalDestination": ".agents/skills/react-ui-change/SKILL.md",
+            "blobSha": "1fe2c9a97d3d2c8dd6e9ed4c7af2f35469a0a847",
+            "sizeBytes": 2439,
+            "sha256": "784cde83bc57c868d87ef9f6af8cddc23e942c458762470e0b23ab4463434222",
+            "mode": 420
+          },
+          {
+            "destination": ".agents/skills/react-ui-change/SOURCES.md",
+            "canonicalDestination": ".agents/skills/react-ui-change/SOURCES.md",
+            "blobSha": "6eab09a5bf41d8cea7319e49a1d5f249179d71b2",
+            "sizeBytes": 598,
+            "sha256": "cc98e4974f35026fd9da66580d9a8f75d02e9462a753f32a5249399bda51ed37",
+            "mode": 420
+          },
+          {
+            "destination": ".agents/skills/react-ui-change/applicability.json",
+            "canonicalDestination": ".agents/skills/react-ui-change/applicability.json",
+            "blobSha": "52cd4e9b39c4f64ac86e639d481787ea1d449e1b",
+            "sizeBytes": 162,
+            "sha256": "1f65c07eae5daab2c9b7e47262d5149219a0df87b7d74bf8708dd85791341145",
+            "mode": 420
+          }
+        ],
+        "gitProof": {
+          "status": "unconfirmed"
+        },
+        "policy": {
+          "manifestVersion": 1,
+          "plannerVersion": "m4.2-v1",
+          "adapterVersion": "m3.3-v1",
+          "writerPolicyVersion": "create-only-v1-unavailable",
+          "serializationVersion": "sorted-json-utf8-v1",
+          "observationVersion": "bigint-lstat-v1",
+          "ttlMs": 600000,
+          "maxReceipts": 8,
+          "maxSourceBytes": 8388608,
+          "maxRetainedSourceBytes": 33554432,
+          "callerBinding": "host-installation-instance-only",
+          "writeCapability": "unavailable_m4_2",
+          "previewBudgets": {
+            "files": 2048,
+            "pathBytes": 1024,
+            "pathDepth": 32,
+            "fileBytes": 1048576,
+            "readBytes": 8388608,
+            "filesystemChecks": 32768,
+            "diffBytes": 131072,
+            "responseBytes": 1048576,
+            "deadlineMs": 8000
+          }
+        }
+      },
+      "receipt": {
+        "planDigest": "b16aa7aa0a0b5524d96fc9b1b0659f7a02fc746820e3bc0aee50d224259af8f6",
+        "epoch": "1443064baae508bab436ddc169df15c4e2b64cae98ea2f7cf59c8bb6348c57a2",
+        "viewNonce": "smoke-view",
+        "issuedAt": 1795765366310,
+        "expiresAt": 1795765966310,
+        "previewId": "[redacted]"
+      },
+      "applyEligibility": {
+        "status": "ineligible",
+        "reasons": [
+          "write_capability_unavailable"
+        ]
+      },
+      "plannedEffect": "create_only",
+      "readOnlySnapshotMatch": true,
+      "snapshotBeforeSha256": "fe22e116654ef89d3f604b3deb5949fd60f8646ae0602cf766d56cd39ede51b4",
+      "snapshotAfterSha256": "fe22e116654ef89d3f604b3deb5949fd60f8646ae0602cf766d56cd39ede51b4"
+    },
+    "plain": {
+      "status": "ready",
+      "schemaVersion": 2,
+      "manifest": {
+        "schemaVersion": 1,
+        "hostId": "srv_Sm2YsMgGy-KK",
+        "installationInstanceId": "eaa99016d64788f78d2ddafbd55ac80313bb6cbe36e00ea79fd0f437d157ddcd",
+        "epoch": "1443064baae508bab436ddc169df15c4e2b64cae98ea2f7cf59c8bb6348c57a2",
+        "viewNonce": "smoke-view",
+        "savedCatalogRef": "4044fbf0545f4be1da51dbc10f1327f0a3da0017",
+        "plan": {
+          "status": "ready",
+          "intent": {
+            "schemaVersion": 1,
+            "hostId": "srv_Sm2YsMgGy-KK",
+            "canonicalDirectory": "/private/tmp/m42-spike-43otpswg/plain",
+            "catalogSource": "https://github.com/anmeo2204/project-skills",
+            "catalogCommitSha": "4044fbf0545f4be1da51dbc10f1327f0a3da0017",
+            "settingsRevision": "420eba798a50f0f8fb1ba5e7e815fafc31d6fd4b2354ebf12b4f6a2717a67fe9",
+            "selectedSkillIds": [
+              "debug-regression",
+              "react-ui-change"
+            ],
+            "targetProviderIds": [
+              "codex",
+              "kiro"
+            ],
+            "recommendationRequestId": "m42-smoke"
+          },
+          "entries": [
+            {
+              "skillId": "debug-regression",
+              "destination": ".agents/skills/debug-regression/SKILL.md",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 3639,
+                "sha256": "a09e1842c31849c449d678cb87d9c83bb10559f70ad1df7ba943868d8c98fc30",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/debug-regression/SKILL.md\" \"b/.agents/skills/debug-regression/SKILL.md\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.agents/skills/debug-regression/SKILL.md\"\n@@ -0,0 +1,40 @@\n+---\n+name: debug-regression\n+description: Reproduces a regression, verifies its cause, and makes and validates a minimal fix. Use when previously working behavior changes unexpectedly or an existing check starts failing.\n+---\n+\n+# Debug Regression\n+\n+## Workflow\n+\n+### 1. Tái hiện lỗi\n+\n+- Đọc hướng dẫn và test policy của dự án để chọn môi trường và cách chạy phù hợp.\n+- Xác định hành vi mong đợi từ contract, test hiện có hoặc phiên bản đã chạy đúng. Ghi hành vi thực tế và dấu hiệu nhận biết lỗi.\n+- Tìm điểm vào bị ảnh hưởng và chọn cách tái hiện nhỏ nhất còn quan sát được lỗi. Ghi đầu vào, trạng thái ban đầu, cấu hình liên quan và các bước chạy.\n+- Chạy trước khi sửa để xác nhận lỗi phù hợp với báo cáo. Nếu lỗi chập chờn, ghi điều kiện và tần suất quan sát được. Nếu chưa tái hiện được, ghi những gì đã thử và tiếp tục thu thập bằng chứng.\n+\n+### 2. Xác minh nguyên nhân\n+\n+- Theo luồng từ điểm vào đến nơi hành vi bắt đầu sai lệch. Dùng kết quả test, log, trace hoặc giá trị quan sát được để khoanh vùng.\n+- Nêu giả thuyết cụ thể và kết quả dự đoán. Kiểm tra bằng cách cô lập điều kiện nghi vấn, thay đổi một yếu tố mỗi lần hoặc đối chiếu với phiên bản đã chạy đúng trong điều kiện tương đương.\n+- Ghi quan sát nối nguyên nhân với triệu chứng. Chỉ chuyển sang bước sửa khi bằng chứng đủ xác nhận nguyên nhân. Nếu chưa đủ, dừng trước bước sửa, tiếp tục điều tra nếu còn cách kiểm tra và ghi rõ phần chưa xác minh.\n+\n+### 3. Sửa tối thiểu\n+\n+- Sửa tại nơi phát sinh sai lệch, dùng cách xử lý hiện có nếu phù hợp. Giữ contract của các trường hợp hợp lệ và giới hạn diff trong phạm vi lỗi đã xác minh.\n+- Tái sử dụng kiểm tra hiện có nếu nó bắt được lỗi. Khi test policy cho phép và còn thiếu bao phủ, thêm hoặc điều chỉnh một test tập trung xác nhận hành vi mong đợi. Dùng test đó để kiểm tra trước và sau bản sửa khi khả thi.\n+- Gỡ các thay đổi tạm dùng để chẩn đoán trước khi kiểm tra lần cuối.\n+\n+## Verification\n+\n+- Chạy lại ca tái hiện với cùng điều kiện và xác nhận kết quả đáp ứng contract. Với lỗi chập chờn, lặp lại trong điều kiện từng kích hoạt lỗi và ghi số lần chạy cùng kết quả.\n+- Chạy các kiểm tra liên quan theo test policy của dự án, gồm luồng hợp lệ và các trường hợp biên chịu ảnh hưởng trực tiếp của bản sửa.\n+- Review diff để xác nhận phạm vi sửa và kiểm tra khớp với nguyên nhân đã xác minh.\n+- Báo cách tái hiện, bằng chứng nguyên nhân, phạm vi sửa, lệnh hoặc thao tác kiểm tra cùng kết quả trước và sau. Ghi rõ phần chưa kiểm tra được và lý do.\n+\n+## Ví dụ\n+\n+- Một bộ lọc trả về toàn bộ kết quả khi nhận giá trị `0` hợp lệ. Tái hiện qua điểm vào đang lỗi và đối chiếu với ca bỏ trống bộ lọc.\n+- Kiểm tra tại bước chuẩn hóa đầu vào xem `0` có bị chuyển thành giá trị biểu thị bộ lọc vắng mặt hay không.\n+- Nếu xác nhận bước đó làm mất giá trị `0`, sửa quy tắc nhận diện bộ lọc vắng mặt rồi kiểm tra lại cả hai ca.\n"
+              }
+            },
+            {
+              "skillId": "debug-regression",
+              "destination": ".agents/skills/debug-regression/applicability.json",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 67,
+                "sha256": "a0cc6e49e3f53754580914558afd68220af1e4883c8d27d9e6245b3475490b29",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/debug-regression/applicability.json\" \"b/.agents/skills/debug-regression/applicability.json\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.agents/skills/debug-regression/applicability.json\"\n@@ -0,0 +1,1 @@\n+{ \"schemaVersion\": 1, \"scope\": \"project\", \"level\": \"recommended\" }\n"
+              }
+            },
+            {
+              "skillId": "react-ui-change",
+              "destination": ".agents/skills/react-ui-change/SKILL.md",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 2439,
+                "sha256": "784cde83bc57c868d87ef9f6af8cddc23e942c458762470e0b23ab4463434222",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/react-ui-change/SKILL.md\" \"b/.agents/skills/react-ui-change/SKILL.md\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.agents/skills/react-ui-change/SKILL.md\"\n@@ -0,0 +1,36 @@\n+---\n+name: react-ui-change\n+description: Changes React component presentation or interaction and verifies visible behavior. Use when changing composition, shared UI state, focus, or keyboard interaction.\n+---\n+\n+# React UI Change\n+\n+## Workflow\n+\n+### 1. Xác định hành vi giao diện\n+\n+- Xác định component được render ở luồng bị ảnh hưởng và đọc các caller. Ghi các trạng thái và tương tác mà người dùng cần quan sát được.\n+- Đọc component tương tự để nhận diện quy ước props, composition, design token và primitive accessibility đang dùng.\n+- Nếu UI có trường nhập hoặc dữ liệu từ API, xác định phần việc riêng của vòng đời form hoặc request trước khi thay đổi chúng.\n+\n+### 2. Chọn ranh giới component và state\n+\n+- Đặt state ở component sở hữu hành vi. Khi nhiều component phải đồng bộ, chọn tổ tiên chung phù hợp và truyền giá trị cùng callback theo pattern hiện có.\n+- Tính giá trị suy ra từ props/state trong render khi phù hợp. Kiểm tra key và vị trí component nếu thay đổi cấu trúc có thể reset state đang cần giữ.\n+- Dùng composition khi caller cần ghép các phần giao diện độc lập. Giữ props tương thích với caller ngoài phạm vi task.\n+\n+### 3. Giữ khả năng tương tác\n+\n+- Tái sử dụng control có semantics và hành vi bàn phím phù hợp. Giữ tên truy cập, trạng thái disabled/expanded và thứ tự focus theo tương tác thực tế.\n+- Với UI mở/đóng hoặc thay nội dung, xác định focus đi đâu khi xuất hiện, biến mất hoặc thao tác bị hủy.\n+\n+## Verification\n+\n+- Qua điểm vào thực tế, kiểm tra giao diện ở các trạng thái liên quan và chuyển đổi giữa chúng.\n+- Khi diff chạm tương tác bàn phím hoặc focus, kiểm tra thao tác tương ứng. Nếu UI mở hoặc đóng, kiểm tra focus ban đầu và nơi focus trở về.\n+- Kiểm tra một caller có sẵn nếu thay đổi component dùng chung. Xác nhận state được giữ hoặc reset theo thiết kế.\n+- Báo tình huống đã thử, môi trường và lý do cho ca phù hợp chưa xác minh được.\n+\n+## Ví dụ\n+\n+- Nếu tách nút mở hộp thoại khỏi nội dung hộp thoại, kiểm tra mở bằng bàn phím, focus vào nội dung, đóng và trả focus về nút mở.\n"
+              }
+            },
+            {
+              "skillId": "react-ui-change",
+              "destination": ".agents/skills/react-ui-change/SOURCES.md",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 598,
+                "sha256": "cc98e4974f35026fd9da66580d9a8f75d02e9462a753f32a5249399bda51ed37",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/react-ui-change/SOURCES.md\" \"b/.agents/skills/react-ui-change/SOURCES.md\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.agents/skills/react-ui-change/SOURCES.md\"\n@@ -0,0 +1,9 @@\n+# Nguồn\n+\n+Chỉ dùng khi người dùng yêu cầu đối chiếu nguồn, SHA hoặc license.\n+\n+## Chỉ tham khảo\n+\n+- [React Sharing State](https://react.dev/learn/sharing-state-between-components)\n+- [Quyền sở hữu và chia sẻ UI state](https://github.com/vercel-labs/agent-skills/blob/5a37a6329fbad3666c3207392a6a7c0110e92efb/skills/composition-patterns/rules/state-lift-state.md).\n+- [Composition cho component dùng chung](https://github.com/vercel-labs/agent-skills/blob/5a37a6329fbad3666c3207392a6a7c0110e92efb/skills/composition-patterns/rules/architecture-compound-components.md).\n"
+              }
+            },
+            {
+              "skillId": "react-ui-change",
+              "destination": ".agents/skills/react-ui-change/applicability.json",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 162,
+                "sha256": "1f65c07eae5daab2c9b7e47262d5149219a0df87b7d74bf8708dd85791341145",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/react-ui-change/applicability.json\" \"b/.agents/skills/react-ui-change/applicability.json\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.agents/skills/react-ui-change/applicability.json\"\n@@ -0,0 +1,6 @@\n+{\n+  \"schemaVersion\": 1,\n+  \"scope\": \"boundary\",\n+  \"appliesWhen\": [[{ \"kind\": \"framework\", \"basis\": \"inferred\", \"key\": \"react\" }]],\n+  \"recommendWhen\": \"on_match\"\n+}\n"
+              }
+            }
+          ],
+          "providers": [
+            {
+              "providerId": "codex",
+              "strategy": "canonical_only",
+              "status": "canonical_only",
+              "verification": {
+                "basis": "historical_m3_1",
+                "report": "M3.1-completion-report.md",
+                "paseoVersion": "0.17.5",
+                "binaryVersion": "0.167.0",
+                "transport": "app-server",
+                "loadMode": "auto; read-only; approval never; web search disabled",
+                "cwdScope": "root_and_nested",
+                "note": "M3.1 model gpt-6.1-sol. Historical discovery/load evidence; not a live runtime attestation."
+              },
+              "skills": []
+            },
+            {
+              "providerId": "kiro",
+              "strategy": "kiro_derived",
+              "status": "limited",
+              "rootStatus": "unconfirmed",
+              "verification": {
+                "basis": "historical_m3_1",
+                "report": "M3.1-completion-report.md",
+                "paseoVersion": "0.17.5",
+                "binaryVersion": "2.34.2",
+                "transport": "kiro-cli acp",
+                "loadMode": "kiro_default",
+                "cwdScope": "git_root",
+                "note": "M3.1 model reported auto. Derived .kiro/skills discovery/load verified only with session CWD at root; custom agents and nested sessions are not covered."
+              },
+              "skills": [
+                {
+                  "skillId": "debug-regression",
+                  "status": "deferred",
+                  "reason": "kiro_root_unconfirmed"
+                },
+                {
+                  "skillId": "react-ui-change",
+                  "status": "deferred",
+                  "reason": "kiro_root_unconfirmed"
+                }
+              ]
+            }
+          ],
+          "derivedEntries": [],
+          "diagnostics": [
+            {
+              "code": "kiro_root_unconfirmed",
+              "providerId": "kiro",
+              "skillId": "debug-regression",
+              "paths": []
+            },
+            {
+              "code": "kiro_root_unconfirmed",
+              "providerId": "kiro",
+              "skillId": "react-ui-change",
+              "paths": []
+            }
+          ]
+        },
+        "directoryEffects": [
+          {
+            "destination": ".agents",
+            "status": "create",
+            "mode": 493,
+            "absentAncestor": ".agents"
+          },
+          {
+            "destination": ".agents/skills",
+            "status": "create",
+            "mode": 493,
+            "absentAncestor": ".agents"
+          },
+          {
+            "destination": ".agents/skills/debug-regression",
+            "status": "create",
+            "mode": 493,
+            "absentAncestor": ".agents"
+          },
+          {
+            "destination": ".agents/skills/react-ui-change",
+            "status": "create",
+            "mode": 493,
+            "absentAncestor": ".agents"
+          }
+        ],
+        "readSet": [
+          {
+            "scope": "anchor",
+            "path": "/",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "2",
+              "mode": "16877",
+              "uid": "0",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "anchor",
+            "path": "/private",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "110816932",
+              "mode": "16877",
+              "uid": "0",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "anchor",
+            "path": "/private/tmp",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "110832738",
+              "mode": "17407",
+              "uid": "0",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "anchor",
+            "path": "/private/tmp/m42-spike-43otpswg",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "122675188",
+              "mode": "16832",
+              "uid": "501",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/plain",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "122685014",
+              "mode": "16877",
+              "uid": "501",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/plain/.agents",
+            "observation": {
+              "state": "absent"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/plain/.cursor",
+            "observation": {
+              "state": "absent"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/plain/.git",
+            "observation": {
+              "state": "absent"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/plain/.kiro",
+            "observation": {
+              "state": "absent"
+            }
+          }
+        ],
+        "sources": [
+          {
+            "destination": ".agents/skills/debug-regression/SKILL.md",
+            "canonicalDestination": ".agents/skills/debug-regression/SKILL.md",
+            "blobSha": "755cf302d9eb0b31838ad52e8ab9a79aa66a5e30",
+            "sizeBytes": 3639,
+            "sha256": "a09e1842c31849c449d678cb87d9c83bb10559f70ad1df7ba943868d8c98fc30",
+            "mode": 420
+          },
+          {
+            "destination": ".agents/skills/debug-regression/applicability.json",
+            "canonicalDestination": ".agents/skills/debug-regression/applicability.json",
+            "blobSha": "738357a179cc2f554459cf54307a5f66c65fa880",
+            "sizeBytes": 67,
+            "sha256": "a0cc6e49e3f53754580914558afd68220af1e4883c8d27d9e6245b3475490b29",
+            "mode": 420
+          },
+          {
+            "destination": ".agents/skills/react-ui-change/SKILL.md",
+            "canonicalDestination": ".agents/skills/react-ui-change/SKILL.md",
+            "blobSha": "1fe2c9a97d3d2c8dd6e9ed4c7af2f35469a0a847",
+            "sizeBytes": 2439,
+            "sha256": "784cde83bc57c868d87ef9f6af8cddc23e942c458762470e0b23ab4463434222",
+            "mode": 420
+          },
+          {
+            "destination": ".agents/skills/react-ui-change/SOURCES.md",
+            "canonicalDestination": ".agents/skills/react-ui-change/SOURCES.md",
+            "blobSha": "6eab09a5bf41d8cea7319e49a1d5f249179d71b2",
+            "sizeBytes": 598,
+            "sha256": "cc98e4974f35026fd9da66580d9a8f75d02e9462a753f32a5249399bda51ed37",
+            "mode": 420
+          },
+          {
+            "destination": ".agents/skills/react-ui-change/applicability.json",
+            "canonicalDestination": ".agents/skills/react-ui-change/applicability.json",
+            "blobSha": "52cd4e9b39c4f64ac86e639d481787ea1d449e1b",
+            "sizeBytes": 162,
+            "sha256": "1f65c07eae5daab2c9b7e47262d5149219a0df87b7d74bf8708dd85791341145",
+            "mode": 420
+          }
+        ],
+        "gitProof": {
+          "status": "unconfirmed"
+        },
+        "policy": {
+          "manifestVersion": 1,
+          "plannerVersion": "m4.2-v1",
+          "adapterVersion": "m3.3-v1",
+          "writerPolicyVersion": "create-only-v1-unavailable",
+          "serializationVersion": "sorted-json-utf8-v1",
+          "observationVersion": "bigint-lstat-v1",
+          "ttlMs": 600000,
+          "maxReceipts": 8,
+          "maxSourceBytes": 8388608,
+          "maxRetainedSourceBytes": 33554432,
+          "callerBinding": "host-installation-instance-only",
+          "writeCapability": "unavailable_m4_2",
+          "previewBudgets": {
+            "files": 2048,
+            "pathBytes": 1024,
+            "pathDepth": 32,
+            "fileBytes": 1048576,
+            "readBytes": 8388608,
+            "filesystemChecks": 32768,
+            "diffBytes": 131072,
+            "responseBytes": 1048576,
+            "deadlineMs": 8000
+          }
+        }
+      },
+      "receipt": {
+        "planDigest": "ca5f87955434b10185eaf8a5eb1494b94f2ea815cf5314749b9ab7aa55276a7f",
+        "epoch": "1443064baae508bab436ddc169df15c4e2b64cae98ea2f7cf59c8bb6348c57a2",
+        "viewNonce": "smoke-view",
+        "issuedAt": 1795765366316,
+        "expiresAt": 1795765966316,
+        "previewId": "[redacted]"
+      },
+      "applyEligibility": {
+        "status": "ineligible",
+        "reasons": [
+          "write_capability_unavailable"
+        ]
+      },
+      "plannedEffect": "create_only",
+      "readOnlySnapshotMatch": true,
+      "snapshotBeforeSha256": "fe22e116654ef89d3f604b3deb5949fd60f8646ae0602cf766d56cd39ede51b4",
+      "snapshotAfterSha256": "fe22e116654ef89d3f604b3deb5949fd60f8646ae0602cf766d56cd39ede51b4"
+    },
+    "conflict": {
+      "status": "ready",
+      "schemaVersion": 2,
+      "manifest": {
+        "schemaVersion": 1,
+        "hostId": "srv_Sm2YsMgGy-KK",
+        "installationInstanceId": "eaa99016d64788f78d2ddafbd55ac80313bb6cbe36e00ea79fd0f437d157ddcd",
+        "epoch": "1443064baae508bab436ddc169df15c4e2b64cae98ea2f7cf59c8bb6348c57a2",
+        "viewNonce": "smoke-view",
+        "savedCatalogRef": "4044fbf0545f4be1da51dbc10f1327f0a3da0017",
+        "plan": {
+          "status": "ready",
+          "intent": {
+            "schemaVersion": 1,
+            "hostId": "srv_Sm2YsMgGy-KK",
+            "canonicalDirectory": "/private/tmp/m42-spike-43otpswg/target",
+            "catalogSource": "https://github.com/anmeo2204/project-skills",
+            "catalogCommitSha": "4044fbf0545f4be1da51dbc10f1327f0a3da0017",
+            "settingsRevision": "420eba798a50f0f8fb1ba5e7e815fafc31d6fd4b2354ebf12b4f6a2717a67fe9",
+            "selectedSkillIds": [
+              "debug-regression",
+              "react-ui-change"
+            ],
+            "targetProviderIds": [
+              "codex",
+              "kiro"
+            ],
+            "recommendationRequestId": "m42-smoke"
+          },
+          "entries": [
+            {
+              "skillId": "debug-regression",
+              "destination": ".agents/skills/debug-regression/SKILL.md",
+              "status": "conflict",
+              "proposed": {
+                "sizeBytes": 3639,
+                "sha256": "a09e1842c31849c449d678cb87d9c83bb10559f70ad1df7ba943868d8c98fc30",
+                "mode": 420
+              },
+              "existing": {
+                "sizeBytes": 16,
+                "sha256": "6dd8221aec227284d5c6f21c64753cc08da6e0cb7e6619aa376b0ab4edca9d83",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/debug-regression/SKILL.md\" \"b/.agents/skills/debug-regression/SKILL.md\"\n--- \"a/.agents/skills/debug-regression/SKILL.md\"\n+++ \"b/.agents/skills/debug-regression/SKILL.md\"\n@@ -1,1 +1,40 @@\n-foreign content\n+---\n+name: debug-regression\n+description: Reproduces a regression, verifies its cause, and makes and validates a minimal fix. Use when previously working behavior changes unexpectedly or an existing check starts failing.\n+---\n+\n+# Debug Regression\n+\n+## Workflow\n+\n+### 1. Tái hiện lỗi\n+\n+- Đọc hướng dẫn và test policy của dự án để chọn môi trường và cách chạy phù hợp.\n+- Xác định hành vi mong đợi từ contract, test hiện có hoặc phiên bản đã chạy đúng. Ghi hành vi thực tế và dấu hiệu nhận biết lỗi.\n+- Tìm điểm vào bị ảnh hưởng và chọn cách tái hiện nhỏ nhất còn quan sát được lỗi. Ghi đầu vào, trạng thái ban đầu, cấu hình liên quan và các bước chạy.\n+- Chạy trước khi sửa để xác nhận lỗi phù hợp với báo cáo. Nếu lỗi chập chờn, ghi điều kiện và tần suất quan sát được. Nếu chưa tái hiện được, ghi những gì đã thử và tiếp tục thu thập bằng chứng.\n+\n+### 2. Xác minh nguyên nhân\n+\n+- Theo luồng từ điểm vào đến nơi hành vi bắt đầu sai lệch. Dùng kết quả test, log, trace hoặc giá trị quan sát được để khoanh vùng.\n+- Nêu giả thuyết cụ thể và kết quả dự đoán. Kiểm tra bằng cách cô lập điều kiện nghi vấn, thay đổi một yếu tố mỗi lần hoặc đối chiếu với phiên bản đã chạy đúng trong điều kiện tương đương.\n+- Ghi quan sát nối nguyên nhân với triệu chứng. Chỉ chuyển sang bước sửa khi bằng chứng đủ xác nhận nguyên nhân. Nếu chưa đủ, dừng trước bước sửa, tiếp tục điều tra nếu còn cách kiểm tra và ghi rõ phần chưa xác minh.\n+\n+### 3. Sửa tối thiểu\n+\n+- Sửa tại nơi phát sinh sai lệch, dùng cách xử lý hiện có nếu phù hợp. Giữ contract của các trường hợp hợp lệ và giới hạn diff trong phạm vi lỗi đã xác minh.\n+- Tái sử dụng kiểm tra hiện có nếu nó bắt được lỗi. Khi test policy cho phép và còn thiếu bao phủ, thêm hoặc điều chỉnh một test tập trung xác nhận hành vi mong đợi. Dùng test đó để kiểm tra trước và sau bản sửa khi khả thi.\n+- Gỡ các thay đổi tạm dùng để chẩn đoán trước khi kiểm tra lần cuối.\n+\n+## Verification\n+\n+- Chạy lại ca tái hiện với cùng điều kiện và xác nhận kết quả đáp ứng contract. Với lỗi chập chờn, lặp lại trong điều kiện từng kích hoạt lỗi và ghi số lần chạy cùng kết quả.\n+- Chạy các kiểm tra liên quan theo test policy của dự án, gồm luồng hợp lệ và các trường hợp biên chịu ảnh hưởng trực tiếp của bản sửa.\n+- Review diff để xác nhận phạm vi sửa và kiểm tra khớp với nguyên nhân đã xác minh.\n+- Báo cách tái hiện, bằng chứng nguyên nhân, phạm vi sửa, lệnh hoặc thao tác kiểm tra cùng kết quả trước và sau. Ghi rõ phần chưa kiểm tra được và lý do.\n+\n+## Ví dụ\n+\n+- Một bộ lọc trả về toàn bộ kết quả khi nhận giá trị `0` hợp lệ. Tái hiện qua điểm vào đang lỗi và đối chiếu với ca bỏ trống bộ lọc.\n+- Kiểm tra tại bước chuẩn hóa đầu vào xem `0` có bị chuyển thành giá trị biểu thị bộ lọc vắng mặt hay không.\n+- Nếu xác nhận bước đó làm mất giá trị `0`, sửa quy tắc nhận diện bộ lọc vắng mặt rồi kiểm tra lại cả hai ca.\n"
+              }
+            },
+            {
+              "skillId": "debug-regression",
+              "destination": ".agents/skills/debug-regression/applicability.json",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 67,
+                "sha256": "a0cc6e49e3f53754580914558afd68220af1e4883c8d27d9e6245b3475490b29",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/debug-regression/applicability.json\" \"b/.agents/skills/debug-regression/applicability.json\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.agents/skills/debug-regression/applicability.json\"\n@@ -0,0 +1,1 @@\n+{ \"schemaVersion\": 1, \"scope\": \"project\", \"level\": \"recommended\" }\n"
+              }
+            },
+            {
+              "skillId": "react-ui-change",
+              "destination": ".agents/skills/react-ui-change/SKILL.md",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 2439,
+                "sha256": "784cde83bc57c868d87ef9f6af8cddc23e942c458762470e0b23ab4463434222",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/react-ui-change/SKILL.md\" \"b/.agents/skills/react-ui-change/SKILL.md\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.agents/skills/react-ui-change/SKILL.md\"\n@@ -0,0 +1,36 @@\n+---\n+name: react-ui-change\n+description: Changes React component presentation or interaction and verifies visible behavior. Use when changing composition, shared UI state, focus, or keyboard interaction.\n+---\n+\n+# React UI Change\n+\n+## Workflow\n+\n+### 1. Xác định hành vi giao diện\n+\n+- Xác định component được render ở luồng bị ảnh hưởng và đọc các caller. Ghi các trạng thái và tương tác mà người dùng cần quan sát được.\n+- Đọc component tương tự để nhận diện quy ước props, composition, design token và primitive accessibility đang dùng.\n+- Nếu UI có trường nhập hoặc dữ liệu từ API, xác định phần việc riêng của vòng đời form hoặc request trước khi thay đổi chúng.\n+\n+### 2. Chọn ranh giới component và state\n+\n+- Đặt state ở component sở hữu hành vi. Khi nhiều component phải đồng bộ, chọn tổ tiên chung phù hợp và truyền giá trị cùng callback theo pattern hiện có.\n+- Tính giá trị suy ra từ props/state trong render khi phù hợp. Kiểm tra key và vị trí component nếu thay đổi cấu trúc có thể reset state đang cần giữ.\n+- Dùng composition khi caller cần ghép các phần giao diện độc lập. Giữ props tương thích với caller ngoài phạm vi task.\n+\n+### 3. Giữ khả năng tương tác\n+\n+- Tái sử dụng control có semantics và hành vi bàn phím phù hợp. Giữ tên truy cập, trạng thái disabled/expanded và thứ tự focus theo tương tác thực tế.\n+- Với UI mở/đóng hoặc thay nội dung, xác định focus đi đâu khi xuất hiện, biến mất hoặc thao tác bị hủy.\n+\n+## Verification\n+\n+- Qua điểm vào thực tế, kiểm tra giao diện ở các trạng thái liên quan và chuyển đổi giữa chúng.\n+- Khi diff chạm tương tác bàn phím hoặc focus, kiểm tra thao tác tương ứng. Nếu UI mở hoặc đóng, kiểm tra focus ban đầu và nơi focus trở về.\n+- Kiểm tra một caller có sẵn nếu thay đổi component dùng chung. Xác nhận state được giữ hoặc reset theo thiết kế.\n+- Báo tình huống đã thử, môi trường và lý do cho ca phù hợp chưa xác minh được.\n+\n+## Ví dụ\n+\n+- Nếu tách nút mở hộp thoại khỏi nội dung hộp thoại, kiểm tra mở bằng bàn phím, focus vào nội dung, đóng và trả focus về nút mở.\n"
+              }
+            },
+            {
+              "skillId": "react-ui-change",
+              "destination": ".agents/skills/react-ui-change/SOURCES.md",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 598,
+                "sha256": "cc98e4974f35026fd9da66580d9a8f75d02e9462a753f32a5249399bda51ed37",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/react-ui-change/SOURCES.md\" \"b/.agents/skills/react-ui-change/SOURCES.md\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.agents/skills/react-ui-change/SOURCES.md\"\n@@ -0,0 +1,9 @@\n+# Nguồn\n+\n+Chỉ dùng khi người dùng yêu cầu đối chiếu nguồn, SHA hoặc license.\n+\n+## Chỉ tham khảo\n+\n+- [React Sharing State](https://react.dev/learn/sharing-state-between-components)\n+- [Quyền sở hữu và chia sẻ UI state](https://github.com/vercel-labs/agent-skills/blob/5a37a6329fbad3666c3207392a6a7c0110e92efb/skills/composition-patterns/rules/state-lift-state.md).\n+- [Composition cho component dùng chung](https://github.com/vercel-labs/agent-skills/blob/5a37a6329fbad3666c3207392a6a7c0110e92efb/skills/composition-patterns/rules/architecture-compound-components.md).\n"
+              }
+            },
+            {
+              "skillId": "react-ui-change",
+              "destination": ".agents/skills/react-ui-change/applicability.json",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 162,
+                "sha256": "1f65c07eae5daab2c9b7e47262d5149219a0df87b7d74bf8708dd85791341145",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/react-ui-change/applicability.json\" \"b/.agents/skills/react-ui-change/applicability.json\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.agents/skills/react-ui-change/applicability.json\"\n@@ -0,0 +1,6 @@\n+{\n+  \"schemaVersion\": 1,\n+  \"scope\": \"boundary\",\n+  \"appliesWhen\": [[{ \"kind\": \"framework\", \"basis\": \"inferred\", \"key\": \"react\" }]],\n+  \"recommendWhen\": \"on_match\"\n+}\n"
+              }
+            }
+          ],
+          "providers": [
+            {
+              "providerId": "codex",
+              "strategy": "canonical_only",
+              "status": "canonical_only",
+              "verification": {
+                "basis": "historical_m3_1",
+                "report": "M3.1-completion-report.md",
+                "paseoVersion": "0.17.5",
+                "binaryVersion": "0.167.0",
+                "transport": "app-server",
+                "loadMode": "auto; read-only; approval never; web search disabled",
+                "cwdScope": "root_and_nested",
+                "note": "M3.1 model gpt-6.1-sol. Historical discovery/load evidence; not a live runtime attestation."
+              },
+              "skills": []
+            },
+            {
+              "providerId": "kiro",
+              "strategy": "kiro_derived",
+              "status": "partial",
+              "rootStatus": "git_root",
+              "verification": {
+                "basis": "historical_m3_1",
+                "report": "M3.1-completion-report.md",
+                "paseoVersion": "0.17.5",
+                "binaryVersion": "2.34.2",
+                "transport": "kiro-cli acp",
+                "loadMode": "kiro_default",
+                "cwdScope": "git_root",
+                "note": "M3.1 model reported auto. Derived .kiro/skills discovery/load verified only with session CWD at root; custom agents and nested sessions are not covered."
+              },
+              "skills": [
+                {
+                  "skillId": "debug-regression",
+                  "status": "deferred",
+                  "reason": "canonical_conflict"
+                },
+                {
+                  "skillId": "react-ui-change",
+                  "status": "planned"
+                }
+              ]
+            }
+          ],
+          "derivedEntries": [
+            {
+              "skillId": "react-ui-change",
+              "destination": ".kiro/skills/react-ui-change/SKILL.md",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 2439,
+                "sha256": "784cde83bc57c868d87ef9f6af8cddc23e942c458762470e0b23ab4463434222",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.kiro/skills/react-ui-change/SKILL.md\" \"b/.kiro/skills/react-ui-change/SKILL.md\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.kiro/skills/react-ui-change/SKILL.md\"\n@@ -0,0 +1,36 @@\n+---\n+name: react-ui-change\n+description: Changes React component presentation or interaction and verifies visible behavior. Use when changing composition, shared UI state, focus, or keyboard interaction.\n+---\n+\n+# React UI Change\n+\n+## Workflow\n+\n+### 1. Xác định hành vi giao diện\n+\n+- Xác định component được render ở luồng bị ảnh hưởng và đọc các caller. Ghi các trạng thái và tương tác mà người dùng cần quan sát được.\n+- Đọc component tương tự để nhận diện quy ước props, composition, design token và primitive accessibility đang dùng.\n+- Nếu UI có trường nhập hoặc dữ liệu từ API, xác định phần việc riêng của vòng đời form hoặc request trước khi thay đổi chúng.\n+\n+### 2. Chọn ranh giới component và state\n+\n+- Đặt state ở component sở hữu hành vi. Khi nhiều component phải đồng bộ, chọn tổ tiên chung phù hợp và truyền giá trị cùng callback theo pattern hiện có.\n+- Tính giá trị suy ra từ props/state trong render khi phù hợp. Kiểm tra key và vị trí component nếu thay đổi cấu trúc có thể reset state đang cần giữ.\n+- Dùng composition khi caller cần ghép các phần giao diện độc lập. Giữ props tương thích với caller ngoài phạm vi task.\n+\n+### 3. Giữ khả năng tương tác\n+\n+- Tái sử dụng control có semantics và hành vi bàn phím phù hợp. Giữ tên truy cập, trạng thái disabled/expanded và thứ tự focus theo tương tác thực tế.\n+- Với UI mở/đóng hoặc thay nội dung, xác định focus đi đâu khi xuất hiện, biến mất hoặc thao tác bị hủy.\n+\n+## Verification\n+\n+- Qua điểm vào thực tế, kiểm tra giao diện ở các trạng thái liên quan và chuyển đổi giữa chúng.\n+- Khi diff chạm tương tác bàn phím hoặc focus, kiểm tra thao tác tương ứng. Nếu UI mở hoặc đóng, kiểm tra focus ban đầu và nơi focus trở về.\n+- Kiểm tra một caller có sẵn nếu thay đổi component dùng chung. Xác nhận state được giữ hoặc reset theo thiết kế.\n+- Báo tình huống đã thử, môi trường và lý do cho ca phù hợp chưa xác minh được.\n+\n+## Ví dụ\n+\n+- Nếu tách nút mở hộp thoại khỏi nội dung hộp thoại, kiểm tra mở bằng bàn phím, focus vào nội dung, đóng và trả focus về nút mở.\n"
+              },
+              "providerId": "kiro",
+              "canonicalDestination": ".agents/skills/react-ui-change/SKILL.md"
+            },
+            {
+              "skillId": "react-ui-change",
+              "destination": ".kiro/skills/react-ui-change/SOURCES.md",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 598,
+                "sha256": "cc98e4974f35026fd9da66580d9a8f75d02e9462a753f32a5249399bda51ed37",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.kiro/skills/react-ui-change/SOURCES.md\" \"b/.kiro/skills/react-ui-change/SOURCES.md\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.kiro/skills/react-ui-change/SOURCES.md\"\n@@ -0,0 +1,9 @@\n+# Nguồn\n+\n+Chỉ dùng khi người dùng yêu cầu đối chiếu nguồn, SHA hoặc license.\n+\n+## Chỉ tham khảo\n+\n+- [React Sharing State](https://react.dev/learn/sharing-state-between-components)\n+- [Quyền sở hữu và chia sẻ UI state](https://github.com/vercel-labs/agent-skills/blob/5a37a6329fbad3666c3207392a6a7c0110e92efb/skills/composition-patterns/rules/state-lift-state.md).\n+- [Composition cho component dùng chung](https://github.com/vercel-labs/agent-skills/blob/5a37a6329fbad3666c3207392a6a7c0110e92efb/skills/composition-patterns/rules/architecture-compound-components.md).\n"
+              },
+              "providerId": "kiro",
+              "canonicalDestination": ".agents/skills/react-ui-change/SOURCES.md"
+            },
+            {
+              "skillId": "react-ui-change",
+              "destination": ".kiro/skills/react-ui-change/applicability.json",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 162,
+                "sha256": "1f65c07eae5daab2c9b7e47262d5149219a0df87b7d74bf8708dd85791341145",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.kiro/skills/react-ui-change/applicability.json\" \"b/.kiro/skills/react-ui-change/applicability.json\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.kiro/skills/react-ui-change/applicability.json\"\n@@ -0,0 +1,6 @@\n+{\n+  \"schemaVersion\": 1,\n+  \"scope\": \"boundary\",\n+  \"appliesWhen\": [[{ \"kind\": \"framework\", \"basis\": \"inferred\", \"key\": \"react\" }]],\n+  \"recommendWhen\": \"on_match\"\n+}\n"
+              },
+              "providerId": "kiro",
+              "canonicalDestination": ".agents/skills/react-ui-change/applicability.json"
+            }
+          ],
+          "diagnostics": [
+            {
+              "code": "canonical_conflict",
+              "providerId": "kiro",
+              "skillId": "debug-regression",
+              "paths": [
+                ".agents/skills/debug-regression/SKILL.md"
+              ]
+            }
+          ]
+        },
+        "directoryEffects": [
+          {
+            "destination": ".kiro",
+            "status": "create",
+            "mode": 493,
+            "absentAncestor": ".kiro"
+          },
+          {
+            "destination": ".kiro/skills",
+            "status": "create",
+            "mode": 493,
+            "absentAncestor": ".kiro"
+          },
+          {
+            "destination": ".agents/skills/react-ui-change",
+            "status": "create",
+            "mode": 493,
+            "absentAncestor": ".agents/skills/react-ui-change"
+          },
+          {
+            "destination": ".kiro/skills/react-ui-change",
+            "status": "create",
+            "mode": 493,
+            "absentAncestor": ".kiro"
+          }
+        ],
+        "readSet": [
+          {
+            "scope": "anchor",
+            "path": "/",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "2",
+              "mode": "16877",
+              "uid": "0",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "anchor",
+            "path": "/private",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "110816932",
+              "mode": "16877",
+              "uid": "0",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "anchor",
+            "path": "/private/tmp",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "110832738",
+              "mode": "17407",
+              "uid": "0",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "anchor",
+            "path": "/private/tmp/m42-spike-43otpswg",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "122675188",
+              "mode": "16832",
+              "uid": "501",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "122685013",
+              "mode": "16877",
+              "uid": "501",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.agents",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "122694637",
+              "mode": "16877",
+              "uid": "501",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.agents/skills",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "122694638",
+              "mode": "16877",
+              "uid": "501",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.agents/skills/debug-regression",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "122694639",
+              "mode": "16877",
+              "uid": "501",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.agents/skills/debug-regression/SKILL.md",
+            "observation": {
+              "state": "present",
+              "kind": "file",
+              "dev": "16777230",
+              "ino": "122694640",
+              "mode": "33188",
+              "uid": "501",
+              "gid": "0",
+              "fileVersion": {
+                "sizeBytes": "16",
+                "nlink": "1",
+                "mtimeNs": "1795765366318413815",
+                "ctimeNs": "1795765366318413815"
+              }
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.agents/skills/debug-regression/applicability.json",
+            "observation": {
+              "state": "absent"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.agents/skills/react-ui-change",
+            "observation": {
+              "state": "absent"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.cursor",
+            "observation": {
+              "state": "absent"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.git",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "122685016",
+              "mode": "16877",
+              "uid": "501",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.kiro",
+            "observation": {
+              "state": "absent"
+            }
+          }
+        ],
+        "sources": [
+          {
+            "destination": ".agents/skills/debug-regression/SKILL.md",
+            "canonicalDestination": ".agents/skills/debug-regression/SKILL.md",
+            "blobSha": "755cf302d9eb0b31838ad52e8ab9a79aa66a5e30",
+            "sizeBytes": 3639,
+            "sha256": "a09e1842c31849c449d678cb87d9c83bb10559f70ad1df7ba943868d8c98fc30",
+            "mode": 420
+          },
+          {
+            "destination": ".agents/skills/debug-regression/applicability.json",
+            "canonicalDestination": ".agents/skills/debug-regression/applicability.json",
+            "blobSha": "738357a179cc2f554459cf54307a5f66c65fa880",
+            "sizeBytes": 67,
+            "sha256": "a0cc6e49e3f53754580914558afd68220af1e4883c8d27d9e6245b3475490b29",
+            "mode": 420
+          },
+          {
+            "destination": ".agents/skills/react-ui-change/SKILL.md",
+            "canonicalDestination": ".agents/skills/react-ui-change/SKILL.md",
+            "blobSha": "1fe2c9a97d3d2c8dd6e9ed4c7af2f35469a0a847",
+            "sizeBytes": 2439,
+            "sha256": "784cde83bc57c868d87ef9f6af8cddc23e942c458762470e0b23ab4463434222",
+            "mode": 420
+          },
+          {
+            "destination": ".agents/skills/react-ui-change/SOURCES.md",
+            "canonicalDestination": ".agents/skills/react-ui-change/SOURCES.md",
+            "blobSha": "6eab09a5bf41d8cea7319e49a1d5f249179d71b2",
+            "sizeBytes": 598,
+            "sha256": "cc98e4974f35026fd9da66580d9a8f75d02e9462a753f32a5249399bda51ed37",
+            "mode": 420
+          },
+          {
+            "destination": ".agents/skills/react-ui-change/applicability.json",
+            "canonicalDestination": ".agents/skills/react-ui-change/applicability.json",
+            "blobSha": "52cd4e9b39c4f64ac86e639d481787ea1d449e1b",
+            "sizeBytes": 162,
+            "sha256": "1f65c07eae5daab2c9b7e47262d5149219a0df87b7d74bf8708dd85791341145",
+            "mode": 420
+          },
+          {
+            "destination": ".kiro/skills/react-ui-change/SKILL.md",
+            "canonicalDestination": ".agents/skills/react-ui-change/SKILL.md",
+            "blobSha": "1fe2c9a97d3d2c8dd6e9ed4c7af2f35469a0a847",
+            "sizeBytes": 2439,
+            "sha256": "784cde83bc57c868d87ef9f6af8cddc23e942c458762470e0b23ab4463434222",
+            "mode": 420
+          },
+          {
+            "destination": ".kiro/skills/react-ui-change/SOURCES.md",
+            "canonicalDestination": ".agents/skills/react-ui-change/SOURCES.md",
+            "blobSha": "6eab09a5bf41d8cea7319e49a1d5f249179d71b2",
+            "sizeBytes": 598,
+            "sha256": "cc98e4974f35026fd9da66580d9a8f75d02e9462a753f32a5249399bda51ed37",
+            "mode": 420
+          },
+          {
+            "destination": ".kiro/skills/react-ui-change/applicability.json",
+            "canonicalDestination": ".agents/skills/react-ui-change/applicability.json",
+            "blobSha": "52cd4e9b39c4f64ac86e639d481787ea1d449e1b",
+            "sizeBytes": 162,
+            "sha256": "1f65c07eae5daab2c9b7e47262d5149219a0df87b7d74bf8708dd85791341145",
+            "mode": 420
+          }
+        ],
+        "gitProof": {
+          "status": "confirmed",
+          "rootStatus": "git_root",
+          "gitDirectory": "/private/tmp/m42-spike-43otpswg/target/.git",
+          "commonDirectory": "/private/tmp/m42-spike-43otpswg/target/.git"
+        },
+        "policy": {
+          "manifestVersion": 1,
+          "plannerVersion": "m4.2-v1",
+          "adapterVersion": "m3.3-v1",
+          "writerPolicyVersion": "create-only-v1-unavailable",
+          "serializationVersion": "sorted-json-utf8-v1",
+          "observationVersion": "bigint-lstat-v1",
+          "ttlMs": 600000,
+          "maxReceipts": 8,
+          "maxSourceBytes": 8388608,
+          "maxRetainedSourceBytes": 33554432,
+          "callerBinding": "host-installation-instance-only",
+          "writeCapability": "unavailable_m4_2",
+          "previewBudgets": {
+            "files": 2048,
+            "pathBytes": 1024,
+            "pathDepth": 32,
+            "fileBytes": 1048576,
+            "readBytes": 8388608,
+            "filesystemChecks": 32768,
+            "diffBytes": 131072,
+            "responseBytes": 1048576,
+            "deadlineMs": 8000
+          }
+        }
+      },
+      "receipt": {
+        "planDigest": "2ff4d30785aadb2af8817d5b3f2faf4a01ac6b498e672735bbc6b9d88661a92d",
+        "epoch": "1443064baae508bab436ddc169df15c4e2b64cae98ea2f7cf59c8bb6348c57a2",
+        "viewNonce": "smoke-view",
+        "issuedAt": 1795765366380,
+        "expiresAt": 1795765966380,
+        "previewId": "[redacted]"
+      },
+      "applyEligibility": {
+        "status": "ineligible",
+        "reasons": [
+          "write_capability_unavailable",
+          "plan_conflict"
+        ]
+      },
+      "plannedEffect": "not_applicable",
+      "readOnlySnapshotMatch": true,
+      "snapshotBeforeSha256": "bd42c561d9e27d6da6db6c919512ec99ba4fedaa7abc6901c5e1d2dc24dbd37c",
+      "snapshotAfterSha256": "bd42c561d9e27d6da6db6c919512ec99ba4fedaa7abc6901c5e1d2dc24dbd37c"
+    },
+    "blocked": {
+      "status": "ready",
+      "schemaVersion": 2,
+      "manifest": {
+        "schemaVersion": 1,
+        "hostId": "srv_Sm2YsMgGy-KK",
+        "installationInstanceId": "eaa99016d64788f78d2ddafbd55ac80313bb6cbe36e00ea79fd0f437d157ddcd",
+        "epoch": "1443064baae508bab436ddc169df15c4e2b64cae98ea2f7cf59c8bb6348c57a2",
+        "viewNonce": "smoke-view",
+        "savedCatalogRef": "4044fbf0545f4be1da51dbc10f1327f0a3da0017",
+        "plan": {
+          "status": "ready",
+          "intent": {
+            "schemaVersion": 1,
+            "hostId": "srv_Sm2YsMgGy-KK",
+            "canonicalDirectory": "/private/tmp/m42-spike-43otpswg/target",
+            "catalogSource": "https://github.com/anmeo2204/project-skills",
+            "catalogCommitSha": "4044fbf0545f4be1da51dbc10f1327f0a3da0017",
+            "settingsRevision": "420eba798a50f0f8fb1ba5e7e815fafc31d6fd4b2354ebf12b4f6a2717a67fe9",
+            "selectedSkillIds": [
+              "debug-regression",
+              "react-ui-change"
+            ],
+            "targetProviderIds": [
+              "codex",
+              "kiro"
+            ],
+            "recommendationRequestId": "m42-smoke"
+          },
+          "entries": [
+            {
+              "skillId": "debug-regression",
+              "destination": ".agents/skills/debug-regression/SKILL.md",
+              "status": "conflict",
+              "proposed": {
+                "sizeBytes": 3639,
+                "sha256": "a09e1842c31849c449d678cb87d9c83bb10559f70ad1df7ba943868d8c98fc30",
+                "mode": 420
+              },
+              "existing": {
+                "sizeBytes": 16,
+                "sha256": "6dd8221aec227284d5c6f21c64753cc08da6e0cb7e6619aa376b0ab4edca9d83",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/debug-regression/SKILL.md\" \"b/.agents/skills/debug-regression/SKILL.md\"\n--- \"a/.agents/skills/debug-regression/SKILL.md\"\n+++ \"b/.agents/skills/debug-regression/SKILL.md\"\n@@ -1,1 +1,40 @@\n-foreign content\n+---\n+name: debug-regression\n+description: Reproduces a regression, verifies its cause, and makes and validates a minimal fix. Use when previously working behavior changes unexpectedly or an existing check starts failing.\n+---\n+\n+# Debug Regression\n+\n+## Workflow\n+\n+### 1. Tái hiện lỗi\n+\n+- Đọc hướng dẫn và test policy của dự án để chọn môi trường và cách chạy phù hợp.\n+- Xác định hành vi mong đợi từ contract, test hiện có hoặc phiên bản đã chạy đúng. Ghi hành vi thực tế và dấu hiệu nhận biết lỗi.\n+- Tìm điểm vào bị ảnh hưởng và chọn cách tái hiện nhỏ nhất còn quan sát được lỗi. Ghi đầu vào, trạng thái ban đầu, cấu hình liên quan và các bước chạy.\n+- Chạy trước khi sửa để xác nhận lỗi phù hợp với báo cáo. Nếu lỗi chập chờn, ghi điều kiện và tần suất quan sát được. Nếu chưa tái hiện được, ghi những gì đã thử và tiếp tục thu thập bằng chứng.\n+\n+### 2. Xác minh nguyên nhân\n+\n+- Theo luồng từ điểm vào đến nơi hành vi bắt đầu sai lệch. Dùng kết quả test, log, trace hoặc giá trị quan sát được để khoanh vùng.\n+- Nêu giả thuyết cụ thể và kết quả dự đoán. Kiểm tra bằng cách cô lập điều kiện nghi vấn, thay đổi một yếu tố mỗi lần hoặc đối chiếu với phiên bản đã chạy đúng trong điều kiện tương đương.\n+- Ghi quan sát nối nguyên nhân với triệu chứng. Chỉ chuyển sang bước sửa khi bằng chứng đủ xác nhận nguyên nhân. Nếu chưa đủ, dừng trước bước sửa, tiếp tục điều tra nếu còn cách kiểm tra và ghi rõ phần chưa xác minh.\n+\n+### 3. Sửa tối thiểu\n+\n+- Sửa tại nơi phát sinh sai lệch, dùng cách xử lý hiện có nếu phù hợp. Giữ contract của các trường hợp hợp lệ và giới hạn diff trong phạm vi lỗi đã xác minh.\n+- Tái sử dụng kiểm tra hiện có nếu nó bắt được lỗi. Khi test policy cho phép và còn thiếu bao phủ, thêm hoặc điều chỉnh một test tập trung xác nhận hành vi mong đợi. Dùng test đó để kiểm tra trước và sau bản sửa khi khả thi.\n+- Gỡ các thay đổi tạm dùng để chẩn đoán trước khi kiểm tra lần cuối.\n+\n+## Verification\n+\n+- Chạy lại ca tái hiện với cùng điều kiện và xác nhận kết quả đáp ứng contract. Với lỗi chập chờn, lặp lại trong điều kiện từng kích hoạt lỗi và ghi số lần chạy cùng kết quả.\n+- Chạy các kiểm tra liên quan theo test policy của dự án, gồm luồng hợp lệ và các trường hợp biên chịu ảnh hưởng trực tiếp của bản sửa.\n+- Review diff để xác nhận phạm vi sửa và kiểm tra khớp với nguyên nhân đã xác minh.\n+- Báo cách tái hiện, bằng chứng nguyên nhân, phạm vi sửa, lệnh hoặc thao tác kiểm tra cùng kết quả trước và sau. Ghi rõ phần chưa kiểm tra được và lý do.\n+\n+## Ví dụ\n+\n+- Một bộ lọc trả về toàn bộ kết quả khi nhận giá trị `0` hợp lệ. Tái hiện qua điểm vào đang lỗi và đối chiếu với ca bỏ trống bộ lọc.\n+- Kiểm tra tại bước chuẩn hóa đầu vào xem `0` có bị chuyển thành giá trị biểu thị bộ lọc vắng mặt hay không.\n+- Nếu xác nhận bước đó làm mất giá trị `0`, sửa quy tắc nhận diện bộ lọc vắng mặt rồi kiểm tra lại cả hai ca.\n"
+              }
+            },
+            {
+              "skillId": "debug-regression",
+              "destination": ".agents/skills/debug-regression/applicability.json",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 67,
+                "sha256": "a0cc6e49e3f53754580914558afd68220af1e4883c8d27d9e6245b3475490b29",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/debug-regression/applicability.json\" \"b/.agents/skills/debug-regression/applicability.json\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.agents/skills/debug-regression/applicability.json\"\n@@ -0,0 +1,1 @@\n+{ \"schemaVersion\": 1, \"scope\": \"project\", \"level\": \"recommended\" }\n"
+              }
+            },
+            {
+              "skillId": "react-ui-change",
+              "destination": ".agents/skills/react-ui-change/SKILL.md",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 2439,
+                "sha256": "784cde83bc57c868d87ef9f6af8cddc23e942c458762470e0b23ab4463434222",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/react-ui-change/SKILL.md\" \"b/.agents/skills/react-ui-change/SKILL.md\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.agents/skills/react-ui-change/SKILL.md\"\n@@ -0,0 +1,36 @@\n+---\n+name: react-ui-change\n+description: Changes React component presentation or interaction and verifies visible behavior. Use when changing composition, shared UI state, focus, or keyboard interaction.\n+---\n+\n+# React UI Change\n+\n+## Workflow\n+\n+### 1. Xác định hành vi giao diện\n+\n+- Xác định component được render ở luồng bị ảnh hưởng và đọc các caller. Ghi các trạng thái và tương tác mà người dùng cần quan sát được.\n+- Đọc component tương tự để nhận diện quy ước props, composition, design token và primitive accessibility đang dùng.\n+- Nếu UI có trường nhập hoặc dữ liệu từ API, xác định phần việc riêng của vòng đời form hoặc request trước khi thay đổi chúng.\n+\n+### 2. Chọn ranh giới component và state\n+\n+- Đặt state ở component sở hữu hành vi. Khi nhiều component phải đồng bộ, chọn tổ tiên chung phù hợp và truyền giá trị cùng callback theo pattern hiện có.\n+- Tính giá trị suy ra từ props/state trong render khi phù hợp. Kiểm tra key và vị trí component nếu thay đổi cấu trúc có thể reset state đang cần giữ.\n+- Dùng composition khi caller cần ghép các phần giao diện độc lập. Giữ props tương thích với caller ngoài phạm vi task.\n+\n+### 3. Giữ khả năng tương tác\n+\n+- Tái sử dụng control có semantics và hành vi bàn phím phù hợp. Giữ tên truy cập, trạng thái disabled/expanded và thứ tự focus theo tương tác thực tế.\n+- Với UI mở/đóng hoặc thay nội dung, xác định focus đi đâu khi xuất hiện, biến mất hoặc thao tác bị hủy.\n+\n+## Verification\n+\n+- Qua điểm vào thực tế, kiểm tra giao diện ở các trạng thái liên quan và chuyển đổi giữa chúng.\n+- Khi diff chạm tương tác bàn phím hoặc focus, kiểm tra thao tác tương ứng. Nếu UI mở hoặc đóng, kiểm tra focus ban đầu và nơi focus trở về.\n+- Kiểm tra một caller có sẵn nếu thay đổi component dùng chung. Xác nhận state được giữ hoặc reset theo thiết kế.\n+- Báo tình huống đã thử, môi trường và lý do cho ca phù hợp chưa xác minh được.\n+\n+## Ví dụ\n+\n+- Nếu tách nút mở hộp thoại khỏi nội dung hộp thoại, kiểm tra mở bằng bàn phím, focus vào nội dung, đóng và trả focus về nút mở.\n"
+              }
+            },
+            {
+              "skillId": "react-ui-change",
+              "destination": ".agents/skills/react-ui-change/SOURCES.md",
+              "status": "blocked",
+              "proposed": {
+                "sizeBytes": 598,
+                "sha256": "cc98e4974f35026fd9da66580d9a8f75d02e9462a753f32a5249399bda51ed37",
+                "mode": 420
+              },
+              "reason": "unsafe_entry"
+            },
+            {
+              "skillId": "react-ui-change",
+              "destination": ".agents/skills/react-ui-change/applicability.json",
+              "status": "create",
+              "proposed": {
+                "sizeBytes": 162,
+                "sha256": "1f65c07eae5daab2c9b7e47262d5149219a0df87b7d74bf8708dd85791341145",
+                "mode": 420
+              },
+              "change": {
+                "kind": "text",
+                "unifiedDiff": "diff --git \"a/.agents/skills/react-ui-change/applicability.json\" \"b/.agents/skills/react-ui-change/applicability.json\"\nnew file mode 100644\n--- /dev/null\n+++ \"b/.agents/skills/react-ui-change/applicability.json\"\n@@ -0,0 +1,6 @@\n+{\n+  \"schemaVersion\": 1,\n+  \"scope\": \"boundary\",\n+  \"appliesWhen\": [[{ \"kind\": \"framework\", \"basis\": \"inferred\", \"key\": \"react\" }]],\n+  \"recommendWhen\": \"on_match\"\n+}\n"
+              }
+            }
+          ],
+          "providers": [
+            {
+              "providerId": "codex",
+              "strategy": "canonical_only",
+              "status": "canonical_only",
+              "verification": {
+                "basis": "historical_m3_1",
+                "report": "M3.1-completion-report.md",
+                "paseoVersion": "0.17.5",
+                "binaryVersion": "0.167.0",
+                "transport": "app-server",
+                "loadMode": "auto; read-only; approval never; web search disabled",
+                "cwdScope": "root_and_nested",
+                "note": "M3.1 model gpt-6.1-sol. Historical discovery/load evidence; not a live runtime attestation."
+              },
+              "skills": []
+            },
+            {
+              "providerId": "kiro",
+              "strategy": "kiro_derived",
+              "status": "deferred",
+              "rootStatus": "git_root",
+              "verification": {
+                "basis": "historical_m3_1",
+                "report": "M3.1-completion-report.md",
+                "paseoVersion": "0.17.5",
+                "binaryVersion": "2.34.2",
+                "transport": "kiro-cli acp",
+                "loadMode": "kiro_default",
+                "cwdScope": "git_root",
+                "note": "M3.1 model reported auto. Derived .kiro/skills discovery/load verified only with session CWD at root; custom agents and nested sessions are not covered."
+              },
+              "skills": [
+                {
+                  "skillId": "debug-regression",
+                  "status": "deferred",
+                  "reason": "canonical_conflict"
+                },
+                {
+                  "skillId": "react-ui-change",
+                  "status": "deferred",
+                  "reason": "canonical_blocked"
+                }
+              ]
+            }
+          ],
+          "derivedEntries": [],
+          "diagnostics": [
+            {
+              "code": "canonical_blocked",
+              "providerId": "kiro",
+              "skillId": "react-ui-change",
+              "paths": [
+                ".agents/skills/react-ui-change/SOURCES.md"
+              ]
+            },
+            {
+              "code": "canonical_conflict",
+              "providerId": "kiro",
+              "skillId": "debug-regression",
+              "paths": [
+                ".agents/skills/debug-regression/SKILL.md"
+              ]
+            }
+          ]
+        },
+        "directoryEffects": [],
+        "readSet": [
+          {
+            "scope": "anchor",
+            "path": "/",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "2",
+              "mode": "16877",
+              "uid": "0",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "anchor",
+            "path": "/private",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "110816932",
+              "mode": "16877",
+              "uid": "0",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "anchor",
+            "path": "/private/tmp",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "110832738",
+              "mode": "17407",
+              "uid": "0",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "anchor",
+            "path": "/private/tmp/m42-spike-43otpswg",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "122675188",
+              "mode": "16832",
+              "uid": "501",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "122685013",
+              "mode": "16877",
+              "uid": "501",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.agents",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "122694637",
+              "mode": "16877",
+              "uid": "501",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.agents/skills",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "122694638",
+              "mode": "16877",
+              "uid": "501",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.agents/skills/debug-regression",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "122694639",
+              "mode": "16877",
+              "uid": "501",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.agents/skills/debug-regression/SKILL.md",
+            "observation": {
+              "state": "present",
+              "kind": "file",
+              "dev": "16777230",
+              "ino": "122694640",
+              "mode": "33188",
+              "uid": "501",
+              "gid": "0",
+              "fileVersion": {
+                "sizeBytes": "16",
+                "nlink": "1",
+                "mtimeNs": "1795765366318413815",
+                "ctimeNs": "1795765366318413815"
+              }
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.agents/skills/debug-regression/applicability.json",
+            "observation": {
+              "state": "absent"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.agents/skills/react-ui-change",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "122694641",
+              "mode": "16877",
+              "uid": "501",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.agents/skills/react-ui-change/SKILL.md",
+            "observation": {
+              "state": "absent"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.agents/skills/react-ui-change/SOURCES.md",
+            "observation": {
+              "state": "present",
+              "kind": "unsafe",
+              "dev": "16777230",
+              "ino": "122694642",
+              "mode": "41453",
+              "uid": "501",
+              "gid": "0",
+              "fileVersion": {
+                "sizeBytes": "37",
+                "nlink": "1",
+                "mtimeNs": "1795765366390222810",
+                "ctimeNs": "1795765366390240227"
+              }
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.agents/skills/react-ui-change/applicability.json",
+            "observation": {
+              "state": "absent"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.cursor",
+            "observation": {
+              "state": "absent"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.git",
+            "observation": {
+              "state": "present",
+              "kind": "directory",
+              "dev": "16777230",
+              "ino": "122685016",
+              "mode": "16877",
+              "uid": "501",
+              "gid": "0"
+            }
+          },
+          {
+            "scope": "target",
+            "path": "/private/tmp/m42-spike-43otpswg/target/.kiro",
+            "observation": {
+              "state": "absent"
+            }
+          }
+        ],
+        "sources": [
+          {
+            "destination": ".agents/skills/debug-regression/SKILL.md",
+            "canonicalDestination": ".agents/skills/debug-regression/SKILL.md",
+            "blobSha": "755cf302d9eb0b31838ad52e8ab9a79aa66a5e30",
+            "sizeBytes": 3639,
+            "sha256": "a09e1842c31849c449d678cb87d9c83bb10559f70ad1df7ba943868d8c98fc30",
+            "mode": 420
+          },
+          {
+            "destination": ".agents/skills/debug-regression/applicability.json",
+            "canonicalDestination": ".agents/skills/debug-regression/applicability.json",
+            "blobSha": "738357a179cc2f554459cf54307a5f66c65fa880",
+            "sizeBytes": 67,
+            "sha256": "a0cc6e49e3f53754580914558afd68220af1e4883c8d27d9e6245b3475490b29",
+            "mode": 420
+          },
+          {
+            "destination": ".agents/skills/react-ui-change/SKILL.md",
+            "canonicalDestination": ".agents/skills/react-ui-change/SKILL.md",
+            "blobSha": "1fe2c9a97d3d2c8dd6e9ed4c7af2f35469a0a847",
+            "sizeBytes": 2439,
+            "sha256": "784cde83bc57c868d87ef9f6af8cddc23e942c458762470e0b23ab4463434222",
+            "mode": 420
+          },
+          {
+            "destination": ".agents/skills/react-ui-change/SOURCES.md",
+            "canonicalDestination": ".agents/skills/react-ui-change/SOURCES.md",
+            "blobSha": "6eab09a5bf41d8cea7319e49a1d5f249179d71b2",
+            "sizeBytes": 598,
+            "sha256": "cc98e4974f35026fd9da66580d9a8f75d02e9462a753f32a5249399bda51ed37",
+            "mode": 420
+          },
+          {
+            "destination": ".agents/skills/react-ui-change/applicability.json",
+            "canonicalDestination": ".agents/skills/react-ui-change/applicability.json",
+            "blobSha": "52cd4e9b39c4f64ac86e639d481787ea1d449e1b",
+            "sizeBytes": 162,
+            "sha256": "1f65c07eae5daab2c9b7e47262d5149219a0df87b7d74bf8708dd85791341145",
+            "mode": 420
+          }
+        ],
+        "gitProof": {
+          "status": "confirmed",
+          "rootStatus": "git_root",
+          "gitDirectory": "/private/tmp/m42-spike-43otpswg/target/.git",
+          "commonDirectory": "/private/tmp/m42-spike-43otpswg/target/.git"
+        },
+        "policy": {
+          "manifestVersion": 1,
+          "plannerVersion": "m4.2-v1",
+          "adapterVersion": "m3.3-v1",
+          "writerPolicyVersion": "create-only-v1-unavailable",
+          "serializationVersion": "sorted-json-utf8-v1",
+          "observationVersion": "bigint-lstat-v1",
+          "ttlMs": 600000,
+          "maxReceipts": 8,
+          "maxSourceBytes": 8388608,
+          "maxRetainedSourceBytes": 33554432,
+          "callerBinding": "host-installation-instance-only",
+          "writeCapability": "unavailable_m4_2",
+          "previewBudgets": {
+            "files": 2048,
+            "pathBytes": 1024,
+            "pathDepth": 32,
+            "fileBytes": 1048576,
+            "readBytes": 8388608,
+            "filesystemChecks": 32768,
+            "diffBytes": 131072,
+            "responseBytes": 1048576,
+            "deadlineMs": 8000
+          }
+        }
+      },
+      "receipt": {
+        "planDigest": "74824845e9538a48f6f0a2766c7d6fd9e87646907c8e318e534a6dfb0d92d400",
+        "epoch": "1443064baae508bab436ddc169df15c4e2b64cae98ea2f7cf59c8bb6348c57a2",
+        "viewNonce": "smoke-view",
+        "issuedAt": 1795765366447,
+        "expiresAt": 1795765966447,
+        "previewId": "[redacted]"
+      },
+      "applyEligibility": {
+        "status": "ineligible",
+        "reasons": [
+          "write_capability_unavailable",
+          "plan_conflict",
+          "plan_blocked",
+          "observations_unverified"
+        ]
+      },
+      "plannedEffect": "not_applicable",
+      "readOnlySnapshotMatch": true,
+      "snapshotBeforeSha256": "4edab93da70f0892041f5ba38e3d2206086224b7c2b973f8957d72ff7242522d",
+      "snapshotAfterSha256": "4edab93da70f0892041f5ba38e3d2206086224b7c2b973f8957d72ff7242522d"
+    }
+  }
+}

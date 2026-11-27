@@ -5,6 +5,7 @@ import { projectScanEvent } from "./project-evidence";
 import { recommendationEvent, recommendationInput } from "./recommendation";
 import { selectionIntentV1Schema } from "./selection-intent";
 import { previewResultSchema, providerPreviewResultSchema } from "./preview";
+import { providerPreviewV2InputSchema, providerPreviewV2ResultSchema } from "./preview-receipt";
 
 export const foundationStatusRpc = defineRpc({
   name: "foundation.status",
@@ -55,4 +56,10 @@ export const providerPreviewRpc = defineRpc({
   name: "preview.providers",
   input: selectionIntentV1Schema,
   output: providerPreviewResultSchema,
+});
+
+export const providerPreviewV2Rpc = defineRpc({
+  name: "preview.providers.v2",
+  input: providerPreviewV2InputSchema,
+  output: providerPreviewV2ResultSchema,
 });

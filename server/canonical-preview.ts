@@ -15,8 +15,13 @@ import { PreviewError, PreviewReader, type PreviewFs } from "./preview-reader";
 import { compare } from "./project-reader";
 import { validateDirectory } from "./validate-directory";
 import { prepareProviderPreview } from "./provider-adapters";
+import { providerPreviewV2InputSchema, providerPreviewV2ResultSchema, receiptPolicy, receiptLimits,
+  type ProviderPreviewV2Result, type PreviewManifest } from "../shared/preview-receipt";
+import { PreviewReceiptStore, canonicalSerialize } from "./preview-receipts";
+import { ReceiptObservations } from "./receipt-observations";
+import { receiptGitProof } from "./receipt-git-proof";
 
-type Options = { io?: PreviewFs; limits?: typeof previewLimits; now?: () => number };
+type Options = { io?: PreviewFs; limits?: typeof previewLimits; now?: () => number; receiptStore?: PreviewReceiptStore; receiptMode?: boolean };
 type File = CatalogSnapshot["skills"][number]["entrypoint"];
 export type PlannedFile = { skillId: string; destination: string; file: File };
 const fingerprint = (bytes: Buffer, mode: number) => ({
@@ -26,12 +31,13 @@ const portablePath = (path: string) => path.split("/").every((part) => part && p
   !/[\\:\u0000-\u001f\u007f]/u.test(part) && !/[. ]$/.test(part) && !/^\.git$/i.test(part) &&
   !/^(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i.test(part));
 
-function selectedFiles(intent: SelectionIntentV1, snapshot: CatalogSnapshot, limits: typeof previewLimits) {
+function selectedFiles(intent: SelectionIntentV1, snapshot: CatalogSnapshot, limits: typeof previewLimits, copySourceBytes = false) {
   if (!catalogSnapshotSchema.safeParse(snapshot).success ||
       new Set(snapshot.skills.map(({ id }) => id)).size !== snapshot.skills.length) throw new PreviewError("invalid_catalog");
   if (snapshot.commitSha !== intent.catalogCommitSha || snapshot.source !== intent.catalogSource) throw new PreviewError("catalog_mismatch");
   const wanted = new Set(intent.selectedSkillIds);
   const files: PlannedFile[] = [];
+  let copiedBytes = 0;
   const paths = new Map<string, { kind: "file" | "directory"; spelling: string }>();
   for (const skill of [...snapshot.skills].sort((a, b) => compare(a.id, b.id))) {
     if (!wanted.delete(skill.id)) continue;
@@ -42,6 +48,7 @@ function selectedFiles(intent: SelectionIntentV1, snapshot: CatalogSnapshot, lim
       const destination = ".agents/skills/" + skill.id + "/" + file.path;
       if (!portablePath(file.path) || Buffer.byteLength(destination) > limits.pathBytes ||
           destination.split("/").length > limits.pathDepth || !hasBlobIntegrity(file)) throw new PreviewError("invalid_catalog");
+      if (copySourceBytes && (copiedBytes += file.bytes.length) > receiptLimits.sourceBytes) throw new PreviewError("limit_exceeded");
       const originalParts = destination.split("/");
       const parts = destination.normalize("NFC").toLowerCase().split("/");
       for (let i = 1; i <= parts.length; i++) {
@@ -52,7 +59,7 @@ function selectedFiles(intent: SelectionIntentV1, snapshot: CatalogSnapshot, lim
         if (known && (known.kind !== kind || known.spelling !== spelling || kind === "file")) throw new PreviewError("invalid_catalog");
         paths.set(path, { kind, spelling });
       }
-      files.push({ skillId: skill.id, destination, file });
+      files.push({ skillId: skill.id, destination, file: copySourceBytes ? { ...file, bytes: Buffer.from(file.bytes) } : file });
       if (files.length > limits.files) throw new PreviewError("limit_exceeded");
     }
   }
@@ -63,8 +70,8 @@ function selectedFiles(intent: SelectionIntentV1, snapshot: CatalogSnapshot, lim
 async function plan(intent: SelectionIntentV1, snapshot: CatalogSnapshot, identity: Stats, signal: AbortSignal,
   options: Options) {
   const limits = options.limits ?? previewLimits;
-  const files = selectedFiles(intent, snapshot, limits);
-  const reader = new PreviewReader(intent.canonicalDirectory, identity, signal, options.io, limits, options.now);
+  const files = selectedFiles(intent, snapshot, limits, options.receiptMode);
+  const reader = new PreviewReader(intent.canonicalDirectory, identity, signal, options.io, limits, options.now, options.receiptMode === true);
   const entries: PreviewEntry[] = [];
   let responseBytes = 0;
   let comparedFiles = 0;
@@ -116,14 +123,18 @@ export function createCanonicalPreviewHandler(
   options: Options = {},
 ) {
   let disposed = false;
-  let active: { stop: AbortController; done: Promise<PreviewResult | ProviderPreviewResult> } | undefined;
-  const run = async (raw: unknown, { paseo }: Pick<PluginHandlerContext, "paseo">, withProviders: boolean): Promise<PreviewResult | ProviderPreviewResult> => {
-    const parsed = selectionIntentV1Schema.safeParse(raw);
+  const receipts = options.receiptStore ?? new PreviewReceiptStore({ responseBytes: options.limits?.responseBytes });
+  type Result = PreviewResult | ProviderPreviewResult | ProviderPreviewV2Result;
+  let active: { stop: AbortController; done: Promise<Result> } | undefined;
+  const run = async (raw: unknown, { paseo }: Pick<PluginHandlerContext, "paseo">, withProviders: boolean, v2 = false): Promise<Result> => {
+    const request = v2 ? providerPreviewV2InputSchema.safeParse(raw) : undefined;
+    if (request && !request.success) return { status: "error", code: "invalid_selection" };
+    const parsed = selectionIntentV1Schema.safeParse(request?.data?.intent ?? raw);
     if (!parsed.success) return { status: "error", code: "invalid_selection" };
     if (disposed) return { status: "error", code: "cancelled" };
     if (active) return { status: "error", code: "busy" };
     const stop = new AbortController();
-    const execute = async (): Promise<PreviewResult | ProviderPreviewResult> => {
+    const execute = async (): Promise<Result> => {
       const intent = parsed.data;
       const io = options.io ?? fs;
       const checkpoint = () => { if (stop.signal.aborted) throw new PreviewError("cancelled"); };
@@ -140,8 +151,19 @@ export function createCanonicalPreviewHandler(
         if (!identity.isDirectory() || await io.realpath(target.directory) !== target.directory) throw new PreviewError("target_changed");
         const snapshot = await loader.load(state.values.catalogRef);
         checkpoint();
-        const result = await plan(intent, snapshot, identity, stop.signal, options);
+        const observations = v2 ? new ReceiptObservations(target.directory, io, stop.signal, options.limits, options.now) : undefined;
+        await observations?.initialize();
+        const result = await plan(intent, snapshot, identity, stop.signal,
+          observations ? { ...options, io: observations.io, receiptMode: true } : options);
         const adapters = withProviders ? await prepareProviderPreview(intent, result, stop.signal) : undefined;
+        const kiroRootStatus = () => adapters?.finish({ status: "ready", intent, entries: result.entries }, [])
+          .providers.find((provider) => provider.providerId === "kiro")?.rootStatus;
+        const gitProof = observations && intent.targetProviderIds.includes("kiro")
+          ? await receiptGitProof(target.directory, result.reader, observations, stop.signal, kiroRootStatus()) : { status: "not_selected" as const };
+        if (observations) {
+          const pinned = await loader.load(state.values.catalogRef);
+          if (pinned.source !== intent.catalogSource || pinned.commitSha !== intent.catalogCommitSha) throw new PreviewError("catalog_mismatch");
+        }
         const latest = await settings.read();
         checkpoint();
         if (latest.status !== "ready" || latest.revision !== state.revision || latest.values.catalogRef !== state.values.catalogRef) {
@@ -153,6 +175,36 @@ export function createCanonicalPreviewHandler(
         const validated = adapters ? providerPreviewResultSchema.parse(adapters.finish(verified.result, verified.changed)) :
           previewResultSchema.parse(verified.result);
         if (Buffer.byteLength(JSON.stringify(validated)) > (options.limits ?? previewLimits).responseBytes) throw new PreviewError("limit_exceeded");
+        if (observations && request?.success) {
+          const providerPlan = providerPreviewResultSchema.options[0].parse(validated);
+          const byDestination = (a: PreviewEntry, b: PreviewEntry) => Buffer.compare(Buffer.from(a.destination), Buffer.from(b.destination));
+          providerPlan.entries.sort(byDestination);
+          providerPlan.derivedEntries.sort(byDestination);
+          const finalProof = intent.targetProviderIds.includes("kiro")
+            ? await receiptGitProof(target.directory, result.reader, observations, stop.signal,
+              providerPlan.providers.find((provider) => provider.providerId === "kiro")?.rootStatus) : gitProof;
+          if (canonicalSerialize(gitProof) !== canonicalSerialize(finalProof)) throw new PreviewError("target_changed");
+          await observations.verify();
+          const allEntries = [...providerPlan.entries, ...providerPlan.derivedEntries].sort(byDestination);
+          const sources = allEntries.map((entry) => {
+            const canonicalDestination = "canonicalDestination" in entry && typeof entry.canonicalDestination === "string"
+              ? entry.canonicalDestination : entry.destination;
+            const source = result.files.find((file) => file.destination === canonicalDestination);
+            if (!source) throw new PreviewError("invalid_catalog");
+            return { destination: entry.destination, canonicalDestination, file: source.file };
+          });
+          const manifest: PreviewManifest = {
+            schemaVersion: 1, hostId: intent.hostId, installationInstanceId: receipts.installationInstanceId, epoch: receipts.epoch,
+            viewNonce: request.data.viewNonce, savedCatalogRef: state.values.catalogRef, plan: providerPlan,
+            directoryEffects: observations.directoryEffects(allEntries.filter((entry) => entry.status === "create").map((entry) => entry.destination)),
+            readSet: observations.snapshot(), sources: sources.map(({ destination, canonicalDestination, file }) => ({
+              destination, canonicalDestination, blobSha: file.blobSha, ...fingerprint(file.bytes, file.mode === "100755" ? 0o755 : 0o644),
+              mode: file.mode === "100755" ? 0o755 as const : 0o644 as const,
+            })), gitProof: finalProof, policy: { ...receiptPolicy, previewBudgets: options.limits ?? previewLimits },
+          };
+          result.reader.checkpoint();
+          return receipts.issue(JSON.parse(JSON.stringify(manifest)), sources.map(({ destination, file }) => ({ destination, bytes: file.bytes })));
+        }
         return validated;
       } catch (error) {
         return { status: "error", code: stop.signal.aborted ? "cancelled" : error instanceof PreviewError ? error.code :
@@ -167,9 +219,11 @@ export function createCanonicalPreviewHandler(
   return {
     handle: async (input: unknown, context: Pick<PluginHandlerContext, "paseo">) => previewResultSchema.parse(await run(input, context, false)),
     handleProviders: async (input: unknown, context: Pick<PluginHandlerContext, "paseo">) => providerPreviewResultSchema.parse(await run(input, context, true)),
+    handleProvidersV2: async (input: unknown, context: Pick<PluginHandlerContext, "paseo">) => providerPreviewV2ResultSchema.parse(await run(input, context, true, true)),
     async dispose() {
     disposed = true;
     active?.stop.abort();
     await active?.done;
+    receipts.dispose();
   } };
 }
