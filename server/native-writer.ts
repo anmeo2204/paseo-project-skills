@@ -17,6 +17,9 @@ export type FixtureWriterOutcome = { result: HostFailure; events: NativeWriterEv
   extraction: { removed: boolean; directory?: string }; nativeExit?: { code: number | null; signal: string | null } };
 export type FixtureWriterOptions = { testing?: boolean; artifact?: WriterArtifact | null;
   onEvent?: (event: NativeWriterEvent, context: { helperPid: number }) => void | Promise<void>;
+  signal?: AbortSignal;
+  onAdmission?: () => Promise<boolean>;
+  onProgress?: (event: Extract<NativeWriterEvent, { event: "mutation_intent" | "file_verified" | "directory_verified" }>) => void;
   // Called after target I/O settles, before the helper releases its coordinator.
   onFinalize?: (result: NativeWriterResult) => void | Promise<void>;
   // Extraction fault hook operates only on the private helper namespace.
@@ -90,8 +93,11 @@ export async function runFixtureWriter(raw: NativeWriterRequest, options: Fixtur
     await verifyExtraction();
     const wire = JSON.stringify({ ...request, expectedParentPid: process.pid }) + "\n";
     if (Buffer.byteLength(wire) > nativeWriterLimits.requestBytes) throw new Error("limit_exceeded");
-    const child = spawn(helper, ["--worker"], { stdio: ["pipe", "pipe", "pipe"],
+    const child = spawn(helper, [request.durableAdmission ? "--worker" : "--primitive-fixture-worker"], { stdio: ["pipe", "pipe", "pipe"],
       env: { PATH: "/usr/bin:/bin", TMPDIR: tmpdir(), LC_ALL: "C" } });
+    const abort = () => child.kill("SIGUSR1");
+    options.signal?.addEventListener("abort", abort, { once: true });
+    // Admission checks the signal too, covering cancellation before exec installs its handler.
     let buffer = "", received = 0, protocolError = false, nativeResult: NativeWriterResult | undefined, closed = false;
     const markUncertain = (code: string) => {
       protocolError = true; outcome.result = hostFailure(code, initialLedger(request), possibleMutation); child.kill("SIGTERM");
@@ -111,8 +117,24 @@ export async function runFixtureWriter(raw: NativeWriterRequest, options: Fixtur
           if (event.event === "mutation_intent") possibleMutation = true;
           if (event.event === "result") nativeResult = event;
           const task = options.onEvent?.(event, { helperPid: child.pid! });
-          if (event.event === "ready_to_finalize") {
-            Promise.resolve(task).then(() => options.onFinalize?.(event.result)).then(() => {
+          if (event.event === "ready_to_admit") {
+            Promise.resolve(task).then(() => {
+              if (!closed && !protocolError && !child.stdin.destroyed) return options.onAdmission?.();
+            }).then((approved) => {
+              if (!closed && !protocolError && !child.stdin.destroyed) child.stdin.write(approved ? "ADMIT\n" : "DENY\n");
+            }, () => markUncertain("admission_controller_failed"));
+          } else if (request.durableAdmission &&
+                     (event.event === "mutation_intent" || event.event === "file_verified" || event.event === "directory_verified")) {
+            Promise.resolve(task).then(() => {
+              if (closed || protocolError || child.stdin.destroyed) return;
+              if (!options.onProgress) throw new Error("journal_unavailable");
+              options.onProgress(event);
+              child.stdin.write("RECORDED\n");
+            }).catch(() => markUncertain("journal_progress_failed"));
+          } else if (event.event === "ready_to_finalize") {
+            Promise.resolve(task).then(() => {
+              if (!closed && !protocolError && !child.stdin.destroyed) return options.onFinalize?.(event.result);
+            }).then(() => {
               if (!closed && !protocolError && !child.stdin.destroyed) child.stdin.write("FINALIZE\n");
             }, () => markUncertain("finalization_controller_failed"));
           } else if (event.event === "barrier") {
@@ -131,7 +153,7 @@ export async function runFixtureWriter(raw: NativeWriterRequest, options: Fixtur
       child.once("close", (code, signal) => { closed = true; resolve({ code, signal }); });
       child.stdin.write(wire);
     });
-    clearTimeout(timeout); outcome.nativeExit = exit;
+    clearTimeout(timeout); options.signal?.removeEventListener("abort", abort); outcome.nativeExit = exit;
     if (!protocolError && nativeResult && !buffer.trim()) {
       const expected = initialLedger(request), byPath = new Map(nativeResult.ledger.map(item => [item.destination, item]));
       const valid = byPath.size === nativeResult.ledger.length && nativeResult.ledger.every(item => expected.some(e => e.destination === item.destination && e.kind === item.kind));

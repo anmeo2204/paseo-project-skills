@@ -16,7 +16,7 @@ try {
    '-DPPS_TESTING=' + Number(testing), join(root,'native/anchored-writer.m'), '-o',output]);
   await exec('codesign',['--verify','--strict',output]);
   const bytes = await fs.readFile(output);
-  artifacts[testing ? 'testing' : 'standard'] = { version: 'm4.3-fixture.1', protocol: 1, arch: 'arm64', fixtureOnly: true, testing,
+  artifacts[testing ? 'testing' : 'standard'] = { version: 'm4.4-fixture.1', protocol: 1, arch: 'arm64', fixtureOnly: true, testing,
    sha256: createHash('sha256').update(bytes).digest('hex'), base64: bytes.toString('base64') };
  }
  const sourceHash = createHash('sha256').update(await fs.readFile(join(root,'native/anchored-writer.m'))).digest('hex');

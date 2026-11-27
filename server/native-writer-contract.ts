@@ -2,7 +2,7 @@ import { z } from "zod";
 import { observationSchema, type PreviewManifest } from "../shared/preview-receipt";
 import { manifestDigest } from "./preview-receipts";
 
-export const nativeWriterVersion = "m4.3-fixture.1";
+export const nativeWriterVersion = "m4.4-fixture.1";
 export const nativeWriterLimits = Object.freeze({ files: 2048, directories: 1024, observations: 32768,
   sourceBytes: 8 * 1024 * 1024, requestBytes: 24 * 1024 * 1024, responseBytes: 4 * 1024 * 1024, deadlineMs: 30000 });
 const path = z.string().min(1).max(4096).refine(value => !value.includes("\0"));
@@ -27,7 +27,7 @@ export const nativeWriterRequestSchema = z.strictObject({
   files: z.array(z.strictObject({ destination: relative, status: z.enum(["create", "unchanged", "conflict", "blocked"]),
     mode: z.union([z.literal(0o644), z.literal(0o755)]), sizeBytes: z.number().int().nonnegative().max(nativeWriterLimits.sourceBytes),
     sha256: sha, bytesBase64: z.string().max(Math.ceil(nativeWriterLimits.sourceBytes / 3) * 4) })).max(nativeWriterLimits.files),
-  coordinator: z.strictObject({ directory: path }).optional(), controls: nativeControlsSchema.optional(),
+  durableAdmission: z.literal(true).optional(), coordinator: z.strictObject({ directory: path }).optional(), controls: nativeControlsSchema.optional(),
 });
 const identity = z.strictObject({ dev: z.string().regex(/^\d+$/), ino: z.string().regex(/^\d+$/) });
 export const nativeLedgerSchema = z.array(z.strictObject({ destination: relative, kind: z.enum(["file", "directory"]),
@@ -44,6 +44,8 @@ export const nativeVersionSchema = z.strictObject({ protocol: z.literal(1), vers
   fixtureOnly: z.literal(true), testing: z.union([z.literal(0), z.literal(1)]), arch: z.literal("arm64") });
 export const nativeEventSchema = z.discriminatedUnion("event", [
   nativeWriterResultSchema,
+  z.strictObject({ event: z.literal("ready_to_admit") }),
+  z.strictObject({ event: z.literal("directory_verified"), destination: relative, identity }),
   z.strictObject({ event: z.literal("ready_to_finalize"), result: nativeWriterResultSchema, lockHeld: z.literal(true) }),
   z.strictObject({ event: z.literal("barrier"), point: barrierPoint, destination: z.string().max(1024), sequence: z.number().int().positive(), pid: z.number().int().positive() }),
   z.strictObject({ event: z.literal("environment"), filesystem: z.literal("apfs"), local: z.literal(true), caseMode: z.literal("insensitive"),

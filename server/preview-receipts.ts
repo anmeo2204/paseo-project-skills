@@ -24,7 +24,7 @@ type RecordValue = { receipt: PreviewReceipt; manifestJson: string; sources: Map
 type Options = { now?: () => number; wallNow?: () => number; limits?: typeof receiptLimits; responseBytes?: number };
 
 // Installation-process lifetime, not a cross-process coordinator or caller identity.
-// There is deliberately no claim/consume/write API in M4.2.
+// Durable fixture claims live in the operation journal.
 export class PreviewReceiptStore {
   readonly epoch = randomToken();
   readonly installationInstanceId = randomToken();
@@ -90,6 +90,13 @@ export class PreviewReceiptStore {
   // Internal only; never exposed as RPC.
   inspect(binding: PreviewReceipt & { hostId: string; installationInstanceId: string }) {
     if (binding.epoch !== this.epoch) return { status: "error" as const, code: "epoch_mismatch" as const };
+    if (binding.issuedAt === undefined || binding.expiresAt === undefined)
+      return { status: "error" as const, code: "digest_mismatch" as const };
+    return this.inspectApply(binding);
+  }
+
+  inspectApply(binding: Pick<PreviewReceipt, "previewId" | "planDigest" | "viewNonce"> &
+    Partial<Pick<PreviewReceipt, "issuedAt" | "expiresAt">> & { hostId: string; installationInstanceId: string }) {
     const record = this.records.get(binding.previewId);
     if (!record) return { status: "error" as const, code: "unknown_receipt" as const };
     if (this.now() >= record.expires) { this.remove(binding.previewId); return { status: "error" as const, code: "expired" as const }; }
@@ -97,7 +104,8 @@ export class PreviewReceiptStore {
     if (binding.hostId !== manifest.hostId || binding.installationInstanceId !== manifest.installationInstanceId ||
       binding.viewNonce !== record.receipt.viewNonce) return { status: "error" as const, code: "binding_mismatch" as const };
     if (binding.planDigest !== record.receipt.planDigest || manifestDigest(manifest) !== binding.planDigest ||
-      binding.issuedAt !== record.receipt.issuedAt || binding.expiresAt !== record.receipt.expiresAt) {
+      (binding.issuedAt !== undefined && binding.issuedAt !== record.receipt.issuedAt) ||
+      (binding.expiresAt !== undefined && binding.expiresAt !== record.receipt.expiresAt)) {
       return { status: "error" as const, code: "digest_mismatch" as const };
     }
     return { status: "ready" as const, manifest,

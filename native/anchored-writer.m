@@ -17,7 +17,7 @@
 #ifndef PPS_TESTING
 #define PPS_TESTING 0
 #endif
-#define VERSION @"m4.3-fixture.1"
+#define VERSION @"m4.4-fixture.1"
 #define MAX_FILES 2048
 #define MAX_DIRS 1024
 #define MAX_OBS 32768
@@ -64,6 +64,8 @@ static PPSDir *coordinatorNode;
 static struct stat coordinatorIdentity;
 static BOOL mutated = NO, parentGone = NO, uncertain = NO;
 static pid_t expectedParent;
+static volatile sig_atomic_t cancelled;
+static void cancelWorker(int signalNumber) { (void)signalNumber; cancelled=1; }
 static double deadline;
 static NSString *errorCode;
 static NSUInteger barrierSequence __attribute__((unused)), syscallCount;
@@ -103,6 +105,22 @@ static NSData *readLine(void) {
         [inputBuffer appendBytes:bytes length:(NSUInteger)n];
     }
     return nil;
+}
+static BOOL durableAdmission(void) {
+    if (!request[@"durableAdmission"]) return YES;
+    if (!coordinatorNode || !emit(@{@"event":@"ready_to_admit"})) return fail(@"admission_failed");
+    NSData *line=readLine();
+    NSString *ack=line ? [[NSString alloc] initWithData:line encoding:NSUTF8StringEncoding] : nil;
+    return ([ack isEqual:@"ADMIT"] && checkpoint()) || fail(@"admission_denied");
+}
+static BOOL progress(NSDictionary *event) {
+    if (!emit(event)) return NO;
+    if (request[@"durableAdmission"]) {
+        NSData *line=readLine();
+        if (!line || ![[[NSString alloc] initWithData:line encoding:NSUTF8StringEncoding] isEqual:@"RECORDED"])
+            return fail(@"journal_ack_failed");
+    }
+    return checkpoint();
 }
 static BOOL barrier(NSString *point, NSString *destination) {
 #if PPS_TESTING
@@ -233,6 +251,7 @@ static BOOL coordinatorLinked(void) {
     return YES;
 }
 static BOOL linkage(void) {
+    if (cancelled) return fail(@"cancelled");
     if (!checkpoint() || !coordinatorLinked()) return NO;
     for (PPSDir *node in dirs) if (node.fd >= 0) {
         struct stat current;
@@ -318,17 +337,19 @@ static BOOL verifyNamedBytes(PPSFile *file) {
     return ok && fileNamed(file);
 }
 static BOOL recordIntent(NSString *operation, NSString *destination) {
-    return emit(@{@"event":@"mutation_intent",@"operation":operation,@"destination":destination}) && checkpoint();
+    return progress(@{@"event":@"mutation_intent",@"operation":operation,@"destination":destination});
 }
 static NSDictionary *identity(struct stat st) { return @{@"dev":[NSString stringWithFormat:@"%llu",(unsigned long long)st.st_dev],@"ino":[NSString stringWithFormat:@"%llu",(unsigned long long)st.st_ino]}; }
 static BOOL validateRequest(void) {
-    if (!keys(request,@[@"protocol",@"helperVersion",@"fixtureBase",@"root",@"expectedParentPid",@"environment",@"observations",@"directories",@"files"],@[@"controls",@"coordinator"]) ||
+    if (!keys(request,@[@"protocol",@"helperVersion",@"fixtureBase",@"root",@"expectedParentPid",@"environment",@"observations",@"directories",@"files"],@[@"controls",@"coordinator",@"durableAdmission"]) ||
         !integer(request[@"protocol"],1) || [request[@"protocol"] intValue]!=1 || ![request[@"helperVersion"] isEqual:VERSION] ||
         !integer(request[@"expectedParentPid"],INT_MAX) || [request[@"expectedParentPid"] intValue]!=expectedParent ||
         !absolute(request[@"root"]) || !absolute(request[@"fixtureBase"]) || !beneath(request[@"root"],request[@"fixtureBase"]) ||
         ![request[@"observations"] isKindOfClass:NSArray.class] || [request[@"observations"] count]>MAX_OBS ||
         ![request[@"directories"] isKindOfClass:NSArray.class] || [request[@"directories"] count]>MAX_DIRS ||
         ![request[@"files"] isKindOfClass:NSArray.class] || [request[@"files"] count]>MAX_FILES) return fail(@"invalid_request");
+    if (request[@"durableAdmission"] && (![request[@"durableAdmission"] isEqual:@YES] ||
+        CFGetTypeID((__bridge CFTypeRef)request[@"durableAdmission"]) != CFBooleanGetTypeID() || !request[@"coordinator"])) return fail(@"invalid_request");
     if (request[@"controls"] && !PPS_TESTING) return fail(@"test_controls_disabled");
     controls=request[@"controls"];
     if (controls && (!keys(controls,@[@"barriers",@"faults"],@[]) || ![controls[@"barriers"] isKindOfClass:NSArray.class] ||
@@ -451,7 +472,7 @@ static BOOL createDirectories(void) {
         PPSDir *node=dirByPath[[rootPath stringByAppendingPathComponent:effect[@"destination"]]];
         PPSDir *parent=dirs[(NSUInteger)node.parent]; NSString *destination=effect[@"destination"];
         if(parent.fd<0) return fail(@"invalid_request");
-        if(!barrier(@"before_mkdir",destination) || !linkage() || !barrier(@"after_mkdir_check",destination) || !recordIntent(@"mkdirat",destination)) return NO;
+        if(!barrier(@"before_mkdir",destination) || !linkage() || !barrier(@"after_mkdir_check",destination) || !recordIntent(@"mkdirat",destination) || (request[@"durableAdmission"] && !linkage())) return NO;
         if(mkdirat(parent.fd,node.name.fileSystemRepresentation,0755)) {
             if(errno==EIO){uncertain=YES;node.ledger[@"state"]=@"ownership_unknown";}
             return fail(errno==EEXIST ? @"destination_exists" : @"mkdir_failed");
@@ -470,6 +491,7 @@ static BOOL createDirectories(void) {
         if(!linkage() || !safeDirectory(node.fd,node.identity,YES)) return NO;
         if(fsync(node.fd) || fsync(parent.fd) || fault(@"directory_sync",destination)) return fail(@"sync_failed");
         if(!linkage())return NO; node.ledger[@"state"]=@"created_verified";
+        if(request[@"durableAdmission"] && !progress(@{@"event":@"directory_verified",@"destination":destination,@"identity":identity(node.identity)}))return NO;
     }
     return YES;
 }
@@ -493,7 +515,7 @@ static BOOL createFiles(void) {
                 [verifiedDerivedSkills addObject:skill];
             }
         }
-        if(!linkage() || !barrier(@"after_create_check",destination) || !recordIntent(@"openat_exclusive",destination))return NO;
+        if(!linkage() || !barrier(@"after_create_check",destination) || !recordIntent(@"openat_exclusive",destination) || (request[@"durableAdmission"] && !linkage()))return NO;
         int fd=openat(file.parent.fd,file.name.fileSystemRepresentation,O_RDWR|O_CREAT|O_EXCL|O_NOFOLLOW|O_CLOEXEC,0600);
         if(fd<0){if(errno==EIO){uncertain=YES;file.ledger[@"state"]=@"ownership_unknown";}return fail(errno==EEXIST ? @"destination_exists" : @"create_failed");}
         mutated=YES; file.ledger[@"state"]=@"created_incomplete";
@@ -527,7 +549,7 @@ static BOOL createFiles(void) {
         if(ok)ok=linkage()&&fileNamed(file);
         if(!ok)return NO;
         file.ledger[@"state"]=@"created_verified";
-        if(!emit(@{@"event":@"file_verified",@"destination":destination,@"identity":identity(file.identity)}))return NO;
+        if(!progress(@{@"event":@"file_verified",@"destination":destination,@"identity":identity(file.identity)}))return NO;
     }
     // Reopen only for read after close, then bind to the owned/unchanged identity.
     for(PPSFile *file in files) {
@@ -553,15 +575,16 @@ static NSDictionary *resultValue(void) {
     return @{@"event":@"result",@"protocol":@1,@"version":VERSION,@"phase":phase,@"code":errorCode?:@"none",@"targetMutated":uncertain&&!mutated?@"unknown":@(mutated),@"ledger":ledger,@"checkpoints":@(syscallCount),@"durability":errorCode?@"not_confirmed":@"fsync_completed"};
 }
 int main(int argc,char **argv) { @autoreleasepool {
-    signal(SIGPIPE,SIG_IGN); expectedParent=getppid(); deadline=monotonic()+30;
+    signal(SIGPIPE,SIG_IGN); signal(SIGUSR1,cancelWorker); expectedParent=getppid(); deadline=monotonic()+30;
     umask(0); // Isolated single-operation helper only; never changes the daemon/Node umask.
     if(argc==2&&!strcmp(argv[1],"--version")) {
         emit(@{@"protocol":@1,@"version":VERSION,@"fixtureOnly":@YES,@"testing":@(PPS_TESTING),@"arch":@"arm64"});return 0;
     }
-    if(argc!=2||strcmp(argv[1],"--worker"))return 2;
+    if(argc!=2 || (strcmp(argv[1],"--worker") && strcmp(argv[1],"--primitive-fixture-worker")))return 2;
+    BOOL durableWorker=!strcmp(argv[1],"--worker");
     dirs=[NSMutableArray new];dirByPath=[NSMutableDictionary new];files=[NSMutableArray new];ledger=[NSMutableArray new];inputBuffer=[NSMutableData new];usedBarriers=[NSMutableSet new];
     NSData *line=readLine(); if(line && line.length<=MAX_WIRE) request=[NSJSONSerialization JSONObjectWithData:line options:0 error:nil];
-    BOOL ok=request && validateRequest() && environmentGate() && lockCoordinator() && preflight() && createDirectories() && createFiles();
+    BOOL ok=request && validateRequest() && durableWorker==(request[@"durableAdmission"]!=nil) && environmentGate() && lockCoordinator() && durableAdmission() && preflight() && createDirectories() && createFiles();
     if(!ok && !errorCode)errorCode=@"invalid_request";
     closeTargets();
     if(coordinatorNode && !parentGone) {

@@ -1,0 +1,33 @@
+{
+  "baseline": "829133398618d01e11ebbdf7db5b2785f83d4232",
+  "branch": "main",
+  "paseoVersion": "0.17.5",
+  "host": [
+    "ProductName:\t\tmacOS",
+    "ProductVersion:\t\t27.2.1",
+    "BuildVersion:\t\t26B131"
+  ],
+  "runnerNode": "v22.23.4",
+  "indexUnchanged": true,
+  "productEntryPointsAndPreviewWireUnchanged": true,
+  "sourceSha256": {
+    "M4.4-completion-report.md": "274a9e2c3c965f0a2f0ae29199a858c9ea2411fa037eba62dbfa507bb1844edd",
+    "native/anchored-writer.m": "7502a93b0cfba6cfb95ef4ec7be806edb8d9c394dad0e92d2866c519df7bc83a",
+    "scripts/build-native-writer.mjs": "ebf358a6e9cc35a1bf20ab3617351a0c0f7b4fa519b18b0282e6c80f6458744f",
+    "scripts/m44-runtime-acceptance.mjs": "7caf3217fccc282a4f426a70dccefb31f45fac491804f0fa0a90fc2c5094ac98",
+    "server/apply-journal.ts": "87e2138a65217c2597c2d7cc967e9831f60c5db15898d5dfcdb462ce1d7f5f48",
+    "server/fixture-apply.ts": "6776650b057ec40afbb97cd3b3ac52851426334f84e9d8d067f467b296e31efd",
+    "server/native-writer-contract.ts": "39d786ebe4f4641b2bb406b4bd26bf62eb3adc76349c916d5f9ef6bbbe31efef",
+    "server/native-writer.ts": "db594032fb0ff9ac6608dbc48d7f0d59a63dd329da8a4be8b5fe50590f5fd88d",
+    "server/native/writer-payload.ts": "598a963c7a6678a6ce882575b3214cf3d5c0df3d72159dc89d3e5ef3f9265092",
+    "server/preview-receipts.ts": "caadaad4e7ebb0082c38bece52107cef35dc07ac1b2651643548f79cfebd40fb",
+    "shared/apply.ts": "1428eb7ac58123ca48d925b1e6a32576152b7cf0ec6c9c7f73e83f83aefa7e08",
+    "tests/apply-journal.test.mjs": "6dc4d31573aa41183ad613e58fcc8d5fea353e48ba7ff3bc65a39fda8cf2c1ad"
+  },
+  "evidenceSha256": {
+    "build.json": "40d37e66ad1ec31a601f0c6d429b9af11a47d0e33aeae61a675aac1c480cd5b6",
+    "cleanup.json": "dae9fa55859cab8e2c60a2d4ad4b3ef9ac9311c73fee6e8e20f772a0ced35be2",
+    "runtime-acceptance.json": "2f1093c9e66f7504f50a8b6f6e6062418af91d8c0dfa24c359aef98d1933cf9d",
+    "tests.log": "bbddbed172b8c0222e4e637060b96f8421fdbbf8804a40f86c1579a67a8be998"
+  }
+}
