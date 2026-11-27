@@ -1,4 +1,4 @@
-import { TextInput } from "@getpaseo/plugin/client/ui";
+import { Icon, TextInput } from "@getpaseo/plugin/client/ui";
 import type { PluginTheme } from "@getpaseo/plugin";
 import type { ReactNode } from "react";
 import { Pressable, Text, View, type TextInputProps } from "react-native";
@@ -45,4 +45,14 @@ export function Input({ theme, ...props }: Themed & TextInputProps) {
         borderRadius: 6, borderColor: theme.colors.border, color: theme.colors.foreground,
         backgroundColor: theme.colors.surface0 }} />
   );
+}
+
+export function Disclosure({ theme, label, expanded, onPress }: Themed & {
+  label: string; expanded: boolean; onPress: () => void;
+}) {
+  return <Pressable accessibilityRole="button" aria-expanded={expanded} accessibilityState={{ expanded }} onPress={onPress}
+    style={{ flexDirection: "row", alignItems: "center", gap: 6, minHeight: 36, alignSelf: "flex-start" }}>
+    <Icon name={expanded ? "ChevronDown" : "ChevronRight"} size={16} color={theme.colors.foregroundMuted} />
+    <Text style={{ color: theme.colors.foreground }}>{label}</Text>
+  </Pressable>;
 }

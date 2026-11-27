@@ -22,7 +22,7 @@ const directoryErrors = {
 
 export function FoundationScreen({ theme, layout, host }: PluginScreenProps) {
   const status = useHosts().find((entry) => entry.serverId === host.id)?.status;
-  const disconnected = status !== undefined && status !== "online";
+  const disconnected = status !== "online";
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: theme.colors.surface0 }}
@@ -30,7 +30,7 @@ export function FoundationScreen({ theme, layout, host }: PluginScreenProps) {
       <View style={{ width: "100%", maxWidth: 880, alignSelf: "center", gap: 12 }}>
         {disconnected ? <>
           <Section theme={theme} title="Target Project">
-            <Detail theme={theme} error>{host.label} is {status}. Connect to this host to choose a directory.</Detail>
+            <Detail theme={theme} error>{host.label} is {status ?? "unavailable"}. Connect to this host to choose a directory.</Detail>
           </Section>
           <Section theme={theme} title="Target Providers"><Detail theme={theme}>Connect to the host to discover providers.</Detail></Section>
           <Section theme={theme} title="Skill Catalog"><Detail theme={theme}>Host settings are unavailable.</Detail></Section>
@@ -45,6 +45,7 @@ function HostScreen({ theme, hostId, hostLabel }: { theme: PluginTheme; hostId: 
 
   const settings = useSettings(catalogSettings);
   const [providers, setProviders] = useState<ProviderId[]>([]);
+  const [providerGeneration, setProviderGeneration] = useState(0);
   const validate = useRpc(validateDirectoryRpc);
   const screenId = useId();
   const path = target?.value.path;
@@ -82,13 +83,16 @@ function HostScreen({ theme, hostId, hostLabel }: { theme: PluginTheme; hostId: 
       <Section theme={theme} title="Target Providers">
         {directory
           ? <ProviderSelection key={target?.selection} theme={theme} hostId={hostId} cwd={directory}
-              selected={providers} onToggle={(id) => setProviders((current) => current.includes(id)
-                ? current.filter((selected) => selected !== id) : [...current, id])} />
+              selected={providers} onToggle={(id) => {
+                setProviderGeneration((value) => value + 1);
+                setProviders((current) => current.includes(id)
+                  ? current.filter((selected) => selected !== id) : [...current, id]);
+              }} />
           : <Detail theme={theme}>Choose a valid target directory to discover providers.</Detail>}
       </Section>
       <Section theme={theme} title="Skill Catalog"><CatalogSection theme={theme} settings={settings} /></Section>
       <RecommendationRun theme={theme} hostId={hostId} directory={directory}
-        generation={target?.selection ?? 0} settings={settings} providers={providers} />
+        generation={target?.selection ?? 0} settings={settings} providers={providers} providerGeneration={providerGeneration} />
       <ConnectionCheck theme={theme} />
     </>
   );

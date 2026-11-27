@@ -1,10 +1,10 @@
 import { constants } from "node:fs";
 import type { Dirent, Stats } from "node:fs";
 import * as fs from "node:fs/promises";
-import { join } from "node:path";
 import { performance } from "node:perf_hooks";
 import { TextDecoder } from "node:util";
 import { relativePath, type ProjectWarning } from "../shared/project-evidence";
+import { checkProjectPath, rootMatches, sameNode, sameFile } from "./filesystem-guards";
 
 export const scanLimits = {
   depth: 6, memberDepth: 10, directories: 256, entries: 8_000, boundaries: 64,
@@ -48,10 +48,6 @@ export class ScanStopped extends Error {
   constructor(readonly code: "cancelled" | "deadline" | "target_changed") { super(code); }
 }
 
-const sameNode = (a: Stats, b: Stats) => a.dev === b.dev && a.ino === b.ino;
-const sameFile = (a: Stats, b: Stats) => sameNode(a, b) && a.size === b.size &&
-  a.mtimeMs === b.mtimeMs && a.ctimeMs === b.ctimeMs;
-
 export class ProjectReader {
   private readonly listings = new Map<string, ProjectEntry[]>();
   private readonly contents = new Map<string, string | undefined>();
@@ -75,38 +71,19 @@ export class ProjectReader {
   }
 
   async assertRoot() {
-    let state: Stats;
     try {
-      state = await this.io.lstat(this.root);
-      if (await this.io.realpath(this.root) !== this.root) throw new ScanStopped("target_changed");
+      if (!await rootMatches(this.root, this.identity, this.io)) throw new ScanStopped("target_changed");
     } catch {
       throw new ScanStopped("target_changed");
     }
-    if (!state.isDirectory() || !sameNode(this.identity, state)) throw new ScanStopped("target_changed");
   }
 
   private async checked(path: string, kind: EntryKind) {
     this.checkpoint();
     await this.assertRoot();
-    let full = this.root;
-    let state = this.identity;
-    const parts = path === "." ? [] : path.split("/");
-    for (const [index, part] of parts.entries()) {
-      full = join(full, part);
-      state = await this.io.lstat(full);
-      const directory = index < parts.length - 1 || kind === "directory";
-      if (state.dev !== this.identity.dev || (directory
-        ? !state.isDirectory()
-        : !state.isFile() || state.nlink !== 1)) {
-        this.warn("unsafe_entry", path);
-        return;
-      }
-    }
-    if (await this.io.realpath(full) !== full) {
-      this.warn("unsafe_entry", path);
-      return;
-    }
-    return { full, state };
+    const safe = await checkProjectPath(this.root, this.identity, path, kind, this.io);
+    if (!safe) this.warn("unsafe_entry", path);
+    return safe;
   }
 
   async list(path: string): Promise<readonly ProjectEntry[]> {

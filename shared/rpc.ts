@@ -3,6 +3,8 @@ import { z } from "zod";
 import { catalogResultSchema } from "./catalog";
 import { projectScanEvent } from "./project-evidence";
 import { recommendationEvent, recommendationInput } from "./recommendation";
+import { selectionIntentV1Schema } from "./selection-intent";
+import { previewResultSchema, providerPreviewResultSchema } from "./preview";
 
 export const foundationStatusRpc = defineRpc({
   name: "foundation.status",
@@ -41,4 +43,16 @@ export const recommendationEvaluateSubscription = defineSubscription({
   name: "recommendation.evaluate",
   input: recommendationInput,
   event: recommendationEvent,
+});
+
+export const canonicalPreviewRpc = defineRpc({
+  name: "preview.canonical",
+  input: selectionIntentV1Schema,
+  output: previewResultSchema,
+});
+
+export const providerPreviewRpc = defineRpc({
+  name: "preview.providers",
+  input: selectionIntentV1Schema,
+  output: providerPreviewResultSchema,
 });

@@ -48,7 +48,7 @@ Project-Skills is the single source of skill templates. The host setting starts 
 
 The loader requires Git on the daemon host and non-interactive SSH read access to `git@github.com:anmeo2204/project-skills.git` with its host key already trusted. It uses the host SSH identity or agent, an isolated temporary bare repo, and an in-memory cache of two resolved snapshots. For a runtime check, use the Paseo SDK settings RPC to save a known SHA, call `catalog.load` with `{}` twice, compare commit, IDs and descriptors, try an unavailable revision and restore the saved ref.
 
-The plugin validates existing directories without creating workspaces or writing target files. Native folder picking, agent sessions, previews and application remain outside the current milestone. The intended canonical skill location is `.agents/skills/`.
+The plugin validates existing directories without creating workspaces or writing target files. Native folder picking and application remain outside the current milestone. The canonical skill location is `.agents/skills/`.
 
 ## Project evidence
 
@@ -70,7 +70,41 @@ Run `npm run typecheck` and `npm test` for the contract, scanner, engine, and su
 
 Open **Project Skills**, choose a project or enter a host path, then save a catalog tag or SHA. Target Providers are optional installation destinations. Choose **Scan & Recommend** to review the pinned result. Open a skill’s details for boundary evidence and existing installations. Open **Unknown** to review skills with insufficient evidence or missing rules.
 
-Select skills manually or use **Select Recommended**. **Clear Selection** preserves provider choices. Rescanning or changing the target or saved catalog discards the previous skill selection. Selection records intent for a later milestone. The screen does not preview or write files.
+Select skills manually or use **Select Recommended**. **Clear Selection** preserves provider choices. Rescanning or changing the target or saved catalog discards the previous skill selection. Select **Preview Changes** to review proposed files for the current intent. The screen does not write files.
+
+## Canonical Preview Planner
+
+M3.2 exposes the typed daemon RPC `preview.canonical`. Its input is the existing `SelectionIntentV1`, now runtime-validated in `shared/selection-intent.ts`. The daemon checks the intent's host ID against `paseo.hosts.list().self.serverId`, revalidates the canonical target, checks the saved settings revision, resolves the saved catalog ref and requires the resolved source/SHA to match the intent. Every selected Skill ID must belong to that snapshot. An empty provider selection is valid. The recommendation request ID is a correlation field, not a stored scan receipt or permission to write.
+
+The planner inspects current destinations under **the selected target's** `.agents/skills/<id>/`, including `SKILL.md` and every supporting file. It returns stable path ordering and `create`, `unchanged`, `conflict` or `blocked` per file. Both bytes and POSIX permission bits must match for `unchanged`; proposed modes are `0644` or `0755` from Git mode. Unrelated existing files are preserved and no deletions are planned. Legacy catalogs work without applicability metadata, and sidecars are planned as ordinary package files.
+
+Changed UTF-8 text receives a unified diff with three lines of context around one contiguous change hunk. Mode-only changes have mode headers. Binary changes carry before/after byte size, SHA-256 and mode, without raw binary bytes. Unsafe paths, symlinks, hardlinks, special files, child mounts, unreadable files and observed replacements block affected entries. The planner shares filesystem identity/path guards with the scanner, while using a separate reader for complete package destinations; scanner metadata allowlists remain unchanged.
+
+Limits: 2,048 files, 1,024 bytes/32 segments per destination, 1 MiB per existing file, 8 MiB total destination reads, 32,768 filesystem `lstat` checks, 128 KiB per text diff, and 1 MiB for the complete JSON response. Files exceeding read/diff budgets are `blocked`; complete-plan or response-budget failures return `limit_exceeded` without truncating a plan. The filesystem phase has an 8-second cooperative deadline; catalog loading retains its separate 20-second limit. One preview runs per installation. Plugin disposal cancels the active preview and waits for its work to settle.
+
+Preview rechecks observed destinations after the final settings read. It describes current filesystem observations, not an atomic snapshot: same-path directory replacement before the request cannot be compared with a prior scan because the intent has no inode receipt. As with the scanner, Node pathname guards are intended for local-first projects, not an adversarial filesystem sandbox. Safe Apply must revalidate independently. This endpoint does not call agents/models or write target files. See [the M3.2 completion report](M3.2-completion-report.md).
+
+## Provider Adapter Preview
+
+M3.3 adds **`preview.providers`** with the same validated `SelectionIntentV1` input. `preview.canonical` keeps its strict M3.2 wire contract and canonical-only behavior, even when provider IDs are selected. The new response retains canonical `entries` and adds `providers`, `derivedEntries` and `diagnostics`. Both endpoints share one active-preview slot, disposal, CatalogLoader, destination reader, fingerprint/diff logic and budgets. Limits apply to the combined canonical and derived work and the complete response; no truncated plan is returned.
+
+Codex, Cursor ACP and Antigravity are `canonical_only`, with zero extra files. Provider status records **historical M3.1 verification**, not a new binary/version/session attestation: Codex 0.167.0 in `auto` with read-only options; Cursor 2026.10.22-27dcf5f through `cursor-agent acp` in `ask`; Antigravity 1.5.18 through its ACP connector in `plan`. Root/nested coverage is recorded, including Antigravity's existing permission flow for reading canonical skills at an ancestor. Preview does not discover models, start agents, alter permissions, or change session CWD/provider configuration.
+
+Kiro proposes a complete derived copy at `.kiro/skills/<id>/` only when the **selected target itself** has safe `.git` metadata and a bounded local `git rev-parse` confirms it as the work-tree root. A directory marker alone is insufficient; linked worktree gitfiles are supported. Git probes are read-only, have a 2-second timeout/16 KiB output cap each, and disable optional locks, hooks, fsmonitor and inherited/global configuration overrides. Root proof is rechecked before publish. Nested workspaces, non-Git directories, unsafe markers or unavailable Git retain canonical preview with `limited` Kiro status and no derived entries. The historical Kiro 2.34.2 evidence covers `kiro_default` with session CWD at root; the planner does not move a session to meet that condition.
+
+Derived entries use the exact canonical package bytes/modes, including supporting files, and carry `providerId` plus `canonicalDestination` lineage. If any canonical file of a skill is `conflict` or `blocked`, its entire Kiro package is `deferred` with diagnostics, while unaffected skills can still plan. Late canonical changes withdraw affected derived packages. Existing Kiro destinations are compared directly with `create/unchanged/conflict/blocked` semantics. Kiro status is `ready` for a generated plan without destination issues, `partial` for a mixed/degraded plan, `deferred` when all selected skills are held, or `limited` when root compatibility is unconfirmed; none of these statuses authorizes Apply.
+
+Duplicate diagnostics inspect only selected directory IDs at target-root `.agents/skills/`, `.cursor/skills/` and `.kiro/skills/`. `duplicate_skill_id` carries `basis: directory_id` and observed paths; these are candidate copies, not proof of matching frontmatter, provenance, activation or precedence. Unsafe/changed observations report `inventory_unverified`. No provider-home or exhaustive recursive inventory is claimed. See [M3.1 evidence](M3.1-completion-report.md) and [the M3.3 completion report](M3.3-completion-report.md).
+
+## Preview Changes in Desktop
+
+After scanning and selecting at least one skill, choose **Preview Changes**. Providers are optional. Each click makes one `preview.providers` request using the current `SelectionIntentV1`. Review the target, pinned catalog SHA, canonical files and any Kiro derived files. Each file shows Create, Unchanged, Conflict or Blocked; open its details for the text diff or before/after size, SHA-256 and permission mode. When every planned file matches, the screen explicitly reports no file changes.
+
+Kiro compatibility explains root requirements and package deferral. Canonical-only providers show zero additional files. Expand **M3.1 historical verification** for version, mode and CWD evidence; this does not verify the current provider session. Duplicate diagnostics show observed paths and leave precedence/activation unverified.
+
+Rescanning, changing host/target/saved settings or skill/provider selection discards the previous preview. Selection generations also invalidate A → B → A changes, including batched updates. Offline or missing hosts clear the current intent. Saving catalog settings temporarily disables Preview. Responses are checked against the request's full intent and obsolete replies are ignored; reconnect never retries automatically.
+
+**Cancel Preview** stops waiting on the UI and ignores late replies. The SDK RPC cannot be cancelled through this control, so the daemon may still finish and a quick retry can return Busy. Retry explicitly in the current scope. There is no Apply action, target write, model call or provider execution in Preview. See [the M3.4 completion report](M3.4-completion-report.md).
 
 ## Optional AI capability
 

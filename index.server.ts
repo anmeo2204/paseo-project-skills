@@ -1,11 +1,12 @@
 import type { PluginServerContext } from "@getpaseo/plugin/server";
 import { catalogSettings } from "./shared/catalog-settings";
-import { catalogLoadRpc, foundationStatusRpc, recommendationEvaluateSubscription, targetScanSubscription, validateDirectoryRpc } from "./shared/rpc";
+import { canonicalPreviewRpc, providerPreviewRpc, catalogLoadRpc, foundationStatusRpc, recommendationEvaluateSubscription, targetScanSubscription, validateDirectoryRpc } from "./shared/rpc";
 import { CatalogLoader } from "./server/catalog-loader";
 import { loadCatalogForHost } from "./server/catalog-rpc";
 import { ProjectScanner } from "./server/project-scanner";
 import { createRecommendationHandler } from "./server/recommendation-rpc";
 import { validateDirectory } from "./server/validate-directory";
+import { createCanonicalPreviewHandler } from "./server/canonical-preview";
 
 export default function contribute(server: PluginServerContext) {
   server.handle(foundationStatusRpc, () => ({ status: "ready" as const }));
@@ -22,6 +23,9 @@ export default function contribute(server: PluginServerContext) {
   });
 
   server.handle(recommendationEvaluateSubscription, createRecommendationHandler(settings, loader, scanner));
+  const preview = createCanonicalPreviewHandler(settings, loader);
+  server.handle(canonicalPreviewRpc, preview.handle);
+  server.handle(providerPreviewRpc, preview.handleProviders);
 
-  return async () => { await Promise.all([loader.dispose(), scanner.dispose()]); };
+  return async () => { await Promise.all([preview.dispose(), loader.dispose(), scanner.dispose()]); };
 }

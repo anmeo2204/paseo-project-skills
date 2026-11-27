@@ -5,10 +5,13 @@ import { Text, View } from "react-native";
 import type { CatalogErrorCode, CatalogSnapshotDescriptor } from "../shared/catalog";
 import type { RecommendationErrorCode, RecommendationEvent, RecommendationInput } from "../shared/recommendation";
 import { catalogLoadRpc, recommendationEvaluateSubscription } from "../shared/rpc";
+import { selectionIntentV1Schema } from "../shared/selection-intent";
 import type { CatalogSettingsState } from "./catalog-section";
 import { Action, Detail, Section } from "./controls";
 import type { ProviderId } from "./provider-selection";
 import { RecommendationResults } from "./recommendation-results";
+import { PreviewRun } from "./preview-run";
+export type { SelectionIntentV1 } from "../shared/selection-intent";
 
 type TerminalResult = Extract<RecommendationEvent, { status: "ready" | "partial" }>;
 type Attempt = { scope: string; requestId: string; directory: string; revision: string; ref: string };
@@ -17,18 +20,6 @@ type Run =
   | { phase: "error" | "stale"; attempt: Attempt; message: string }
   | { phase: "scanning"; attempt: Attempt; catalog: CatalogSnapshotDescriptor }
   | { phase: "complete"; attempt: Attempt; catalog: CatalogSnapshotDescriptor; event: TerminalResult; selected: string[] };
-
-export interface SelectionIntentV1 {
-  schemaVersion: 1;
-  hostId: string;
-  canonicalDirectory: string;
-  catalogSource: string;
-  catalogCommitSha: string;
-  settingsRevision: string;
-  selectedSkillIds: readonly string[];
-  targetProviderIds: readonly ProviderId[];
-  recommendationRequestId: string;
-}
 
 const catalogErrors: Record<CatalogErrorCode, string> = {
   not_configured: "Save a catalog revision first.",
@@ -56,19 +47,21 @@ const recommendationErrors: Record<RecommendationErrorCode, string> = {
 };
 const invalidResult = "The recommendation result could not be verified. Try again.";
 
-export function RecommendationRun({ theme, hostId, directory, generation, settings, providers }: {
+export function RecommendationRun({ theme, hostId, directory, generation, settings, providers, providerGeneration = 0 }: {
   theme: PluginTheme;
   hostId: string;
   directory: string | null;
   generation: number;
   settings: CatalogSettingsState;
   providers: readonly ProviderId[];
+  providerGeneration?: number;
 }) {
   const loadCatalog = useRpc(catalogLoadRpc);
   const id = useId().replace(/[^a-zA-Z0-9_-]/g, "");
   const sequence = useRef(0);
   const active = useRef<Attempt | null>(null);
   const [run, setRun] = useState<Run | null>(null);
+  const [selectionGeneration, setSelectionGeneration] = useState(0);
   const revision = settings.status === "ready" ? settings.revision : null;
   const ref = settings.status === "ready" ? settings.values.catalogRef : "";
   const scope = JSON.stringify([hostId, generation, directory, revision, ref]);
@@ -126,7 +119,7 @@ export function RecommendationRun({ theme, hostId, directory, generation, settin
   }
 
   const completed = visible?.phase === "complete" ? visible : null;
-  const intent: SelectionIntentV1 | null = completed && {
+  const intent = completed && selectionIntentV1Schema.parse({
     schemaVersion: 1,
     hostId,
     canonicalDirectory: completed.attempt.directory,
@@ -136,9 +129,10 @@ export function RecommendationRun({ theme, hostId, directory, generation, settin
     selectedSkillIds: completed.selected,
     targetProviderIds: [...providers].sort(),
     recommendationRequestId: completed.attempt.requestId,
-  };
+  });
 
   function select(update: (previous: string[]) => string[]) {
+    setSelectionGeneration((value) => value + 1);
     setRun((current) => current?.phase === "complete" && current.attempt === completed?.attempt
       ? { ...current, selected: update(current.selected).sort() } : current);
   }
@@ -178,6 +172,9 @@ export function RecommendationRun({ theme, hostId, directory, generation, settin
           ...previous, ...completed.event.result.items.filter(({ applicability }) => applicability === "recommended").map(({ skillId }) => skillId),
         ])])}
         onClear={() => select(() => [])} />}
+      {completed && intent && <PreviewRun key={"preview-" + intent.recommendationRequestId} theme={theme} intent={intent}
+        generation={JSON.stringify([scope, selectionGeneration, providerGeneration, Boolean(settings.saving)])}
+        disabled={Boolean(settings.saving)} />}
     </>
   );
 }

@@ -6,7 +6,7 @@ import { test } from "node:test";
 import contribute from "../index.server.ts";
 import { validateDirectory } from "../server/validate-directory.ts";
 import { catalogSettings, catalogSource } from "../shared/catalog-settings.ts";
-import { catalogLoadRpc, foundationStatusRpc, recommendationEvaluateSubscription, targetScanSubscription, validateDirectoryRpc } from "../shared/rpc.ts";
+import { canonicalPreviewRpc, providerPreviewRpc, catalogLoadRpc, foundationStatusRpc, recommendationEvaluateSubscription, targetScanSubscription, validateDirectoryRpc } from "../shared/rpc.ts";
 
 async function fixture(t) {
   const directory = await mkdtemp(join(tmpdir(), "project-skills-test-"));
@@ -81,7 +81,7 @@ test("server contribution registers the expected typed contracts and host settin
       return { read: async () => ({ status: "ready", revision: "host-settings", values: { catalogRef: "" } }) };
     },
   });
-  assert.deepEqual([...handlers.keys()], [foundationStatusRpc, validateDirectoryRpc, catalogLoadRpc, targetScanSubscription, recommendationEvaluateSubscription]);
+  assert.deepEqual([...handlers.keys()], [foundationStatusRpc, validateDirectoryRpc, catalogLoadRpc, targetScanSubscription, recommendationEvaluateSubscription, canonicalPreviewRpc, providerPreviewRpc]);
   assert.deepEqual(settings, [catalogSettings]);
   assert.deepEqual(foundationStatusRpc.output.parse(handlers.get(foundationStatusRpc)({})), { status: "ready" });
   assert.equal(foundationStatusRpc.input.safeParse({ extra: true }).success, false);

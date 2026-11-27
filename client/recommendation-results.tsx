@@ -5,7 +5,7 @@ import { Pressable, Text, View } from "react-native";
 import type { CatalogSnapshotDescriptor } from "../shared/catalog";
 import type { EvidenceRef } from "../shared/project-evidence";
 import type { RecommendationEvent, RecommendationItem, RecommendationReason } from "../shared/recommendation";
-import { Action, Detail, Section } from "./controls";
+import { Action, Detail, Disclosure, Section } from "./controls";
 
 type Result = Extract<RecommendationEvent, { result: unknown }>["result"];
 
@@ -119,16 +119,6 @@ export function RecommendationResults({ theme, result, partial, catalog, selecte
       })}
     </Section>
   );
-}
-
-function Disclosure({ theme, label, expanded, onPress }: {
-  theme: PluginTheme; label: string; expanded: boolean; onPress: () => void;
-}) {
-  return <Pressable accessibilityRole="button" aria-expanded={expanded} accessibilityState={{ expanded }} onPress={onPress}
-    style={{ flexDirection: "row", alignItems: "center", gap: 6, minHeight: 36, alignSelf: "flex-start" }}>
-    <Icon name={expanded ? "ChevronDown" : "ChevronRight"} size={16} color={theme.colors.foregroundMuted} />
-    <Text style={{ color: theme.colors.foreground }}>{label}</Text>
-  </Pressable>;
 }
 
 function SkillRow({ theme, item, title, description, refs, checked, onToggle }: {
