@@ -7,7 +7,9 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { writerArtifacts } from "./native/writer-payload";
 import { nativeEventSchema, nativeVersionSchema, nativeWriterRequestSchema, nativeWriterVersion, nativeWriterLimits,
-  type NativeWriterRequest, type NativeWriterResult, type NativeWriterEvent } from "./native-writer-contract";
+  singleProjectEnrollEventSchema, singleProjectEnrollRequestSchema, singleProjectWriterRequestSchema,
+  type NativeWriterRequest, type NativeWriterResult, type NativeWriterEvent,
+  type SingleProjectEnrollEvent, type SingleProjectEnrollRequest, type SingleProjectWriterRequest } from "./native-writer-contract";
 
 const exec = promisify(execFile);
 export type WriterArtifact = { version: string; protocol: number; arch: string; fixtureOnly: boolean; testing: boolean; sha256: string; base64: string };
@@ -25,7 +27,7 @@ export type FixtureWriterOptions = { testing?: boolean; artifact?: WriterArtifac
   // Extraction fault hook operates only on the private helper namespace.
   onExtracted?: (directory: string) => void | Promise<void> };
 
-function initialLedger(request: NativeWriterRequest): Ledger {
+function initialLedger(request: Pick<NativeWriterRequest, "directories" | "files">): Ledger {
   return [...request.directories.map(item => ({ destination: item.destination, kind: "directory" as const, state: "not_attempted" as const })),
     ...request.files.map(item => ({ destination: item.destination, kind: "file" as const, state: "not_attempted" as const, bytesWritten: 0 }))];
 }
@@ -40,6 +42,82 @@ const sameNode = (a: { dev: bigint; ino: bigint }, b: { dev: bigint; ino: bigint
 // no product write capability or caller authorization is created by this module.
 export async function runFixtureWriter(raw: NativeWriterRequest, options: FixtureWriterOptions = {}): Promise<FixtureWriterOutcome> {
   const request = nativeWriterRequestSchema.parse(raw);
+  const modeArg = request.durableAdmission ? "--worker" : "--primitive-fixture-worker";
+  return runNativeWriterInternal(request, modeArg, options);
+}
+
+export async function runSingleProjectWriter(raw: SingleProjectWriterRequest, options: FixtureWriterOptions = {}): Promise<FixtureWriterOutcome> {
+  const request = singleProjectWriterRequestSchema.parse(raw);
+  const modeArg = request.durableAdmission ? "--single-project-worker" : "--single-project-probe";
+  return runNativeWriterInternal(request, modeArg, options);
+}
+
+export async function runSingleProjectEnroll(raw: SingleProjectEnrollRequest, options: Pick<FixtureWriterOptions, "testing" | "artifact" | "onExtracted"> = {}): Promise<SingleProjectEnrollEvent> {
+  const request = singleProjectEnrollRequestSchema.parse(raw);
+  if (process.platform !== "darwin" || process.arch !== "arm64") {
+    return { event: "enroll_error", protocol: 1, version: nativeWriterVersion, code: "unsupported_environment" };
+  }
+  const artifact = options.artifact === undefined ? writerArtifacts[options.testing ? "testing" : "standard"] : options.artifact;
+  if (!artifact || !artifact.base64) return { event: "enroll_error", protocol: 1, version: nativeWriterVersion, code: "helper_missing" };
+  if (artifact.version !== nativeWriterVersion || artifact.protocol !== 1 || artifact.arch !== "arm64" || !artifact.fixtureOnly || artifact.testing !== Boolean(options.testing)) {
+    return { event: "enroll_error", protocol: 1, version: nativeWriterVersion, code: "helper_version" };
+  }
+  const bytes = Buffer.from(artifact.base64, "base64");
+  if (bytes.toString("base64") !== artifact.base64 || digest(bytes) !== artifact.sha256) {
+    return { event: "enroll_error", protocol: 1, version: nativeWriterVersion, code: "helper_integrity" };
+  }
+  let directory: string | undefined;
+  let directoryIdentity: Awaited<ReturnType<typeof fs.lstat>> | undefined;
+  try {
+    directory = await fs.mkdtemp(join(await fs.realpath(tmpdir()), "pps-helper-m43-"));
+    directoryIdentity = await fs.lstat(directory);
+    if (!directoryIdentity.isDirectory() || (directoryIdentity.mode & 0o7777) !== 0o700 || directoryIdentity.uid !== process.getuid?.()) throw new Error("extraction_unsafe");
+    const helper = join(directory, "writer");
+    const handle = await fs.open(helper, constants.O_RDWR | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW, 0o700);
+    try { await handle.writeFile(bytes); await handle.chmod(0o700); await handle.sync(); } finally { await handle.close(); }
+    await options.onExtracted?.(directory);
+    const versionRaw = await exec(helper, ["--version"], { timeout: 3000, maxBuffer: 4096, env: { PATH: "/usr/bin:/bin", TMPDIR: tmpdir() } });
+    const version = nativeVersionSchema.safeParse(JSON.parse(versionRaw.stdout));
+    if (!version.success || version.data.testing !== Number(Boolean(options.testing))) throw new Error("helper_version");
+    const wire = JSON.stringify({ ...request, expectedParentPid: process.pid }) + "\n";
+    const child = spawn(helper, ["--enroll-root"], { stdio: ["pipe", "pipe", "pipe"], env: { PATH: "/usr/bin:/bin", TMPDIR: tmpdir(), LC_ALL: "C" } });
+    let stdout = "";
+    child.stdout.setEncoding("utf8");
+    child.stdout.on("data", (chunk: string) => { if (stdout.length + chunk.length <= 262144) stdout += chunk; });
+    child.stderr.on("data", () => {});
+    child.stdin.on("error", () => {});
+    await new Promise<void>(resolve => {
+      const timeout = setTimeout(() => { child.kill("SIGTERM"); resolve(); }, 10000);
+      child.once("close", () => { clearTimeout(timeout); resolve(); });
+      child.once("error", () => { clearTimeout(timeout); resolve(); });
+      child.stdin.write(wire);
+    });
+    const line = stdout.trim().split("\n")[0];
+    if (!line) return { event: "enroll_error", protocol: 1, version: nativeWriterVersion, code: "helper_protocol" };
+    const parsed = singleProjectEnrollEventSchema.safeParse(JSON.parse(line));
+    return parsed.success ? parsed.data : { event: "enroll_error", protocol: 1, version: nativeWriterVersion, code: "helper_protocol" };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "helper_unavailable";
+    const code = ["helper_integrity", "helper_version", "extraction_unsafe"].includes(message) ? message : "helper_unavailable";
+    return { event: "enroll_error", protocol: 1, version: nativeWriterVersion, code };
+  } finally {
+    if (directory && directoryIdentity) {
+      try {
+        const current = await fs.lstat(directory);
+        if (current.dev === directoryIdentity.dev && current.ino === directoryIdentity.ino && current.isDirectory() &&
+          current.uid === process.getuid?.() && (current.mode & 0o7777) === 0o700 && await fs.realpath(directory) === directory) {
+          await fs.rm(directory, { recursive: true });
+        }
+      } catch { /* ignore cleanup failure */ }
+    }
+  }
+}
+
+async function runNativeWriterInternal(
+  request: NativeWriterRequest | SingleProjectWriterRequest,
+  modeArg: "--worker" | "--primitive-fixture-worker" | "--single-project-worker" | "--single-project-probe",
+  options: FixtureWriterOptions = {},
+): Promise<FixtureWriterOutcome> {
   const events: NativeWriterEvent[] = [];
   let result: HostFailure = hostFailure("helper_missing", initialLedger(request));
   const outcome: FixtureWriterOutcome = { result, events, extraction: { removed: true } };
@@ -93,7 +171,7 @@ export async function runFixtureWriter(raw: NativeWriterRequest, options: Fixtur
     await verifyExtraction();
     const wire = JSON.stringify({ ...request, expectedParentPid: process.pid }) + "\n";
     if (Buffer.byteLength(wire) > nativeWriterLimits.requestBytes) throw new Error("limit_exceeded");
-    const child = spawn(helper, [request.durableAdmission ? "--worker" : "--primitive-fixture-worker"], { stdio: ["pipe", "pipe", "pipe"],
+    const child = spawn(helper, [modeArg], { stdio: ["pipe", "pipe", "pipe"],
       env: { PATH: "/usr/bin:/bin", TMPDIR: tmpdir(), LC_ALL: "C" } });
     const abort = () => child.kill("SIGUSR1");
     options.signal?.addEventListener("abort", abort, { once: true });

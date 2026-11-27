@@ -1,13 +1,14 @@
 import type { PluginHandlerContext } from "@getpaseo/plugin/server";
 import { createHash } from "node:crypto";
 import { isAbsolute, join, relative } from "node:path";
-import { lstatSync, realpathSync } from "node:fs";
+import { lstatSync, mkdirSync, realpathSync } from "node:fs";
 import { applyCreateInputSchema, applyStatusInputSchema, type ApplyOutput, type ApplyOperation, type ApplyCreateInput } from "../shared/apply";
 import { createCanonicalPreviewHandler } from "./canonical-preview";
 import { ApplyJournal, type ApplyJournalRecord } from "./apply-journal";
 import { canonicalSerialize, manifestDigest, PreviewReceiptStore } from "./preview-receipts";
-import { fixtureWriterRequest, type NativeControls, type NativeWriterRequest, type NativeWriterResult } from "./native-writer-contract";
-import { runFixtureWriter, type FixtureWriterOptions } from "./native-writer";
+import { fixtureWriterRequest, singleProjectWriterRequest, type NativeControls, type NativeWriterRequest, type NativeWriterResult } from "./native-writer-contract";
+import { runFixtureWriter, runSingleProjectWriter, type FixtureWriterOptions } from "./native-writer";
+import { pilotRuntimeDirectory, toEnrollmentBinding, type ActiveSingleProjectPolicy } from "./single-project-policy";
 
 type Context = Pick<PluginHandlerContext, "paseo">;
 type ErrorCode = Extract<ApplyOutput, { status: "error" }>["code"];
@@ -46,18 +47,130 @@ type FixtureConfiguration = {
   };
 };
 
+type SingleProjectConfiguration = {
+  daemonHome: string;
+  installation: string;
+  readPolicy: () => ActiveSingleProjectPolicy | undefined;
+  receipts: PreviewReceiptStore;
+  settings: Parameters<typeof createCanonicalPreviewHandler>[0];
+  catalog: Parameters<typeof createCanonicalPreviewHandler>[1];
+  environment: NativeWriterRequest["environment"];
+  test?: FixtureConfiguration["test"];
+};
+
 export function createFixtureApply(config: FixtureConfiguration) {
   const base = realpathSync(config.fixtureBase);
   const home = process.env.PASEO_HOME;
   if (!home || !beneath(base, home) || realpathSync(home) !== home || !lstatSync(home).isDirectory())
     throw new Error("fixture_daemon_home_required");
   const coordinator = join(home, "runtime", "project-skills-m44");
-  const journal = new ApplyJournal(coordinator);
+  const allowsTarget = (target: string) => isFixtureApplyTarget(base, target, home) && (config.targetAllowed?.(target) ?? true);
+  return createApplyEngine({
+    coordinator,
+    installation: config.installation,
+    receipts: config.receipts,
+    settings: config.settings,
+    catalog: config.catalog,
+    environment: config.environment,
+    test: config.test,
+    revalidationStore: () => new PreviewReceiptStore(config.receipts.policy.writeCapability === "fixture_m4_5" ? { fixtureApply: allowsTarget } : {}),
+    prepareWrite(manifest, planDigest, sources, controls) {
+      if (!allowsTarget(manifest.plan.intent.canonicalDirectory)) return { ok: false, code: "unsupported_environment" };
+      const request = { ...fixtureWriterRequest({ fixtureBase: base, manifest, planDigest, sources,
+        environment: config.environment, coordinator, controls }), durableAdmission: true as const };
+      return {
+        ok: true,
+        directories: request.directories,
+        files: request.files,
+        checkBeforeAdmit: () => undefined,
+        run: (options) => runFixtureWriter(request, options),
+      };
+    },
+  });
+}
+
+export function createSingleProjectApply(config: SingleProjectConfiguration) {
+  const home = realpathSync(config.daemonHome);
+  if (process.env.PASEO_HOME !== home || !lstatSync(home).isDirectory())
+    throw new Error("pilot_daemon_home_required");
+  const runtime = join(home, "runtime");
+  mkdirSync(runtime, { recursive: true, mode: 0o700 });
+  const pilotDir = pilotRuntimeDirectory(home);
+  mkdirSync(pilotDir, { recursive: true, mode: 0o700 });
+  const coordinator = join(pilotDir, "coordinator");
+  mkdirSync(coordinator, { recursive: true, mode: 0o700 });
+  return createApplyEngine({
+    coordinator,
+    installation: config.installation,
+    receipts: config.receipts,
+    settings: config.settings,
+    catalog: config.catalog,
+    environment: config.environment,
+    test: config.test,
+    requireCreateEntries: true,
+    revalidationStore: () => new PreviewReceiptStore({
+      singleProject: () => {
+        const policy = config.readPolicy();
+        return policy ? toEnrollmentBinding(policy) : undefined;
+      },
+    }),
+    prepareWrite(manifest, planDigest, sources, controls) {
+      const policy = config.readPolicy();
+      if (!policy) return { ok: false, code: "receipt_invalid" };
+      if (manifest.plan.intent.canonicalDirectory !== policy.canonicalRoot) return { ok: false, code: "unsupported_environment" };
+      const request = { ...singleProjectWriterRequest({ enrollment: policy, manifest, planDigest, sources,
+        environment: config.environment, coordinator, controls }), durableAdmission: true as const };
+      return {
+        ok: true,
+        directories: request.directories,
+        files: request.files,
+        checkBeforeAdmit: () => {
+          const live = config.readPolicy();
+          if (!live || live.policyRevision !== policy.policyRevision || live.canonicalRoot !== policy.canonicalRoot) {
+            return "receipt_invalid";
+          }
+          return undefined;
+        },
+        run: (options) => runSingleProjectWriter(request, options),
+      };
+    },
+  });
+}
+
+type PreparedWrite =
+  | { ok: false; code: ErrorCode }
+  | {
+      ok: true;
+      directories: { destination: string; mode: 493 }[];
+      files: { destination: string }[];
+      checkBeforeAdmit: () => ErrorCode | undefined;
+      run: (options: FixtureWriterOptions) => ReturnType<typeof runFixtureWriter>;
+    };
+
+type EngineConfiguration = {
+  coordinator: string;
+  installation: string;
+  receipts: PreviewReceiptStore;
+  settings: Parameters<typeof createCanonicalPreviewHandler>[0];
+  catalog: Parameters<typeof createCanonicalPreviewHandler>[1];
+  environment: NativeWriterRequest["environment"];
+  test?: FixtureConfiguration["test"];
+  requireCreateEntries?: boolean;
+  revalidationStore: () => PreviewReceiptStore;
+  prepareWrite: (
+    manifest: Parameters<typeof fixtureWriterRequest>[0]["manifest"],
+    planDigest: string,
+    sources: Parameters<typeof fixtureWriterRequest>[0]["sources"],
+    controls: NativeControls | undefined,
+  ) => PreparedWrite;
+};
+
+function createApplyEngine(config: EngineConfiguration) {
+  const journal = new ApplyJournal(config.coordinator);
   const active = new Map<string, { requestHash: string; done: Promise<ApplyOutput> }>();
   const stop = new AbortController();
-  const allowsTarget = (target: string) => isFixtureApplyTarget(base, target, home) && (config.targetAllowed?.(target) ?? true);
   const revalidation = createCanonicalPreviewHandler(config.settings, config.catalog, {
-    receiptStore: new PreviewReceiptStore(config.receipts.policy.writeCapability === "fixture_m4_5" ? { fixtureApply: allowsTarget } : {}),
+    receiptStore: config.revalidationStore(),
   });
   const host = async (context: Context) => (await context.paseo.hosts.list()).self.serverId;
 
@@ -84,16 +197,16 @@ export function createFixtureApply(config: FixtureConfiguration) {
     const receipt = config.receipts.inspectApply(binding);
     if (receipt.status !== "ready") return error("receipt_invalid");
     const { manifest, sources } = receipt;
-    if (!allowsTarget(manifest.plan.intent.canonicalDirectory)) return error("unsupported_environment");
     const entries = [...manifest.plan.entries, ...manifest.plan.derivedEntries];
     if (entries.some(item => item.status === "conflict" || item.status === "blocked") ||
+        (config.requireCreateEntries && !entries.some(item => item.status === "create")) ||
         manifest.readSet.some(item => item.observation.state === "unverified" ||
           item.observation.state === "present" && item.observation.kind === "unsafe"))
       return error("plan_not_applicable");
     if (stop.signal.aborted) return error("cancelled");
     const controls = config.test?.controls?.(input);
-    const request = { ...fixtureWriterRequest({ fixtureBase: base, manifest, planDigest: input.planDigest, sources,
-      environment: config.environment, coordinator, controls }), durableAdmission: true as const };
+    const prepared = config.prepareWrite(manifest, input.planDigest, sources, controls);
+    if (!prepared.ok) return error(prepared.code);
 
     const byDestination = new Map(manifest.sources.map(source => [source.destination, source]));
     const record: ApplyJournalRecord = {
@@ -103,8 +216,8 @@ export function createFixtureApply(config: FixtureConfiguration) {
         status: "operation", operationId: input.operationId, planDigest: input.planDigest,
         phase: "accepted", code: "none", targetMutated: "unknown", requiresPreview: false, durability: "not_confirmed",
         ledger: [
-          ...request.directories.map(item => ({ destination: item.destination, kind: "directory" as const, state: "not_attempted" as const })),
-          ...request.files.map(item => {
+          ...prepared.directories.map(item => ({ destination: item.destination, kind: "directory" as const, state: "not_attempted" as const })),
+          ...prepared.files.map(item => {
             const source = byDestination.get(item.destination)!;
             return { destination: item.destination, kind: "file" as const, state: "not_attempted" as const, bytesWritten: 0,
               canonicalDestination: source.canonicalDestination,
@@ -134,13 +247,15 @@ export function createFixtureApply(config: FixtureConfiguration) {
       terminal = operation;
     };
 
-    const outcome = await runFixtureWriter(request, {
+    const outcome = await prepared.run({
       testing: Boolean(controls), onEvent: config.test?.onEvent, onExtracted: config.test?.onExtracted, signal: stop.signal,
       onAdmission: async () => {
         if (stop.signal.aborted) { denied = error("cancelled"); return false; }
         try {
           denied = lookup();
           if (denied) return false;
+          const policyErr = prepared.checkBeforeAdmit();
+          if (policyErr) { denied = error(policyErr); return false; }
           if (config.receipts.inspectApply(binding).status !== "ready") { denied = error("receipt_invalid"); return false; }
           const refusal = journal.checkAdmission(record);
           if (refusal) { denied = error(refusal); return false; }

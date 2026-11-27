@@ -25,13 +25,33 @@ export const receiptPolicy = Object.freeze({
     fileBytes: 1024 * 1024, readBytes: 8 * 1024 * 1024, filesystemChecks: 32768,
     diffBytes: 128 * 1024, responseBytes: 1024 * 1024, deadlineMs: 8000 }),
 } as const);
+export const enrollmentBindingSchema = z.strictObject({
+  policyRevision: token,
+  canonicalRoot: absolutePath,
+  volume: z.strictObject({
+    fsid: z.tuple([signedDecimal, signedDecimal]),
+    fstype: z.literal("apfs"),
+    mountPoint: absolutePath,
+    caseMode: z.literal("insensitive"),
+  }),
+  rootIdentity: z.strictObject({
+    dev: decimal,
+    ino: decimal,
+    mode: decimal,
+    uid: decimal,
+    gid: decimal,
+  }),
+  ancestorsDigest: token,
+});
+export type EnrollmentBinding = z.infer<typeof enrollmentBindingSchema>;
 const policySchema = z.strictObject({
   manifestVersion: z.literal(1), plannerVersion: z.literal(receiptPolicy.plannerVersion),
   adapterVersion: z.literal(receiptPolicy.adapterVersion), writerPolicyVersion: z.literal(receiptPolicy.writerPolicyVersion),
   serializationVersion: z.literal(receiptPolicy.serializationVersion), observationVersion: z.literal(receiptPolicy.observationVersion),
   ttlMs: z.literal(receiptLimits.ttlMs), maxReceipts: z.literal(receiptLimits.receipts),
   maxSourceBytes: z.literal(receiptLimits.sourceBytes), maxRetainedSourceBytes: z.literal(receiptLimits.retainedSourceBytes),
-  callerBinding: z.literal(receiptPolicy.callerBinding), writeCapability: z.enum(["unavailable_m4_2", "fixture_m4_5"]),
+  callerBinding: z.literal(receiptPolicy.callerBinding), writeCapability: z.enum(["unavailable_m4_2", "fixture_m4_5", "single_project_v1"]),
+  enrollment: enrollmentBindingSchema.optional(),
   previewBudgets: z.strictObject({
     files: z.number().int().nonnegative().max(2048), pathBytes: z.number().int().nonnegative().max(1024),
     pathDepth: z.number().int().nonnegative().max(32), fileBytes: z.number().int().nonnegative().max(1024 * 1024),

@@ -1,0 +1,5 @@
+{
+  "id": "paseo-project-skills-single-project-pilot",
+  "name": "Project Skills Single-Project Pilot",
+  "requirements": { "paseo": "0.17.5" }
+}

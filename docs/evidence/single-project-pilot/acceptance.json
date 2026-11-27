@@ -1,0 +1,603 @@
+{
+  "workspace": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-pilot-accept-vIZaGq",
+  "environment": {
+    "paseoVersion": "0.17.5",
+    "sdkVersion": "0.17.4",
+    "macOS": "27.2.1",
+    "arch": "arm64"
+  },
+  "cases": {
+    "optInOff": {
+      "pass": true,
+      "capability": {
+        "enabled": false
+      },
+      "previewEligibility": {
+        "status": "ineligible",
+        "reasons": [
+          "write_capability_unavailable"
+        ]
+      },
+      "applyError": {
+        "status": "error",
+        "code": "receipt_invalid"
+      }
+    },
+    "outOfScope": {
+      "pass": true,
+      "enrolledRoot": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-pilot-accept-vIZaGq/project-copy-1",
+      "policyRevision": "cd2ebeb5164c5676a1a781fb3210a26ef7903b9ec3296a4dfe784ba6ce7f0b5c",
+      "aliasEnrollError": "invalid_target",
+      "sibling": {
+        "eligibility": {
+          "status": "ineligible",
+          "reasons": [
+            "write_capability_unavailable"
+          ]
+        },
+        "applyError": {
+          "status": "error",
+          "code": "receipt_invalid"
+        },
+        "untouched": true
+      },
+      "nested": {
+        "eligibility": {
+          "status": "ineligible",
+          "reasons": [
+            "write_capability_unavailable"
+          ]
+        },
+        "applyError": {
+          "status": "error",
+          "code": "receipt_invalid"
+        },
+        "untouched": true
+      },
+      "alias": {
+        "previewResult": {
+          "status": "error",
+          "code": "target_changed"
+        }
+      }
+    },
+    "rootReplacement": {
+      "pass": true,
+      "beforePreview": {
+        "eligibility": {
+          "status": "ineligible",
+          "reasons": [
+            "write_capability_unavailable"
+          ]
+        },
+        "replacementUntouched": true
+      },
+      "afterPreview": {
+        "applyError": {
+          "status": "error",
+          "code": "unsupported_environment"
+        },
+        "replacementUntouched": true
+      },
+      "moveAfterLinkageCheck": {
+        "operation": {
+          "status": "operation",
+          "operationId": "f9477b5d8800475b30899b673ee94905",
+          "planDigest": "3534e33c8cf4857a4741b1bac9a65f14d5e9c3f99614d13f946c829b98754666",
+          "phase": "partial_failure",
+          "code": "linkage_changed",
+          "targetMutated": true,
+          "requiresPreview": true,
+          "durability": "not_confirmed",
+          "ledger": [
+            {
+              "destination": ".agents",
+              "kind": "directory",
+              "state": "created_verified",
+              "identity": {
+                "dev": "16777230",
+                "ino": "122833017"
+              }
+            },
+            {
+              "destination": ".agents/skills",
+              "kind": "directory",
+              "state": "created_verified",
+              "identity": {
+                "dev": "16777230",
+                "ino": "122833020"
+              }
+            },
+            {
+              "destination": ".agents/skills/demo",
+              "kind": "directory",
+              "state": "created_verified",
+              "identity": {
+                "dev": "16777230",
+                "ino": "122833023"
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/file-00.txt",
+              "kind": "file",
+              "state": "created_verified",
+              "bytesWritten": 14,
+              "canonicalDestination": ".agents/skills/demo/file-00.txt",
+              "expected": {
+                "sha256": "cf88052b2f8a0e2da7b7041b51485c2e06fdd0a7e334d8b56199a66d38ae1487",
+                "mode": 420,
+                "sizeBytes": 14
+              },
+              "identity": {
+                "dev": "16777230",
+                "ino": "122833026"
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/file-01.txt",
+              "kind": "file",
+              "state": "created_incomplete",
+              "bytesWritten": 0,
+              "canonicalDestination": ".agents/skills/demo/file-01.txt",
+              "expected": {
+                "sha256": "6878c1ee9b0c4b6a6c58e784da8ae1a502c356f75af325e1f8b26db9f05dea8c",
+                "mode": 420,
+                "sizeBytes": 14
+              },
+              "identity": {
+                "dev": "16777230",
+                "ino": "122833033"
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/run.sh",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "canonicalDestination": ".agents/skills/demo/run.sh",
+              "expected": {
+                "sha256": "b4d644d4279594903f1a9911956432d9473041f2984fc6014c14d7402c7d126c",
+                "mode": 493,
+                "sizeBytes": 18
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/SKILL.md",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "canonicalDestination": ".agents/skills/demo/SKILL.md",
+              "expected": {
+                "sha256": "816bbf583ec5479ca4518042f7791b75a97b578b43107e7aede5497caf4caddd",
+                "mode": 420,
+                "sizeBytes": 62
+              }
+            }
+          ]
+        },
+        "oldDirectory": {
+          "path": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-pilot-accept-vIZaGq/moved-old-root-3c",
+          "file00": {
+            "kind": "file",
+            "dev": "16777230",
+            "ino": "122833026",
+            "mode": 420,
+            "size": 14,
+            "sha256": "cf88052b2f8a0e2da7b7041b51485c2e06fdd0a7e334d8b56199a66d38ae1487"
+          },
+          "file01": {
+            "kind": "file",
+            "dev": "16777230",
+            "ino": "122833033",
+            "mode": 384,
+            "size": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "skillMdAbsent": true
+        },
+        "replacementDirectory": {
+          "path": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-pilot-accept-vIZaGq/project-copy-1",
+          "untouched": true,
+          "postPreviewEligibility": {
+            "status": "ineligible",
+            "reasons": [
+              "write_capability_unavailable"
+            ]
+          }
+        }
+      }
+    },
+    "noClobberAndRace": {
+      "pass": true,
+      "lateCollision": {
+        "operation": {
+          "status": "operation",
+          "operationId": "af16417cbfd43f7eec21c748765fa46d",
+          "planDigest": "5bc995ae6f149649f41e7481ccebbcd069e6b64575c4f1b39314936426a7729e",
+          "phase": "failed_before_write",
+          "code": "destination_exists",
+          "targetMutated": false,
+          "requiresPreview": true,
+          "durability": "not_confirmed",
+          "ledger": [
+            {
+              "destination": ".agents/skills/demo/file-00.txt",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "canonicalDestination": ".agents/skills/demo/file-00.txt",
+              "expected": {
+                "sha256": "cf88052b2f8a0e2da7b7041b51485c2e06fdd0a7e334d8b56199a66d38ae1487",
+                "mode": 420,
+                "sizeBytes": 14
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/file-01.txt",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "canonicalDestination": ".agents/skills/demo/file-01.txt",
+              "expected": {
+                "sha256": "6878c1ee9b0c4b6a6c58e784da8ae1a502c356f75af325e1f8b26db9f05dea8c",
+                "mode": 420,
+                "sizeBytes": 14
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/run.sh",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "canonicalDestination": ".agents/skills/demo/run.sh",
+              "expected": {
+                "sha256": "b4d644d4279594903f1a9911956432d9473041f2984fc6014c14d7402c7d126c",
+                "mode": 493,
+                "sizeBytes": 18
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/SKILL.md",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "canonicalDestination": ".agents/skills/demo/SKILL.md",
+              "expected": {
+                "sha256": "816bbf583ec5479ca4518042f7791b75a97b578b43107e7aede5497caf4caddd",
+                "mode": 420,
+                "sizeBytes": 62
+              }
+            }
+          ]
+        },
+        "foreignBefore": {
+          "kind": "file",
+          "dev": "16777230",
+          "ino": "122833056",
+          "mode": 416,
+          "size": 16,
+          "sha256": "b707f2416e5d0d99f8ba2e7581007da84beef61c119cf83fb948038a10407b5d"
+        },
+        "foreignAfter": {
+          "kind": "file",
+          "dev": "16777230",
+          "ino": "122833056",
+          "mode": 416,
+          "size": 16,
+          "sha256": "b707f2416e5d0d99f8ba2e7581007da84beef61c119cf83fb948038a10407b5d"
+        }
+      },
+      "twoWritersSameLeaf": {
+        "phases": [
+          "completed",
+          "failed_before_write"
+        ],
+        "loserCode": "destination_exists",
+        "loserMutated": false,
+        "winnerLeaf": {
+          "kind": "file",
+          "dev": "16777230",
+          "ino": "122833068",
+          "mode": 420,
+          "size": 43,
+          "sha256": "6dd760ef03973aa8bcf4e7641e7193af4ecd90b4da7cc2ce0b12dd4f7f33adb4"
+        }
+      }
+    },
+    "crashRecovery": {
+      "pass": true,
+      "operationId": "67f26258cdcb37ae27d50c4cf713db62",
+      "statusAfterRestartAndOptInOff": {
+        "status": "operation",
+        "operationId": "67f26258cdcb37ae27d50c4cf713db62",
+        "planDigest": "2a56ba689d3077914c1409f85fda7de51244d593ab87d49fb06c98c131e19382",
+        "phase": "recovery_required",
+        "code": "terminal_record_missing",
+        "targetMutated": "unknown",
+        "requiresPreview": true,
+        "durability": "not_confirmed",
+        "ledger": [
+          {
+            "destination": ".agents",
+            "kind": "directory",
+            "state": "created_verified",
+            "identity": {
+              "dev": "16777230",
+              "ino": "122833085"
+            }
+          },
+          {
+            "destination": ".agents/skills",
+            "kind": "directory",
+            "state": "created_verified",
+            "identity": {
+              "dev": "16777230",
+              "ino": "122833088"
+            }
+          },
+          {
+            "destination": ".agents/skills/demo",
+            "kind": "directory",
+            "state": "created_verified",
+            "identity": {
+              "dev": "16777230",
+              "ino": "122833091"
+            }
+          },
+          {
+            "destination": ".agents/skills/demo/file-00.txt",
+            "kind": "file",
+            "state": "created_verified",
+            "bytesWritten": 14,
+            "identity": {
+              "dev": "16777230",
+              "ino": "122833094"
+            },
+            "expected": {
+              "sha256": "cf88052b2f8a0e2da7b7041b51485c2e06fdd0a7e334d8b56199a66d38ae1487",
+              "mode": 420,
+              "sizeBytes": 14
+            },
+            "canonicalDestination": ".agents/skills/demo/file-00.txt"
+          },
+          {
+            "destination": ".agents/skills/demo/file-01.txt",
+            "kind": "file",
+            "state": "ownership_unknown",
+            "bytesWritten": 0,
+            "expected": {
+              "sha256": "6878c1ee9b0c4b6a6c58e784da8ae1a502c356f75af325e1f8b26db9f05dea8c",
+              "mode": 420,
+              "sizeBytes": 14
+            },
+            "canonicalDestination": ".agents/skills/demo/file-01.txt"
+          },
+          {
+            "destination": ".agents/skills/demo/run.sh",
+            "kind": "file",
+            "state": "not_attempted",
+            "bytesWritten": 0,
+            "expected": {
+              "sha256": "b4d644d4279594903f1a9911956432d9473041f2984fc6014c14d7402c7d126c",
+              "mode": 493,
+              "sizeBytes": 18
+            },
+            "canonicalDestination": ".agents/skills/demo/run.sh"
+          },
+          {
+            "destination": ".agents/skills/demo/SKILL.md",
+            "kind": "file",
+            "state": "not_attempted",
+            "bytesWritten": 0,
+            "expected": {
+              "sha256": "816bbf583ec5479ca4518042f7791b75a97b578b43107e7aede5497caf4caddd",
+              "mode": 420,
+              "sizeBytes": 62
+            },
+            "canonicalDestination": ".agents/skills/demo/SKILL.md"
+          }
+        ]
+      },
+      "diskEvidence": {
+        "file00": {
+          "kind": "file",
+          "dev": "16777230",
+          "ino": "122833094",
+          "mode": 420,
+          "size": 14,
+          "sha256": "cf88052b2f8a0e2da7b7041b51485c2e06fdd0a7e334d8b56199a66d38ae1487"
+        },
+        "file01": {
+          "kind": "file",
+          "dev": "16777230",
+          "ino": "122833097",
+          "mode": 384,
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "skillMdAbsent": true
+      },
+      "previewAfterCrash": {
+        "status": "ineligible",
+        "reasons": [
+          "plan_conflict"
+        ]
+      },
+      "stalePolicyRevisionApplyError": {
+        "status": "error",
+        "code": "receipt_invalid"
+      }
+    },
+    "desktopApplyStatusNoop": {
+      "pass": true,
+      "enrolledRoot": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-pilot-accept-vIZaGq/project-copy-desktop",
+      "operationId": "801993ac2c06a34039014d45661474b8",
+      "status": {
+        "status": "operation",
+        "operationId": "801993ac2c06a34039014d45661474b8",
+        "planDigest": "34ce54b4b7a089b1a28dfad76ebc7fd800b247026236509d1b398e9fb9999459",
+        "phase": "completed",
+        "code": "none",
+        "targetMutated": true,
+        "requiresPreview": false,
+        "durability": "fsync_completed",
+        "ledger": [
+          {
+            "destination": ".agents",
+            "kind": "directory",
+            "state": "created_verified",
+            "identity": {
+              "dev": "16777230",
+              "ino": "122833516"
+            }
+          },
+          {
+            "destination": ".agents/skills",
+            "kind": "directory",
+            "state": "created_verified",
+            "identity": {
+              "dev": "16777230",
+              "ino": "122833519"
+            }
+          },
+          {
+            "destination": ".agents/skills/demo",
+            "kind": "directory",
+            "state": "created_verified",
+            "identity": {
+              "dev": "16777230",
+              "ino": "122833522"
+            }
+          },
+          {
+            "destination": ".agents/skills/demo/file-00.txt",
+            "kind": "file",
+            "state": "created_verified",
+            "bytesWritten": 14,
+            "identity": {
+              "dev": "16777230",
+              "ino": "122833525"
+            },
+            "expected": {
+              "sha256": "cf88052b2f8a0e2da7b7041b51485c2e06fdd0a7e334d8b56199a66d38ae1487",
+              "mode": 420,
+              "sizeBytes": 14
+            },
+            "canonicalDestination": ".agents/skills/demo/file-00.txt"
+          },
+          {
+            "destination": ".agents/skills/demo/file-01.txt",
+            "kind": "file",
+            "state": "created_verified",
+            "bytesWritten": 14,
+            "identity": {
+              "dev": "16777230",
+              "ino": "122833528"
+            },
+            "expected": {
+              "sha256": "6878c1ee9b0c4b6a6c58e784da8ae1a502c356f75af325e1f8b26db9f05dea8c",
+              "mode": 420,
+              "sizeBytes": 14
+            },
+            "canonicalDestination": ".agents/skills/demo/file-01.txt"
+          },
+          {
+            "destination": ".agents/skills/demo/run.sh",
+            "kind": "file",
+            "state": "created_verified",
+            "bytesWritten": 18,
+            "identity": {
+              "dev": "16777230",
+              "ino": "122833531"
+            },
+            "expected": {
+              "sha256": "b4d644d4279594903f1a9911956432d9473041f2984fc6014c14d7402c7d126c",
+              "mode": 493,
+              "sizeBytes": 18
+            },
+            "canonicalDestination": ".agents/skills/demo/run.sh"
+          },
+          {
+            "destination": ".agents/skills/demo/SKILL.md",
+            "kind": "file",
+            "state": "created_verified",
+            "bytesWritten": 62,
+            "identity": {
+              "dev": "16777230",
+              "ino": "122833534"
+            },
+            "expected": {
+              "sha256": "816bbf583ec5479ca4518042f7791b75a97b578b43107e7aede5497caf4caddd",
+              "mode": 420,
+              "sizeBytes": 62
+            },
+            "canonicalDestination": ".agents/skills/demo/SKILL.md"
+          }
+        ]
+      },
+      "createdFiles": {
+        ".agents/skills/demo/file-00.txt": {
+          "kind": "file",
+          "dev": "16777230",
+          "ino": "122833525",
+          "mode": 420,
+          "size": 14,
+          "sha256": "cf88052b2f8a0e2da7b7041b51485c2e06fdd0a7e334d8b56199a66d38ae1487"
+        },
+        ".agents/skills/demo/file-01.txt": {
+          "kind": "file",
+          "dev": "16777230",
+          "ino": "122833528",
+          "mode": 420,
+          "size": 14,
+          "sha256": "6878c1ee9b0c4b6a6c58e784da8ae1a502c356f75af325e1f8b26db9f05dea8c"
+        },
+        ".agents/skills/demo/run.sh": {
+          "kind": "file",
+          "dev": "16777230",
+          "ino": "122833531",
+          "mode": 493,
+          "size": 18,
+          "sha256": "b4d644d4279594903f1a9911956432d9473041f2984fc6014c14d7402c7d126c"
+        },
+        ".agents/skills/demo/SKILL.md": {
+          "kind": "file",
+          "dev": "16777230",
+          "ino": "122833534",
+          "mode": 420,
+          "size": 62,
+          "sha256": "816bbf583ec5479ca4518042f7791b75a97b578b43107e7aede5497caf4caddd"
+        }
+      },
+      "sentinelUnchanged": true,
+      "repreviewEligibility": {
+        "status": "no_changes"
+      }
+    }
+  },
+  "install": {
+    "id": "paseo-project-skills-single-project-pilot",
+    "path": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-pilot-accept-vIZaGq/candidate",
+    "enabled": true,
+    "status": "running",
+    "name": "Project Skills Single-Project Pilot",
+    "installation": {
+      "identity": {
+        "kind": "directory",
+        "path": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-pilot-accept-vIZaGq/candidate"
+      }
+    }
+  },
+  "cleanup": {
+    "home": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-pilot-accept-vIZaGq/daemon",
+    "pid": null,
+    "startedAt": null,
+    "listen": null,
+    "hostname": null,
+    "configuredListen": "127.0.0.1:60763",
+    "localDaemon": "stopped",
+    "desktopManaged": false,
+    "logPath": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-pilot-accept-vIZaGq/daemon/daemon.log",
+    "connectedDaemon": "not_probed"
+  }
+}

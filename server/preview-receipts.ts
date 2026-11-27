@@ -1,6 +1,6 @@
 import { createHash, randomBytes } from "node:crypto";
 import { previewManifestSchema, providerPreviewV2ResultSchema, receiptLimits, receiptPolicy,
-  type PreviewManifest, type PreviewReceipt, type ProviderPreviewV2Result } from "../shared/preview-receipt";
+  type EnrollmentBinding, type PreviewManifest, type PreviewReceipt, type ProviderPreviewV2Result } from "../shared/preview-receipt";
 import { PreviewError } from "./preview-reader";
 import { previewLimits } from "./preview-limits";
 
@@ -21,7 +21,11 @@ export const manifestDigest = (manifest: PreviewManifest) => createHash("sha256"
 const randomToken = () => randomBytes(32).toString("hex");
 type Source = { destination: string; bytes: Buffer };
 type RecordValue = { receipt: PreviewReceipt; manifestJson: string; sources: Map<string, Buffer>; bytes: number; expires: number };
-type Options = { now?: () => number; wallNow?: () => number; limits?: typeof receiptLimits; responseBytes?: number; fixtureApply?: (target: string) => boolean };
+type Options = {
+  now?: () => number; wallNow?: () => number; limits?: typeof receiptLimits; responseBytes?: number;
+  fixtureApply?: (target: string) => boolean;
+  singleProject?: () => EnrollmentBinding | undefined;
+};
 
 // Installation-process lifetime, not a cross-process coordinator or caller identity.
 // Durable fixture claims live in the operation journal.
@@ -49,6 +53,16 @@ export class PreviewReceiptStore {
   get policy() {
     return { ...receiptPolicy, writeCapability: this.options.fixtureApply ? "fixture_m4_5" as const : receiptPolicy.writeCapability };
   }
+  policyFor(target: string): PreviewManifest["policy"] {
+    if (this.options.singleProject) {
+      const binding = this.options.singleProject();
+      if (binding && binding.canonicalRoot === target) {
+        return { ...receiptPolicy, writeCapability: "single_project_v1" as const, enrollment: binding };
+      }
+      return { ...receiptPolicy, writeCapability: receiptPolicy.writeCapability };
+    }
+    return this.policy;
+  }
   issue(raw: PreviewManifest, sourceFiles: Source[]): Extract<ProviderPreviewV2Result, { status: "ready" }> {
     const manifest = previewManifestSchema.parse(raw);
     if (manifest.epoch !== this.epoch || manifest.installationInstanceId !== this.installationInstanceId) throw new PreviewError("host_io_error");
@@ -71,8 +85,16 @@ export class PreviewReceiptStore {
       viewNonce: manifest.viewNonce, issuedAt, expiresAt: issuedAt + this.limits.ttlMs };
     const entries = [...manifest.plan.entries, ...manifest.plan.derivedEntries];
     const reasons: Extract<Extract<ProviderPreviewV2Result, { status: "ready" }>["applyEligibility"], { status: "ineligible" }>["reasons"] = [];
-    if (!this.options.fixtureApply?.(manifest.plan.intent.canonicalDirectory)) reasons.push("write_capability_unavailable");
-    if (manifest.policy.writeCapability !== this.policy.writeCapability) throw new PreviewError("host_io_error");
+    const target = manifest.plan.intent.canonicalDirectory;
+    const expectedPolicy = this.policyFor(target);
+    const scopeEligible = this.options.singleProject
+      ? expectedPolicy.writeCapability === "single_project_v1"
+      : Boolean(this.options.fixtureApply?.(target));
+    if (!scopeEligible) reasons.push("write_capability_unavailable");
+    if (manifest.policy.writeCapability !== expectedPolicy.writeCapability ||
+      canonicalSerialize(manifest.policy.enrollment ?? null) !== canonicalSerialize(expectedPolicy.enrollment ?? null)) {
+      throw new PreviewError("host_io_error");
+    }
     if (entries.some((entry) => entry.status === "conflict")) reasons.push("plan_conflict");
     if (entries.some((entry) => entry.status === "blocked")) reasons.push("plan_blocked");
     if (manifest.readSet.some((item) => item.observation.state === "unverified" ||
@@ -114,6 +136,13 @@ export class PreviewReceiptStore {
       (binding.issuedAt !== undefined && binding.issuedAt !== record.receipt.issuedAt) ||
       (binding.expiresAt !== undefined && binding.expiresAt !== record.receipt.expiresAt)) {
       return { status: "error" as const, code: "digest_mismatch" as const };
+    }
+    if (this.options.singleProject) {
+      const current = this.options.singleProject();
+      if (!current || manifest.policy.writeCapability !== "single_project_v1" || !manifest.policy.enrollment ||
+        canonicalSerialize(manifest.policy.enrollment) !== canonicalSerialize(current)) {
+        return { status: "error" as const, code: "binding_mismatch" as const };
+      }
     }
     return { status: "ready" as const, manifest,
       sources: [...record.sources].map(([destination, bytes]) => ({ destination, bytes: Buffer.from(bytes) })) };

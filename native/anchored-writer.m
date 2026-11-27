@@ -62,7 +62,7 @@ static PPSDir *rootNode;
 static int coordinatorFd = -1;
 static PPSDir *coordinatorNode;
 static struct stat coordinatorIdentity;
-static BOOL mutated = NO, parentGone = NO, uncertain = NO;
+static BOOL mutated = NO, parentGone = NO, uncertain = NO, singleProjectMode = NO;
 static pid_t expectedParent;
 static volatile sig_atomic_t cancelled;
 static void cancelWorker(int signalNumber) { (void)signalNumber; cancelled=1; }
@@ -161,6 +161,9 @@ static BOOL decimalEqual(id value, unsigned long long actual) {
     if (!stringValue(value) || ![value length]) return NO;
     for (const char *p = [value UTF8String]; *p; p++) if (*p < '0' || *p > '9') return NO;
     errno = 0; unsigned long long n = strtoull([value UTF8String], NULL, 10); return !errno && n == actual;
+}
+static BOOL signedDecimalEqual(id value, long long actual) {
+    return stringValue(value) && [value isEqual:[NSString stringWithFormat:@"%lld", actual]];
 }
 static BOOL timeEqual(id value, struct timespec time) {
     return stringValue(value) && [value isEqual:[NSString stringWithFormat:@"%lld", (long long)time.tv_sec * 1000000000LL + time.tv_nsec]];
@@ -340,21 +343,53 @@ static BOOL recordIntent(NSString *operation, NSString *destination) {
     return progress(@{@"event":@"mutation_intent",@"operation":operation,@"destination":destination});
 }
 static NSDictionary *identity(struct stat st) { return @{@"dev":[NSString stringWithFormat:@"%llu",(unsigned long long)st.st_dev],@"ino":[NSString stringWithFormat:@"%llu",(unsigned long long)st.st_ino]}; }
+static BOOL validEnrollmentShape(NSDictionary *enrollment) {
+    if (!keys(enrollment, @[@"policyRevision", @"canonicalRoot", @"volume", @"ancestors"], @[])) return NO;
+    NSString *rev = enrollment[@"policyRevision"];
+    if (!stringValue(rev) || rev.length != 64) return NO;
+    for (const char *p = rev.UTF8String; *p; p++) if (!((*p >= '0' && *p <= '9') || (*p >= 'a' && *p <= 'f'))) return NO;
+    NSString *canonical = enrollment[@"canonicalRoot"];
+    if (!absolute(canonical) || [canonical isEqual:@"/"]) return NO;
+    NSDictionary *vol = enrollment[@"volume"];
+    if (!keys(vol, @[@"fsid", @"fstype", @"mountPoint", @"caseMode"], @[]) ||
+        ![vol[@"fstype"] isEqual:@"apfs"] || ![vol[@"caseMode"] isEqual:@"insensitive"] || !absolute(vol[@"mountPoint"]) ||
+        ![vol[@"fsid"] isKindOfClass:NSArray.class] || [vol[@"fsid"] count] != 2 ||
+        !stringValue(vol[@"fsid"][0]) || !stringValue(vol[@"fsid"][1])) return NO;
+    NSArray *ancestors = enrollment[@"ancestors"];
+    if (![ancestors isKindOfClass:NSArray.class] || ancestors.count < 2 || ancestors.count > 64) return NO;
+    NSString *prev = nil;
+    for (NSUInteger i = 0; i < ancestors.count; i++) {
+        NSDictionary *a = ancestors[i];
+        if (!keys(a, @[@"path", @"dev", @"ino", @"mode", @"uid", @"gid"], @[]) || !absolute(a[@"path"])) return NO;
+        if (i == 0) { if (![a[@"path"] isEqual:@"/"]) return NO; }
+        else { if (![[a[@"path"] stringByDeletingLastPathComponent] isEqual:prev] || [a[@"path"] isEqual:prev]) return NO; }
+        prev = a[@"path"];
+    }
+    return [prev isEqual:canonical];
+}
 static BOOL validateRequest(void) {
-    if (!keys(request,@[@"protocol",@"helperVersion",@"fixtureBase",@"root",@"expectedParentPid",@"environment",@"observations",@"directories",@"files"],@[@"controls",@"coordinator",@"durableAdmission"]) ||
+    NSArray *requiredKeys = singleProjectMode
+        ? @[@"protocol",@"helperVersion",@"enrollment",@"root",@"expectedParentPid",@"environment",@"observations",@"directories",@"files"]
+        : @[@"protocol",@"helperVersion",@"fixtureBase",@"root",@"expectedParentPid",@"environment",@"observations",@"directories",@"files"];
+    if (!keys(request,requiredKeys,@[@"controls",@"coordinator",@"durableAdmission"]) ||
         !integer(request[@"protocol"],1) || [request[@"protocol"] intValue]!=1 || ![request[@"helperVersion"] isEqual:VERSION] ||
         !integer(request[@"expectedParentPid"],INT_MAX) || [request[@"expectedParentPid"] intValue]!=expectedParent ||
-        !absolute(request[@"root"]) || !absolute(request[@"fixtureBase"]) || !beneath(request[@"root"],request[@"fixtureBase"]) ||
+        !absolute(request[@"root"]) ||
         ![request[@"observations"] isKindOfClass:NSArray.class] || [request[@"observations"] count]>MAX_OBS ||
         ![request[@"directories"] isKindOfClass:NSArray.class] || [request[@"directories"] count]>MAX_DIRS ||
         ![request[@"files"] isKindOfClass:NSArray.class] || [request[@"files"] count]>MAX_FILES) return fail(@"invalid_request");
+    if (singleProjectMode) {
+        if (!validEnrollmentShape(request[@"enrollment"]) || ![request[@"root"] isEqual:request[@"enrollment"][@"canonicalRoot"]]) return fail(@"enrollment_mismatch");
+    } else {
+        if (!absolute(request[@"fixtureBase"]) || !beneath(request[@"root"],request[@"fixtureBase"])) return fail(@"invalid_request");
+    }
     if (request[@"durableAdmission"] && (![request[@"durableAdmission"] isEqual:@YES] ||
         CFGetTypeID((__bridge CFTypeRef)request[@"durableAdmission"]) != CFBooleanGetTypeID() || !request[@"coordinator"])) return fail(@"invalid_request");
     if (request[@"controls"] && !PPS_TESTING) return fail(@"test_controls_disabled");
     controls=request[@"controls"];
     if (controls && (!keys(controls,@[@"barriers",@"faults"],@[]) || ![controls[@"barriers"] isKindOfClass:NSArray.class] ||
         ![controls[@"faults"] isKindOfClass:NSArray.class] || [controls[@"barriers"] count]>16 || [controls[@"faults"] count]>16)) return fail(@"invalid_request");
-    for (NSDictionary *b in controls[@"barriers"] ?: @[]) if (!keys(b,@[@"point"],@[@"destination"]) || ![@[@"after_preflight",@"before_create",@"after_create_check",@"after_create",@"after_write",@"before_mkdir",@"after_mkdir_check",@"after_mkdir"] containsObject:b[@"point"]] || (b[@"destination"] && !portable(b[@"destination"],YES))) return fail(@"invalid_request");
+    for (NSDictionary *b in controls[@"barriers"] ?: @[]) if (!keys(b,@[@"point"],@[@"destination"]) || ![@[@"after_preflight",@"before_create",@"after_create_check",@"before_openat",@"after_create",@"after_write",@"before_mkdir",@"after_mkdir_check",@"after_mkdir"] containsObject:b[@"point"]] || (b[@"destination"] && !portable(b[@"destination"],YES))) return fail(@"invalid_request");
     for (NSDictionary *f in controls[@"faults"] ?: @[]) if (!keys(f,@[@"point",@"destination"],@[@"afterBytes",@"shortBytes",@"error"]) || ![@[@"write",@"zero_write",@"short_write",@"sync",@"directory_sync",@"chmod",@"close",@"readback"] containsObject:f[@"point"]] || !portable(f[@"destination"],YES) || (f[@"error"] && (![@[@"EIO",@"ENOSPC",@"EACCES"] containsObject:f[@"error"]] || ![f[@"point"] isEqual:@"write"])) || (f[@"afterBytes"] && !integer(f[@"afterBytes"],MAX_SOURCE)) || (f[@"shortBytes"] && (!integer(f[@"shortBytes"],8192) || [f[@"shortBytes"] intValue]<1))) return fail(@"invalid_request");
     NSMutableSet *paths=[NSMutableSet new], *obsPaths=[NSMutableSet new];
     for (NSDictionary *obs in request[@"observations"]) {
@@ -385,7 +420,7 @@ static BOOL validateRequest(void) {
     for (PPSFile *file in files) for (NSString *path in paths) if ([path hasPrefix:[[file.destination precomposedStringWithCanonicalMapping].lowercaseString stringByAppendingString:@"/"]]) return fail(@"invalid_request");
     return YES;
 }
-static BOOL environmentGate(void) {
+static BOOL platformGate(void) {
 #if !defined(__arm64__)
     return fail(@"unsupported_environment");
 #endif
@@ -393,7 +428,33 @@ static BOOL environmentGate(void) {
     if (!keys(env,@[@"paseoVersion",@"sdkVersion"],@[]) || ![env[@"paseoVersion"] isEqual:@"0.17.5"] || ![env[@"sdkVersion"] isEqual:@"0.17.4"]) return fail(@"unsupported_environment");
     NSOperatingSystemVersion os=NSProcessInfo.processInfo.operatingSystemVersion;
     if (os.majorVersion!=27 || os.minorVersion!=2 || os.patchVersion!=1) return fail(@"unsupported_environment");
-    rootPath=request[@"root"]; NSString *base=request[@"fixtureBase"]; char canonical[PATH_MAX], temp[PATH_MAX];
+    return YES;
+}
+static BOOL environmentGate(void) {
+    if (!platformGate()) return NO;
+    rootPath=request[@"root"];
+    if (singleProjectMode) {
+        NSDictionary *enrollment = request[@"enrollment"];
+        for (NSDictionary *a in enrollment[@"ancestors"]) {
+            PPSDir *node = directory(a[@"path"]);
+            if (!node || node.fd < 0) return fail(@"enrollment_mismatch");
+            if (!decimalEqual(a[@"dev"], node.identity.st_dev) || !decimalEqual(a[@"ino"], node.identity.st_ino) ||
+                !decimalEqual(a[@"mode"], node.identity.st_mode) || !decimalEqual(a[@"uid"], node.identity.st_uid) ||
+                !decimalEqual(a[@"gid"], node.identity.st_gid)) return fail(@"enrollment_mismatch");
+        }
+        rootNode = directory(rootPath);
+        if (!rootNode || rootNode.fd < 0) return fail(@"enrollment_mismatch");
+        struct statfs volume;
+        if (fstatfs(rootNode.fd, &volume) || strcmp(volume.f_fstypename, "apfs") || !(volume.f_flags & MNT_LOCAL) || (volume.f_flags & MNT_RDONLY)) return fail(@"unsupported_environment");
+        long caseSensitive = fpathconf(rootNode.fd, _PC_CASE_SENSITIVE);
+        if (caseSensitive != 0) return fail(@"unsupported_case_mode");
+        NSDictionary *ev = enrollment[@"volume"];
+        if (!signedDecimalEqual(ev[@"fsid"][0], volume.f_fsid.val[0]) || !signedDecimalEqual(ev[@"fsid"][1], volume.f_fsid.val[1]) ||
+            ![ev[@"mountPoint"] isEqual:[NSString stringWithUTF8String:volume.f_mntonname]]) return fail(@"enrollment_mismatch");
+        if (!safeDirectory(rootNode.fd, rootNode.identity, YES)) return NO;
+        return emit(@{@"event":@"environment",@"filesystem":@"apfs",@"local":@YES,@"caseMode":@"insensitive",@"macOS":@"27.2.1",@"arch":@"arm64",@"fixtureOnly":@NO,@"pid":@(getpid())});
+    }
+    NSString *base=request[@"fixtureBase"]; char canonical[PATH_MAX], temp[PATH_MAX];
     NSString *tempDir=NSTemporaryDirectory(); if(!realpath(tempDir.fileSystemRepresentation,temp)) return fail(@"unsupported_environment");
     BOOL temporary=beneath(base,@"/private/tmp") || beneath(base,[NSString stringWithUTF8String:temp]);
     if (!temporary || ![base.lastPathComponent hasPrefix:@"pps-m43-"] || !realpath(base.fileSystemRepresentation,canonical) || ![base isEqual:[NSString stringWithUTF8String:canonical]]) return fail(@"fixture_scope_required");
@@ -408,13 +469,19 @@ static BOOL environmentGate(void) {
 }
 static BOOL lockCoordinator(void) {
     NSDictionary *c=request[@"coordinator"]; if(!c) return YES;
-    if(!keys(c,@[@"directory"],@[]) || !absolute(c[@"directory"]) || !beneath(c[@"directory"],request[@"fixtureBase"]) ||
+    if(!keys(c,@[@"directory"],@[]) || !absolute(c[@"directory"]) ||
+       (!singleProjectMode && !beneath(c[@"directory"],request[@"fixtureBase"])) ||
        beneath(c[@"directory"],rootPath) || beneath(rootPath,c[@"directory"]) || [c[@"directory"] isEqual:rootPath]) return fail(@"invalid_coordinator");
     PPSDir *node=directory(c[@"directory"]); if(!node || node.fd<0 || node.identity.st_uid!=getuid() || (node.identity.st_mode&07777)!=0700 || !emptyAcl(node.fd)) return fail(@"invalid_coordinator");
+    if (singleProjectMode) {
+        struct statfs cvol;
+        if (fstatfs(node.fd, &cvol) || strcmp(cvol.f_fstypename, "apfs") || !(cvol.f_flags & MNT_LOCAL) || (cvol.f_flags & MNT_RDONLY)) return fail(@"invalid_coordinator");
+    }
     coordinatorFd=openat(node.fd,"writer.lock",O_RDWR|O_CREAT|O_EXCL|O_NOFOLLOW|O_CLOEXEC,0600);
     if(coordinatorFd<0 && errno==EEXIST) coordinatorFd=openat(node.fd,"writer.lock",O_RDWR|O_NOFOLLOW|O_CLOEXEC|O_NONBLOCK);
     struct stat st,linked;
-    if(coordinatorFd<0 || fstat(coordinatorFd,&st) || !S_ISREG(st.st_mode) || st.st_dev!=rootNode.identity.st_dev ||
+    dev_t expectedDev = singleProjectMode ? node.identity.st_dev : rootNode.identity.st_dev;
+    if(coordinatorFd<0 || fstat(coordinatorFd,&st) || !S_ISREG(st.st_mode) || st.st_dev!=expectedDev ||
         st.st_nlink!=1 || st.st_uid!=getuid() || (st.st_mode&07777)!=0600 ||
         fstatat(node.fd,"writer.lock",&linked,AT_SYMLINK_NOFOLLOW) || !sameNode(st,linked)) return fail(@"invalid_coordinator");
     if(!emptyAcl(coordinatorFd))return fail(@"invalid_coordinator");
@@ -515,7 +582,7 @@ static BOOL createFiles(void) {
                 [verifiedDerivedSkills addObject:skill];
             }
         }
-        if(!linkage() || !barrier(@"after_create_check",destination) || !recordIntent(@"openat_exclusive",destination) || (request[@"durableAdmission"] && !linkage()))return NO;
+        if(!linkage() || !barrier(@"after_create_check",destination) || !recordIntent(@"openat_exclusive",destination) || (request[@"durableAdmission"] && !linkage()) || !barrier(@"before_openat",destination))return NO;
         int fd=openat(file.parent.fd,file.name.fileSystemRepresentation,O_RDWR|O_CREAT|O_EXCL|O_NOFOLLOW|O_CLOEXEC,0600);
         if(fd<0){if(errno==EIO){uncertain=YES;file.ledger[@"state"]=@"ownership_unknown";}return fail(errno==EEXIST ? @"destination_exists" : @"create_failed");}
         mutated=YES; file.ledger[@"state"]=@"created_incomplete";
@@ -574,17 +641,89 @@ static NSDictionary *resultValue(void) {
     NSString *phase=errorCode ? (uncertain?@"uncertain":mutated?@"partial_failure":@"failed_before_write") : @"completed";
     return @{@"event":@"result",@"protocol":@1,@"version":VERSION,@"phase":phase,@"code":errorCode?:@"none",@"targetMutated":uncertain&&!mutated?@"unknown":@(mutated),@"ledger":ledger,@"checkpoints":@(syscallCount),@"durability":errorCode?@"not_confirmed":@"fsync_completed"};
 }
+static int runEnrollRoot(void) {
+    dirs=[NSMutableArray new];dirByPath=[NSMutableDictionary new];inputBuffer=[NSMutableData new];
+    NSData *line=readLine(); if(line && line.length<=MAX_WIRE) request=[NSJSONSerialization JSONObjectWithData:line options:0 error:nil];
+    if (!request || !keys(request, @[@"protocol",@"helperVersion",@"root",@"expectedParentPid",@"environment"], @[]) ||
+        !integer(request[@"protocol"],1) || [request[@"protocol"] intValue]!=1 || ![request[@"helperVersion"] isEqual:VERSION] ||
+        !integer(request[@"expectedParentPid"],INT_MAX) || [request[@"expectedParentPid"] intValue]!=expectedParent ||
+        !absolute(request[@"root"]) || [request[@"root"] isEqual:@"/"]) {
+        emit(@{@"event":@"enroll_error",@"protocol":@1,@"version":VERSION,@"code":@"invalid_request"});
+        return 1;
+    }
+    if (!platformGate()) { emit(@{@"event":@"enroll_error",@"protocol":@1,@"version":VERSION,@"code":errorCode ?: @"unsupported_environment"}); return 1; }
+    rootPath = request[@"root"];
+    char canonical[PATH_MAX];
+    if (!realpath(rootPath.fileSystemRepresentation, canonical) || ![rootPath isEqual:[NSString stringWithUTF8String:canonical]]) {
+        emit(@{@"event":@"enroll_error",@"protocol":@1,@"version":VERSION,@"code":@"invalid_target"});
+        return 1;
+    }
+    rootNode = directory(rootPath);
+    if (!rootNode || rootNode.fd < 0) {
+        emit(@{@"event":@"enroll_error",@"protocol":@1,@"version":VERSION,@"code":errorCode ?: @"invalid_target"});
+        releaseCoordinator();
+        return 1;
+    }
+    struct statfs volume;
+    if (fstatfs(rootNode.fd, &volume) || strcmp(volume.f_fstypename, "apfs") || !(volume.f_flags & MNT_LOCAL) || (volume.f_flags & MNT_RDONLY)) {
+        releaseCoordinator();
+        emit(@{@"event":@"enroll_error",@"protocol":@1,@"version":VERSION,@"code":@"unsupported_environment"});
+        return 1;
+    }
+    long caseSensitive = fpathconf(rootNode.fd, _PC_CASE_SENSITIVE);
+    if (caseSensitive != 0) {
+        releaseCoordinator();
+        emit(@{@"event":@"enroll_error",@"protocol":@1,@"version":VERSION,@"code":@"unsupported_case_mode"});
+        return 1;
+    }
+    if (!safeDirectory(rootNode.fd, rootNode.identity, YES) || !linkage()) {
+        releaseCoordinator();
+        emit(@{@"event":@"enroll_error",@"protocol":@1,@"version":VERSION,@"code":errorCode ?: @"unsupported_permissions"});
+        return 1;
+    }
+    NSMutableArray *ancestors = [NSMutableArray new];
+    for (PPSDir *node in dirs) {
+        if (node.fd < 0) continue;
+        [ancestors addObject:@{
+            @"path": node.path,
+            @"dev": [NSString stringWithFormat:@"%llu", (unsigned long long)node.identity.st_dev],
+            @"ino": [NSString stringWithFormat:@"%llu", (unsigned long long)node.identity.st_ino],
+            @"mode": [NSString stringWithFormat:@"%llu", (unsigned long long)node.identity.st_mode],
+            @"uid": [NSString stringWithFormat:@"%llu", (unsigned long long)node.identity.st_uid],
+            @"gid": [NSString stringWithFormat:@"%llu", (unsigned long long)node.identity.st_gid],
+        }];
+    }
+    NSDictionary *vol = @{
+        @"fsid": @[
+            [NSString stringWithFormat:@"%lld", (long long)volume.f_fsid.val[0]],
+            [NSString stringWithFormat:@"%lld", (long long)volume.f_fsid.val[1]],
+        ],
+        @"fstype": @"apfs",
+        @"mountPoint": [NSString stringWithUTF8String:volume.f_mntonname],
+        @"caseMode": @"insensitive",
+    };
+    releaseCoordinator();
+    emit(@{@"event":@"enrolled",@"protocol":@1,@"version":VERSION,@"canonicalRoot":rootPath,@"volume":vol,@"ancestors":ancestors});
+    return 0;
+}
 int main(int argc,char **argv) { @autoreleasepool {
     signal(SIGPIPE,SIG_IGN); signal(SIGUSR1,cancelWorker); expectedParent=getppid(); deadline=monotonic()+30;
     umask(0); // Isolated single-operation helper only; never changes the daemon/Node umask.
     if(argc==2&&!strcmp(argv[1],"--version")) {
         emit(@{@"protocol":@1,@"version":VERSION,@"fixtureOnly":@YES,@"testing":@(PPS_TESTING),@"arch":@"arm64"});return 0;
     }
-    if(argc!=2 || (strcmp(argv[1],"--worker") && strcmp(argv[1],"--primitive-fixture-worker")))return 2;
-    BOOL durableWorker=!strcmp(argv[1],"--worker");
+    if(argc==2&&!strcmp(argv[1],"--enroll-root")) return runEnrollRoot();
+    BOOL isFixtureWorker = (argc==2 && !strcmp(argv[1],"--worker"));
+    BOOL isFixturePrimitive = (argc==2 && !strcmp(argv[1],"--primitive-fixture-worker"));
+    BOOL isSingleWorker = (argc==2 && !strcmp(argv[1],"--single-project-worker"));
+    BOOL isSingleProbe = (argc==2 && !strcmp(argv[1],"--single-project-probe"));
+    if(!isFixtureWorker && !isFixturePrimitive && !isSingleWorker && !isSingleProbe) return 2;
+    singleProjectMode = isSingleWorker || isSingleProbe;
+    BOOL durableWorker = isFixtureWorker || isSingleWorker;
     dirs=[NSMutableArray new];dirByPath=[NSMutableDictionary new];files=[NSMutableArray new];ledger=[NSMutableArray new];inputBuffer=[NSMutableData new];usedBarriers=[NSMutableSet new];
     NSData *line=readLine(); if(line && line.length<=MAX_WIRE) request=[NSJSONSerialization JSONObjectWithData:line options:0 error:nil];
-    BOOL ok=request && validateRequest() && durableWorker==(request[@"durableAdmission"]!=nil) && environmentGate() && lockCoordinator() && durableAdmission() && preflight() && createDirectories() && createFiles();
+    BOOL probeOk = !isSingleProbe || ([request[@"files"] isKindOfClass:NSArray.class] && [request[@"files"] count]==0 && [request[@"directories"] isKindOfClass:NSArray.class] && [request[@"directories"] count]==0);
+    BOOL ok=request && validateRequest() && probeOk && durableWorker==(request[@"durableAdmission"]!=nil) && environmentGate() && lockCoordinator() && durableAdmission() && preflight() && createDirectories() && createFiles();
     if(!ok && !errorCode)errorCode=@"invalid_request";
     closeTargets();
     if(coordinatorNode && !parentGone) {

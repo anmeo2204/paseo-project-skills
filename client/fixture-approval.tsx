@@ -31,7 +31,7 @@ function secureHex() {
 function eligible(result: Ready) {
   const { manifest, applyEligibility, plannedEffect } = result;
   const entries = [...manifest.plan.entries, ...manifest.plan.derivedEntries];
-  return manifest.policy.writeCapability === "fixture_m4_5" && applyEligibility.status === "eligible" &&
+  return (manifest.policy.writeCapability === "fixture_m4_5" || manifest.policy.writeCapability === "single_project_v1") && applyEligibility.status === "eligible" &&
     plannedEffect === "create_only" && entries.some(entry => entry.status === "create") &&
     entries.every(entry => entry.status === "create" || entry.status === "unchanged") &&
     manifest.readSet.every(({ observation }) => observation.state !== "unverified" &&
