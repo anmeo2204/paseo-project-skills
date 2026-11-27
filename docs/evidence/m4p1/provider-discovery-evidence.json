@@ -1,0 +1,106 @@
+{
+  "capturedAt": "2026-11-27T13:34:01.991Z",
+  "isolatedFixture": true,
+  "installedSkills": [
+    "m4p1-alpha",
+    "m4p1-beta",
+    "m4p1-gamma"
+  ],
+  "canonicalFilesCreated": 5,
+  "kiroDerivedFilesCreated": 5,
+  "applyPhase": "completed",
+  "durability": "fsync_completed",
+  "providers": {
+    "codex": {
+      "provider": "codex",
+      "command": "codex exec --json --sandbox read-only",
+      "binaryVersion": "codex-cli 0.167.0",
+      "status": "pass",
+      "exitCode": 0,
+      "discoveredCount": 3,
+      "expectedCount": 3,
+      "matchedSkills": [
+        "m4p1-alpha",
+        "m4p1-beta",
+        "m4p1-gamma"
+      ],
+      "agentReplyExcerpt": "{\"discovered\":[\"m4p1-alpha\",\"m4p1-beta\",\"m4p1-gamma\"],\"firstHeading\":\"# m4p1-alpha\"}"
+    },
+    "kiro": {
+      "provider": "kiro",
+      "command": "kiro-cli acp",
+      "binaryVersion": "kiro-cli 2.34.2",
+      "mode": "kiro_default",
+      "status": "pass",
+      "discoveredCount": 3,
+      "expectedCount": 3,
+      "matchedSkills": [
+        "m4p1-alpha",
+        "m4p1-beta",
+        "m4p1-gamma"
+      ],
+      "markerLoaded": true,
+      "readKiroDerived": true,
+      "readRelativePaths": [
+        ".kiro/skills/m4p1-alpha/SKILL.md"
+      ],
+      "agentReplyExcerpt": "Loaded skills: m4p1-alpha, m4p1-beta, m4p1-gamma.\n\nMarker from m4p1-alpha: `M4P1_ALPHA_OK`"
+    },
+    "cursor": {
+      "provider": "cursor",
+      "command": "cursor-agent acp",
+      "binaryVersion": "2026.10.22-27dcf5f",
+      "status": "pass",
+      "discoveredCount": 3,
+      "expectedCount": 3,
+      "matchedSkills": [
+        "m4p1-alpha",
+        "m4p1-beta",
+        "m4p1-gamma"
+      ],
+      "matchedDetails": [
+        {
+          "name": "m4p1-alpha"
+        },
+        {
+          "name": "m4p1-beta"
+        },
+        {
+          "name": "m4p1-gamma"
+        }
+      ],
+      "totalCommandsReported": 34,
+      "notificationMethods": [
+        "session/update"
+      ]
+    },
+    "antigravity": {
+      "provider": "antigravity",
+      "command": "agy acp --disable-telemetry",
+      "binaryVersion": "1.5.18",
+      "status": "pass",
+      "discoveredCount": 3,
+      "expectedCount": 3,
+      "matchedSkills": [
+        "m4p1-alpha",
+        "m4p1-beta",
+        "m4p1-gamma"
+      ],
+      "matchedDetails": [
+        {
+          "name": "m4p1-alpha"
+        },
+        {
+          "name": "m4p1-beta"
+        },
+        {
+          "name": "m4p1-gamma"
+        }
+      ],
+      "totalCommandsReported": 141,
+      "notificationMethods": [
+        "session/update"
+      ]
+    }
+  }
+}

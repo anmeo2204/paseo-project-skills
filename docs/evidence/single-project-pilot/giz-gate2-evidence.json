@@ -1,0 +1,236 @@
+{
+  "capturedAt": "2026-11-27T13:09:00.640Z",
+  "staged": {
+    "base": "<PILOT_TEMP_BASE>",
+    "plugin": "<PILOT_TEMP_BASE>/candidate",
+    "home": "<PILOT_TEMP_BASE>/daemon",
+    "desktop": "<PILOT_TEMP_BASE>/desktop",
+    "cli": "/Applications/Paseo.app/Contents/Resources/bin/paseo",
+    "listen": "127.0.0.1:61057"
+  },
+  "recursiveSkillsBaselineCount": 10,
+  "recursiveSkillsBaseline": {
+    ".gitignore": {
+      "kind": "file",
+      "dev": "16777234",
+      "ino": "10531044",
+      "mode": 420,
+      "size": 11,
+      "sha256": "e1f6cb56844dfb267d9d6a774197cb946ab1f3f30a05c9d2c930f6eb4f3f50de"
+    },
+    "geeks-portal-frontend": {
+      "kind": "directory",
+      "dev": "16777234",
+      "ino": "11495999",
+      "mode": 493,
+      "size": 96
+    },
+    "geeks-portal-frontend/SKILL.md": {
+      "kind": "file",
+      "dev": "16777234",
+      "ino": "11496000",
+      "mode": 420,
+      "size": 6077,
+      "sha256": "dedc92c3c53154a40674a55ea93f2bd1c73cd2bd2a0f95aac9fd0fa90c50f3c1"
+    },
+    "slp-manager": {
+      "kind": "directory",
+      "dev": "16777234",
+      "ino": "11496001",
+      "mode": 493,
+      "size": 128
+    },
+    "slp-manager/SKILL.md": {
+      "kind": "file",
+      "dev": "16777234",
+      "ino": "11496002",
+      "mode": 420,
+      "size": 54588,
+      "sha256": "c6a48a00f87843a10f425a2bc3f7e256d9922360c4fc93bd5bd1793e454f883c"
+    },
+    "slp-manager/references": {
+      "kind": "directory",
+      "dev": "16777234",
+      "ino": "11496003",
+      "mode": 493,
+      "size": 192
+    },
+    "slp-manager/references/PEER_TEMPLATES.md": {
+      "kind": "file",
+      "dev": "16777234",
+      "ino": "11496004",
+      "mode": 420,
+      "size": 6904,
+      "sha256": "09d9c6bc4e04aff0ebed837933264983bb827138e3823f19cbe24a0ee36e00d4"
+    },
+    "slp-manager/references/PROJECT_INVESTIGATION.md": {
+      "kind": "file",
+      "dev": "16777234",
+      "ino": "11496005",
+      "mode": 420,
+      "size": 11917,
+      "sha256": "8cefb8cc0a1af7ebf5a457b6db053b43e2dcfdb26eebefd94b5f82cff1a5aecb"
+    },
+    "slp-manager/references/STACK_PLAYBOOKS.md": {
+      "kind": "file",
+      "dev": "16777234",
+      "ino": "11496006",
+      "mode": 420,
+      "size": 6296,
+      "sha256": "2b20e3106bc8c45394dbb51ff0821b7fb52458a92ee2e12d846669871ad9ebe9"
+    },
+    "slp-manager/references/TEST_POLICY_TEMPLATE.md": {
+      "kind": "file",
+      "dev": "16777234",
+      "ino": "11496007",
+      "mode": 420,
+      "size": 5865,
+      "sha256": "b3d6620ba5aa3d957cabd91c290cc6f6d4ffa1e6279be7ee77acccfa1ed56d66"
+    }
+  },
+  "gitignore": {
+    "path": "<PROJECTS_ROOT>/giz/.agents/skills/.gitignore",
+    "content": "!.gitignore",
+    "checkIgnoreExitCode": 1,
+    "ignored": false
+  },
+  "enrollment": {
+    "command": "enroll",
+    "status": "enrolled",
+    "daemonHome": "<PILOT_TEMP_BASE>/daemon",
+    "policyPath": "<PILOT_TEMP_BASE>/daemon/runtime/project-skills-pilot/enrollment.json",
+    "enabled": true,
+    "canonicalRoot": "<PROJECTS_ROOT>/giz",
+    "policyRevision": "aaae261c87ef37526b4bce2fb096f92639301b533821cd14405512955c4b1d99",
+    "volume": {
+      "fsid": [
+        "16777234",
+        "26"
+      ],
+      "fstype": "apfs",
+      "mountPoint": "<WORK_VOLUME>",
+      "caseMode": "insensitive"
+    },
+    "ancestorCount": 6,
+    "rootIdentity": {
+      "path": "<PROJECTS_ROOT>/giz",
+      "dev": "16777234",
+      "ino": "10167768",
+      "mode": "16877",
+      "uid": "501",
+      "gid": "80"
+    }
+  },
+  "enrollStatus": {
+    "command": "status",
+    "daemonHome": "<PILOT_TEMP_BASE>/daemon",
+    "policyPath": "<PILOT_TEMP_BASE>/daemon/runtime/project-skills-pilot/enrollment.json",
+    "active": true,
+    "canonicalRoot": "<PROJECTS_ROOT>/giz",
+    "policyRevision": "aaae261c87ef37526b4bce2fb096f92639301b533821cd14405512955c4b1d99",
+    "volume": {
+      "fsid": [
+        "16777234",
+        "26"
+      ],
+      "fstype": "apfs",
+      "mountPoint": "<WORK_VOLUME>",
+      "caseMode": "insensitive"
+    },
+    "ancestorCount": 6,
+    "rootIdentity": {
+      "path": "<PROJECTS_ROOT>/giz",
+      "dev": "16777234",
+      "ino": "10167768",
+      "mode": "16877",
+      "uid": "501",
+      "gid": "80"
+    }
+  },
+  "desktopUiVerification": {
+    "capability": {
+      "enabled": true
+    },
+    "previewOnlyNoticeVisible": false,
+    "codexLabel": "Codex, ready",
+    "eligibleTextShown": true,
+    "reviewButtonState": "enabled",
+    "applyTriggered": false
+  },
+  "previewV2": {
+    "status": "ready",
+    "applyEligibility": {
+      "status": "eligible"
+    },
+    "plannedEffect": "create_only",
+    "receipt": {
+      "previewId": "8b22be340d3289a06fd5d1156af211ff4aa534641c71e0f9f3bc3b5dd6bad5d1",
+      "planDigest": "7409e300117d32c29a6313ea916c470ec2c181781cf0f469fd71d5a5ad420a6f",
+      "epoch": "869ec17972232d6db40531df6e0254f891c7015edcc73d971aaa9f206dccf55b",
+      "viewNonce": "giz-gate2-preview",
+      "issuedAt": 1795784940233,
+      "expiresAt": 1795785540233
+    },
+    "enrollmentBinding": {
+      "policyRevision": "aaae261c87ef37526b4bce2fb096f92639301b533821cd14405512955c4b1d99",
+      "canonicalRoot": "<PROJECTS_ROOT>/giz",
+      "volume": {
+        "fsid": [
+          "16777234",
+          "26"
+        ],
+        "fstype": "apfs",
+        "mountPoint": "<WORK_VOLUME>",
+        "caseMode": "insensitive"
+      },
+      "rootIdentity": {
+        "dev": "16777234",
+        "ino": "10167768",
+        "mode": "16877",
+        "uid": "501",
+        "gid": "80"
+      },
+      "ancestorsDigest": "80b4f1734a82c0d6eed14d165206b8858022cd1866e06b4622b948cef99be6ae"
+    },
+    "entries": [
+      {
+        "destination": ".agents/skills/debug-regression/SKILL.md",
+        "status": "create",
+        "mode": 420,
+        "sizeBytes": 3639,
+        "sha256": "a09e1842c31849c449d678cb87d9c83bb10559f70ad1df7ba943868d8c98fc30"
+      },
+      {
+        "destination": ".agents/skills/debug-regression/applicability.json",
+        "status": "create",
+        "mode": 420,
+        "sizeBytes": 67,
+        "sha256": "a0cc6e49e3f53754580914558afd68220af1e4883c8d27d9e6245b3475490b29"
+      }
+    ],
+    "derivedEntries": [],
+    "providers": [
+      {
+        "providerId": "codex",
+        "strategy": "canonical_only",
+        "status": "canonical_only",
+        "verification": {
+          "basis": "historical_m3_1",
+          "report": "M3.1-completion-report.md",
+          "paseoVersion": "0.17.5",
+          "binaryVersion": "0.167.0",
+          "transport": "app-server",
+          "loadMode": "auto; read-only; approval never; web search disabled",
+          "cwdScope": "root_and_nested",
+          "note": "M3.1 model gpt-6.1-sol. Historical discovery/load evidence; not a live runtime attestation."
+        },
+        "skills": []
+      }
+    ]
+  },
+  "zeroWriteCheck": {
+    "debugRegressionAbsent": true,
+    "gitStatusClean": true,
+    "mainDaemonHasPilotPlugin": false
+  }
+}

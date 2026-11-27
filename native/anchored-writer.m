@@ -420,18 +420,49 @@ static BOOL validateRequest(void) {
     for (PPSFile *file in files) for (NSString *path in paths) if ([path hasPrefix:[[file.destination precomposedStringWithCanonicalMapping].lowercaseString stringByAppendingString:@"/"]]) return fail(@"invalid_request");
     return YES;
 }
-static BOOL platformGate(void) {
+static BOOL parseSemver(NSString *value, long *maj, long *min, long *pat) {
+    if (![value isKindOfClass:NSString.class]) return NO;
+    NSArray<NSString *> *parts = [value componentsSeparatedByString:@"."];
+    if (parts.count != 3) return NO;
+    long nums[3];
+    for (NSUInteger i = 0; i < 3; i++) {
+        NSString *p = parts[i];
+        if (!p.length || p.length > 6) return NO;
+        for (NSUInteger j = 0; j < p.length; j++) {
+            unichar c = [p characterAtIndex:j];
+            if (c < '0' || c > '9') return NO;
+        }
+        nums[i] = p.integerValue;
+    }
+    *maj = nums[0]; *min = nums[1]; *pat = nums[2];
+    return YES;
+}
+static NSString *osVersionString(void) {
+    NSOperatingSystemVersion os = NSProcessInfo.processInfo.operatingSystemVersion;
+    return [NSString stringWithFormat:@"%ld.%ld.%ld", (long)os.majorVersion, (long)os.minorVersion, (long)os.patchVersion];
+}
+static BOOL platformGate(BOOL compatPolicy) {
 #if !defined(__arm64__)
     return fail(@"unsupported_environment");
 #endif
     NSDictionary *env=request[@"environment"];
-    if (!keys(env,@[@"paseoVersion",@"sdkVersion"],@[]) || ![env[@"paseoVersion"] isEqual:@"0.17.5"] || ![env[@"sdkVersion"] isEqual:@"0.17.4"]) return fail(@"unsupported_environment");
+    if (!keys(env,@[@"paseoVersion",@"sdkVersion"],@[])) return fail(@"unsupported_environment");
     NSOperatingSystemVersion os=NSProcessInfo.processInfo.operatingSystemVersion;
-    if (os.majorVersion!=27 || os.minorVersion!=2 || os.patchVersion!=1) return fail(@"unsupported_environment");
+    if (!compatPolicy) {
+        if (![env[@"paseoVersion"] isEqual:@"0.17.5"] || ![env[@"sdkVersion"] isEqual:@"0.17.4"]) return fail(@"unsupported_environment");
+        if (os.majorVersion!=27 || os.minorVersion!=2 || os.patchVersion!=1) return fail(@"unsupported_environment");
+        return YES;
+    }
+    long pMaj=0, pMin=0, pPat=0, sMaj=0, sMin=0, sPat=0;
+    if (!parseSemver(env[@"paseoVersion"], &pMaj, &pMin, &pPat) || !parseSemver(env[@"sdkVersion"], &sMaj, &sMin, &sPat)) return fail(@"unsupported_environment");
+    BOOL paseoOk = (pMaj == 0 && ((pMin == 17 && pPat >= 5) || pMin > 17));
+    BOOL sdkOk = (sMaj == 0 && sMin == 17 && sPat >= 4);
+    if (!paseoOk || !sdkOk) return fail(@"unsupported_environment");
+    if (os.majorVersion < 14) return fail(@"unsupported_environment");
     return YES;
 }
 static BOOL environmentGate(void) {
-    if (!platformGate()) return NO;
+    if (!platformGate(singleProjectMode)) return NO;
     rootPath=request[@"root"];
     if (singleProjectMode) {
         NSDictionary *enrollment = request[@"enrollment"];
@@ -452,7 +483,7 @@ static BOOL environmentGate(void) {
         if (!signedDecimalEqual(ev[@"fsid"][0], volume.f_fsid.val[0]) || !signedDecimalEqual(ev[@"fsid"][1], volume.f_fsid.val[1]) ||
             ![ev[@"mountPoint"] isEqual:[NSString stringWithUTF8String:volume.f_mntonname]]) return fail(@"enrollment_mismatch");
         if (!safeDirectory(rootNode.fd, rootNode.identity, YES)) return NO;
-        return emit(@{@"event":@"environment",@"filesystem":@"apfs",@"local":@YES,@"caseMode":@"insensitive",@"macOS":@"27.2.1",@"arch":@"arm64",@"fixtureOnly":@NO,@"pid":@(getpid())});
+        return emit(@{@"event":@"environment",@"filesystem":@"apfs",@"local":@YES,@"caseMode":@"insensitive",@"macOS":osVersionString(),@"arch":@"arm64",@"fixtureOnly":@NO,@"pid":@(getpid())});
     }
     NSString *base=request[@"fixtureBase"]; char canonical[PATH_MAX], temp[PATH_MAX];
     NSString *tempDir=NSTemporaryDirectory(); if(!realpath(tempDir.fileSystemRepresentation,temp)) return fail(@"unsupported_environment");
@@ -465,7 +496,7 @@ static BOOL environmentGate(void) {
     if(caseSensitive!=0) return fail(@"unsupported_case_mode");
     if (fixture.identity.st_dev != rootNode.identity.st_dev) return fail(@"unsupported_environment");
     if (!safeDirectory(fixture.fd,fixture.identity,YES) || !safeDirectory(rootNode.fd,rootNode.identity,YES)) return NO;
-    return emit(@{@"event":@"environment",@"filesystem":@"apfs",@"local":@YES,@"caseMode":@"insensitive",@"macOS":@"27.2.1",@"arch":@"arm64",@"fixtureOnly":@YES,@"pid":@(getpid())});
+    return emit(@{@"event":@"environment",@"filesystem":@"apfs",@"local":@YES,@"caseMode":@"insensitive",@"macOS":osVersionString(),@"arch":@"arm64",@"fixtureOnly":@YES,@"pid":@(getpid())});
 }
 static BOOL lockCoordinator(void) {
     NSDictionary *c=request[@"coordinator"]; if(!c) return YES;
@@ -651,7 +682,7 @@ static int runEnrollRoot(void) {
         emit(@{@"event":@"enroll_error",@"protocol":@1,@"version":VERSION,@"code":@"invalid_request"});
         return 1;
     }
-    if (!platformGate()) { emit(@{@"event":@"enroll_error",@"protocol":@1,@"version":VERSION,@"code":errorCode ?: @"unsupported_environment"}); return 1; }
+    if (!platformGate(YES)) { emit(@{@"event":@"enroll_error",@"protocol":@1,@"version":VERSION,@"code":errorCode ?: @"unsupported_environment"}); return 1; }
     rootPath = request[@"root"];
     char canonical[PATH_MAX];
     if (!realpath(rootPath.fileSystemRepresentation, canonical) || ![rootPath isEqual:[NSString stringWithUTF8String:canonical]]) {

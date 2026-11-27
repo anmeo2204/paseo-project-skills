@@ -25,6 +25,7 @@ type Options = {
   now?: () => number; wallNow?: () => number; limits?: typeof receiptLimits; responseBytes?: number;
   fixtureApply?: (target: string) => boolean;
   singleProject?: () => EnrollmentBinding | undefined;
+  multiRoot?: (target: string) => EnrollmentBinding | undefined;
 };
 
 // Installation-process lifetime, not a cross-process coordinator or caller identity.
@@ -54,6 +55,13 @@ export class PreviewReceiptStore {
     return { ...receiptPolicy, writeCapability: this.options.fixtureApply ? "fixture_m4_5" as const : receiptPolicy.writeCapability };
   }
   policyFor(target: string): PreviewManifest["policy"] {
+    if (this.options.multiRoot) {
+      const binding = this.options.multiRoot(target);
+      if (binding && binding.canonicalRoot === target) {
+        return { ...receiptPolicy, writeCapability: "multi_root_v1" as const, enrollment: binding };
+      }
+      return { ...receiptPolicy, writeCapability: receiptPolicy.writeCapability };
+    }
     if (this.options.singleProject) {
       const binding = this.options.singleProject();
       if (binding && binding.canonicalRoot === target) {
@@ -87,7 +95,9 @@ export class PreviewReceiptStore {
     const reasons: Extract<Extract<ProviderPreviewV2Result, { status: "ready" }>["applyEligibility"], { status: "ineligible" }>["reasons"] = [];
     const target = manifest.plan.intent.canonicalDirectory;
     const expectedPolicy = this.policyFor(target);
-    const scopeEligible = this.options.singleProject
+    const scopeEligible = this.options.multiRoot
+      ? expectedPolicy.writeCapability === "multi_root_v1"
+      : this.options.singleProject
       ? expectedPolicy.writeCapability === "single_project_v1"
       : Boolean(this.options.fixtureApply?.(target));
     if (!scopeEligible) reasons.push("write_capability_unavailable");
@@ -137,7 +147,15 @@ export class PreviewReceiptStore {
       (binding.expiresAt !== undefined && binding.expiresAt !== record.receipt.expiresAt)) {
       return { status: "error" as const, code: "digest_mismatch" as const };
     }
-    if (this.options.singleProject) {
+    if (this.options.multiRoot) {
+      const target = manifest.plan.intent.canonicalDirectory;
+      const current = this.options.multiRoot(target);
+      if (!current || manifest.policy.writeCapability !== "multi_root_v1" || !manifest.policy.enrollment ||
+        current.canonicalRoot !== target ||
+        canonicalSerialize(manifest.policy.enrollment) !== canonicalSerialize(current)) {
+        return { status: "error" as const, code: "binding_mismatch" as const };
+      }
+    } else if (this.options.singleProject) {
       const current = this.options.singleProject();
       if (!current || manifest.policy.writeCapability !== "single_project_v1" || !manifest.policy.enrollment ||
         canonicalSerialize(manifest.policy.enrollment) !== canonicalSerialize(current)) {

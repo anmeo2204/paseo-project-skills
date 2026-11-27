@@ -50,7 +50,7 @@ const policySchema = z.strictObject({
   serializationVersion: z.literal(receiptPolicy.serializationVersion), observationVersion: z.literal(receiptPolicy.observationVersion),
   ttlMs: z.literal(receiptLimits.ttlMs), maxReceipts: z.literal(receiptLimits.receipts),
   maxSourceBytes: z.literal(receiptLimits.sourceBytes), maxRetainedSourceBytes: z.literal(receiptLimits.retainedSourceBytes),
-  callerBinding: z.literal(receiptPolicy.callerBinding), writeCapability: z.enum(["unavailable_m4_2", "fixture_m4_5", "single_project_v1"]),
+  callerBinding: z.literal(receiptPolicy.callerBinding), writeCapability: z.enum(["unavailable_m4_2", "fixture_m4_5", "single_project_v1", "multi_root_v1"]),
   enrollment: enrollmentBindingSchema.optional(),
   previewBudgets: z.strictObject({
     files: z.number().int().nonnegative().max(2048), pathBytes: z.number().int().nonnegative().max(1024),

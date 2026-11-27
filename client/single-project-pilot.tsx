@@ -2,6 +2,7 @@ import type { PluginClientContext, PluginScreenProps } from "@getpaseo/plugin/cl
 import { useHosts, useRpc } from "@getpaseo/plugin/client";
 import { SidebarRow } from "@getpaseo/plugin/client/ui";
 import { useEffect, useState } from "react";
+import { Text, View } from "react-native";
 import { FoundationScreen } from "./foundation-screen";
 import { FixtureApprovalScope } from "./fixture-approval";
 import { createOperationTracker } from "./apply-tracker";
@@ -10,6 +11,8 @@ import { localApplyCapabilityRpc } from "../shared/apply";
 const slot = "paseo-project-skills-single-project-pilot";
 const title = "Project Skills Single-Project Pilot";
 type ProfileStorage = { getItem(key: string): string | null; setItem(key: string, value: string): void };
+export const pilotPreviewOnlyNotice =
+  "Safe Apply is inactive on this daemon (Preview-only): opt-in is off, no project root is enrolled, or the enrolled root identity could not be verified.";
 
 export default function contribute(client: PluginClientContext) {
   const tracker = createOperationTracker({ slot,
@@ -17,18 +20,34 @@ export default function contribute(client: PluginClientContext) {
   function Screen(props: PluginScreenProps) {
     const capability = useRpc(localApplyCapabilityRpc);
     const online = useHosts().some(host => host.serverId === props.host.id && host.status === "online");
-    const [verified, setVerified] = useState<{ hostId: string; capability: typeof capability }>();
+    const [probe, setProbe] = useState<{ hostId: string; capability: typeof capability; enabled: boolean }>();
     useEffect(() => {
       let present = true;
-      setVerified(undefined);
+      setProbe(undefined);
       if (online) void capability({}).then(result => {
-        if (present && result.enabled) setVerified({ hostId: props.host.id, capability });
-      }).catch(() => {});
+        if (present) setProbe({ hostId: props.host.id, capability, enabled: Boolean(result.enabled) });
+      }).catch(() => {
+        if (present) setProbe({ hostId: props.host.id, capability, enabled: false });
+      });
       return () => { present = false; };
     }, [online, capability, props.host.id]);
+    const settled = online && probe?.hostId === props.host.id && probe.capability === capability;
+    const enabled = Boolean(settled && probe?.enabled);
     const screen = <FoundationScreen {...props} />;
-    return online && verified?.hostId === props.host.id && verified.capability === capability
-      ? <FixtureApprovalScope slot={slot} tracker={tracker}>{screen}</FixtureApprovalScope> : screen;
+    if (enabled) {
+      return <FixtureApprovalScope slot={slot} tracker={tracker}>{screen}</FixtureApprovalScope>;
+    }
+    if (settled) {
+      return (
+        <View style={{ flex: 1 }}>
+          <View style={{ paddingHorizontal: 16, paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: props.theme.colors.border, backgroundColor: props.theme.colors.surface1 }}>
+            <Text style={{ color: props.theme.colors.foregroundMuted, fontSize: 12 }}>{pilotPreviewOnlyNotice}</Text>
+          </View>
+          {screen}
+        </View>
+      );
+    }
+    return screen;
   }
 
   const removeScreen = client.addScreen({ id: "foundation", title, Component: Screen });

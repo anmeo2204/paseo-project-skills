@@ -93,7 +93,7 @@ export const nativeEventSchema = z.discriminatedUnion("event", [
   z.strictObject({ event: z.literal("ready_to_finalize"), result: nativeWriterResultSchema, lockHeld: z.literal(true) }),
   z.strictObject({ event: z.literal("barrier"), point: barrierPoint, destination: z.string().max(1024), sequence: z.number().int().positive(), pid: z.number().int().positive() }),
   z.strictObject({ event: z.literal("environment"), filesystem: z.literal("apfs"), local: z.literal(true), caseMode: z.literal("insensitive"),
-    macOS: z.literal("27.2.1"), arch: z.literal("arm64"), fixtureOnly: z.boolean(), pid: z.number().int().positive() }),
+    macOS: z.string().regex(/^\d+\.\d+\.\d+$/), arch: z.literal("arm64"), fixtureOnly: z.boolean(), pid: z.number().int().positive() }),
   z.strictObject({ event: z.literal("lock_acquired"), pid: z.number().int().positive(), identity }),
   z.strictObject({ event: z.literal("mutation_intent"), operation: z.enum(["mkdirat", "openat_exclusive"]), destination: relative }),
   z.strictObject({ event: z.literal("file_verified"), destination: relative, identity }),

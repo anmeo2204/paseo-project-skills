@@ -1,0 +1,150 @@
+{
+  "capturedAt": "2026-11-27T13:02:33.211Z",
+  "staged": {
+    "base": "<PILOT_TEMP_BASE>",
+    "plugin": "<PILOT_TEMP_BASE>/candidate",
+    "home": "<PILOT_TEMP_BASE>/daemon",
+    "desktop": "<PILOT_TEMP_BASE>/desktop",
+    "cli": "/Applications/Paseo.app/Contents/Resources/bin/paseo",
+    "listen": "127.0.0.1:61057"
+  },
+  "install": {
+    "id": "paseo-project-skills-single-project-pilot",
+    "path": "<PILOT_TEMP_BASE>/candidate",
+    "enabled": true,
+    "status": "running",
+    "name": "Project Skills Single-Project Pilot",
+    "installation": {
+      "identity": {
+        "kind": "directory",
+        "path": "<PILOT_TEMP_BASE>/candidate"
+      }
+    }
+  },
+  "policyStatus": {
+    "command": "status",
+    "daemonHome": "<PILOT_TEMP_BASE>/daemon",
+    "policyPath": "<PILOT_TEMP_BASE>/daemon/runtime/project-skills-pilot/enrollment.json",
+    "active": false
+  },
+  "preEnrollmentVerification": {
+    "capability": {
+      "enabled": false
+    },
+    "previewStatus": "ready",
+    "applyEligibility": {
+      "status": "ineligible",
+      "reasons": [
+        "write_capability_unavailable"
+      ]
+    },
+    "plannedEntries": [
+      {
+        "destination": ".agents/skills/debug-regression/SKILL.md",
+        "status": "create",
+        "mode": 420,
+        "sizeBytes": 3639,
+        "sha256": "a09e1842c31849c449d678cb87d9c83bb10559f70ad1df7ba943868d8c98fc30"
+      },
+      {
+        "destination": ".agents/skills/debug-regression/applicability.json",
+        "status": "create",
+        "mode": 420,
+        "sizeBytes": 67,
+        "sha256": "a0cc6e49e3f53754580914558afd68220af1e4883c8d27d9e6245b3475490b29"
+      }
+    ],
+    "derivedEntries": [],
+    "providers": [
+      {
+        "providerId": "codex",
+        "strategy": "canonical_only",
+        "status": "canonical_only",
+        "verification": {
+          "basis": "historical_m3_1",
+          "report": "M3.1-completion-report.md",
+          "paseoVersion": "0.17.5",
+          "binaryVersion": "0.167.0",
+          "transport": "app-server",
+          "loadMode": "auto; read-only; approval never; web search disabled",
+          "cwdScope": "root_and_nested",
+          "note": "M3.1 model gpt-6.1-sol. Historical discovery/load evidence; not a live runtime attestation."
+        },
+        "skills": []
+      }
+    ],
+    "directApplyWhenOff": {
+      "status": "error",
+      "code": "receipt_invalid"
+    },
+    "mainDaemonHasPilotPlugin": false
+  },
+  "gizBaseline": {
+    "canonicalPath": "<PROJECTS_ROOT>/giz",
+    "gitHead": "89c89de6c7656bf79a832d35330d1f14456ff3f2",
+    "gitStatusShortLines": 0,
+    "root": {
+      "kind": "directory",
+      "dev": "16777234",
+      "ino": "10167768",
+      "mode": 493,
+      "uid": 501,
+      "gid": 80,
+      "size": 1536
+    },
+    "agentsDir": {
+      "kind": "directory",
+      "dev": "16777234",
+      "ino": "10167852",
+      "mode": 493,
+      "uid": 501,
+      "gid": 80,
+      "size": 256
+    },
+    "skillsDir": {
+      "kind": "directory",
+      "dev": "16777234",
+      "ino": "10531043",
+      "mode": 493,
+      "uid": 501,
+      "gid": 80,
+      "size": 160
+    },
+    "existingSkills": [
+      ".gitignore",
+      "geeks-portal-frontend",
+      "slp-manager"
+    ],
+    "existingSkillEntries": {
+      ".gitignore": {
+        "kind": "file",
+        "dev": "16777234",
+        "ino": "10531044",
+        "mode": 420,
+        "uid": 501,
+        "gid": 80,
+        "size": 11,
+        "sha256": "e1f6cb56844dfb267d9d6a774197cb946ab1f3f30a05c9d2c930f6eb4f3f50de"
+      },
+      "geeks-portal-frontend": {
+        "kind": "directory",
+        "dev": "16777234",
+        "ino": "11495999",
+        "mode": 493,
+        "uid": 501,
+        "gid": 80,
+        "size": 96
+      },
+      "slp-manager": {
+        "kind": "directory",
+        "dev": "16777234",
+        "ino": "11496001",
+        "mode": 493,
+        "uid": 501,
+        "gid": 80,
+        "size": 128
+      }
+    },
+    "debugRegressionAbsent": true
+  }
+}

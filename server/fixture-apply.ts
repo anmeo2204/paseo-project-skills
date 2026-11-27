@@ -9,6 +9,8 @@ import { canonicalSerialize, manifestDigest, PreviewReceiptStore } from "./previ
 import { fixtureWriterRequest, singleProjectWriterRequest, type NativeControls, type NativeWriterRequest, type NativeWriterResult } from "./native-writer-contract";
 import { runFixtureWriter, runSingleProjectWriter, type FixtureWriterOptions } from "./native-writer";
 import { pilotRuntimeDirectory, toEnrollmentBinding, type ActiveSingleProjectPolicy } from "./single-project-policy";
+import { multiRootRuntimeDirectory } from "./multi-root-policy";
+import { checkDaemonTrustBoundary, resolveSafeDaemonHome } from "./compatibility-policy";
 
 type Context = Pick<PluginHandlerContext, "paseo">;
 type ErrorCode = Extract<ApplyOutput, { status: "error" }>["code"];
@@ -126,6 +128,75 @@ export function createSingleProjectApply(config: SingleProjectConfiguration) {
         files: request.files,
         checkBeforeAdmit: () => {
           const live = config.readPolicy();
+          if (!live || live.policyRevision !== policy.policyRevision || live.canonicalRoot !== policy.canonicalRoot) {
+            return "receipt_invalid";
+          }
+          return undefined;
+        },
+        run: (options) => runSingleProjectWriter(request, options),
+      };
+    },
+  });
+}
+
+type MultiRootConfiguration = {
+  daemonHome?: string;
+  installation: string;
+  readPolicy: (canonicalRoot: string) => ActiveSingleProjectPolicy | undefined;
+  checkTrustBoundary?: (daemonHome: string) => { ok: true } | { ok: false; reason: string };
+  receipts: PreviewReceiptStore;
+  settings: Parameters<typeof createCanonicalPreviewHandler>[0];
+  catalog: Parameters<typeof createCanonicalPreviewHandler>[1];
+  environment: NativeWriterRequest["environment"];
+  test?: FixtureConfiguration["test"];
+};
+
+export function createMultiRootApply(config: MultiRootConfiguration) {
+  const resolved = resolveSafeDaemonHome(config.daemonHome);
+  if (!resolved.ok) throw new Error(resolved.reason);
+  const home = resolved.daemonHome;
+  const verifyTrust = () => (config.checkTrustBoundary ?? checkDaemonTrustBoundary)(home);
+  const initialTrust = verifyTrust();
+  if (!initialTrust.ok) throw new Error(initialTrust.reason);
+
+  const runtime = join(home, "runtime");
+  mkdirSync(runtime, { recursive: true, mode: 0o700 });
+  const baseDir = multiRootRuntimeDirectory(home);
+  mkdirSync(baseDir, { recursive: true, mode: 0o700 });
+  const coordinator = join(baseDir, "coordinator");
+  mkdirSync(coordinator, { recursive: true, mode: 0o700 });
+
+  return createApplyEngine({
+    coordinator,
+    installation: config.installation,
+    receipts: config.receipts,
+    settings: config.settings,
+    catalog: config.catalog,
+    environment: config.environment,
+    test: config.test,
+    requireCreateEntries: true,
+    revalidationStore: () => new PreviewReceiptStore({
+      multiRoot: (target) => {
+        if (!verifyTrust().ok) return undefined;
+        const policy = config.readPolicy(target);
+        return policy ? toEnrollmentBinding(policy) : undefined;
+      },
+    }),
+    prepareWrite(manifest, planDigest, sources, controls) {
+      if (!verifyTrust().ok) return { ok: false, code: "unsupported_environment" };
+      const target = manifest.plan.intent.canonicalDirectory;
+      const policy = config.readPolicy(target);
+      if (!policy) return { ok: false, code: "receipt_invalid" };
+      if (target !== policy.canonicalRoot) return { ok: false, code: "unsupported_environment" };
+      const request = { ...singleProjectWriterRequest({ enrollment: policy, manifest, planDigest, sources,
+        environment: config.environment, coordinator, controls }), durableAdmission: true as const };
+      return {
+        ok: true,
+        directories: request.directories,
+        files: request.files,
+        checkBeforeAdmit: () => {
+          if (!verifyTrust().ok) return "unsupported_environment";
+          const live = config.readPolicy(target);
           if (!live || live.policyRevision !== policy.policyRevision || live.canonicalRoot !== policy.canonicalRoot) {
             return "receipt_invalid";
           }

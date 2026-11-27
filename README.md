@@ -108,17 +108,30 @@ Rescanning, changing host/target/saved settings or skill/provider selection disc
 
 M4.2 adds the separate read-only **`preview.providers.v2`** RPC, accepting `{ intent, viewNonce }`. Its strict versioned response contains an immutable-plan manifest and daemon-retained receipt. The manifest binds the M3 provider projection, pinned source fingerprints, proposed directory effects, exact bigint filesystem observations, Git/worktree proof, installation-instance/epoch scope and policy/budgets. The M3 endpoints and UI keep their existing contracts.
 
-Receipts expire after 10 minutes using the daemon's monotonic clock. The installation retains at most 8 receipts and 32 MiB of source bytes, with an 8 MiB combined canonical/derived source limit per receipt; oldest receipts are evicted first. No source bytes travel in the response. All v2 responses explicitly report **write capability unavailable** and **Apply ineligible**, including no-op plans. There is no Apply/status RPC or Apply button. Receipt integrity/lifetime checks do not replace future filesystem/settings/catalog revalidation. See [the M4.2 report](M4.2-completion-report.md) for runtime-spike findings and remaining Apply blockers.
+Receipts expire after 10 minutes using the daemon's monotonic clock. The installation retains at most 8 receipts and 32 MiB of source bytes, with an 8 MiB combined canonical/derived source limit per receipt; oldest receipts are evicted first. No source bytes travel in the response. On the main `paseo-project-skills` installation, all v2 responses explicitly report **write capability unavailable** and **Apply ineligible**, including no-op plans; there is no Apply/status RPC or Apply button on the main daemon. Receipt integrity/lifetime checks do not replace filesystem/settings/catalog revalidation. See [the M4.2 report](M4.2-completion-report.md) for runtime-spike findings.
+
+## Safe Apply — Single-Project Pilot
+
+The limited **Single-Project Safe Apply Pilot** (`paseo-project-skills-single-project-pilot`) has passed acceptance on an isolated Paseo Desktop profile and daemon (**PASS 10/10** on `giz` for `debug-regression` + `Codex`, macOS arm64, local APFS case-insensitive, Paseo 0.17.5 / SDK 0.17.4).
+
+- **Main daemon remains Preview-only:** The default `paseo-project-skills` plugin (`index.server.ts` / `index.client.tsx`) does not expose `apply.*` RPCs or mutate target files.
+- **Pilot isolation & opt-in:** The pilot candidate (`release/single-project-pilot/`) runs in a separate daemon home with opt-in **OFF** by default, binds exactly one canonical project root via native `--enroll-root` (`scripts/enroll-single-project-pilot.mjs`), and enforces create-only / no-clobber writes with durable admission, `fsync` completion, and read-only `apply.status.v1` recovery even after opt-in is disabled.
+- **Evidence & next phase:** See [the pilot design](docs/safe-apply-pilot/SAFE-APPLY-single-project-pilot-design.md), [isolated copy acceptance](docs/safe-apply-pilot/SAFE-APPLY-single-project-pilot-acceptance-report.md), [giz final acceptance (PASS 10/10)](docs/safe-apply-pilot/SAFE-APPLY-giz-final-acceptance-report.md), and [Production Readiness Analysis](docs/safe-apply-pilot/SAFE-APPLY-production-readiness-report.md).
 
 ## Optional AI capability
 
 M2.3 provides a server-side structured agent executor through the public Paseo SDK. It ships with no verified execution profiles, so provider availability alone cannot start a run. The executor is internal to the plugin and will be connected to the optional AI-assisted recommendation flow separately. Catalog and project evidence remain available independently. See [the M2.3 completion report](M2.3-completion-report.md) for the local preflight and provider limitations.
 
-## Roadmap
+## Roadmap & Milestone Status
 
-- **M2 — Read-only scan and recommendation.** Resolve the catalog to a commit SHA, then read it and recommend skills.
-- **M3 — Preview and provider adapters.** Compute and show proposed changes. Generate provider-specific rules or derived skills where required.
-- **M4 — Safe apply.** Write the approved diff to the target project.
-- **M5 — SLP integration pilot.** Validate optional integration while keeping the standalone plugin usable.
+| Milestone | Scope | Status |
+| --- | --- | --- |
+| **M1 — Foundation** | Plugin shell, directory validation, host/workspace selection, catalog settings | **Completed** |
+| **M2 — Read-only scan & recommendation** | Pinned Git catalog loader, bounded project scanner, deterministic recommendation engine, Scan UI | **Completed** |
+| **M3 — Preview & provider adapters** | Canonical preview planner, provider adapters (Codex, Cursor ACP, Antigravity `canonical_only`; Kiro `.kiro/skills/` derived), Preview UI | **Completed** |
+| **M4 — Safe Apply (Pilot)** | Immutable preview receipts (`v2`), native anchored create-only writer, durable journal, single-project enrollment pilot on isolated daemon | **Pilot Completed (PASS 10/10)** |
+| **M4.P1 — Multi-Root Policy, Version Compat & Multi-Skill/Kiro Acceptance** | Multi-root allowlist (`enrollments.json`), per-target approval receipts, semver/trust-boundary compatibility policy, AT-1/2/3/5 & 4-provider live discovery on isolated copies | **Completed (PASS)** |
+| **M4.P2 — Main Plugin Integration & Production Release Gate** | Direct Scan → Recommend → Select → Preview → Approve → Apply on main plugin (`~/.paseo`, Preview-only for unenrolled roots, Relay fail-closed) | **Pending Approval** |
+| **M5 — SLP integration pilot** | Validate optional integration while keeping the standalone plugin usable | **Planned** |
 
 [Paseo 0.17.4 plugin guide](https://github.com/getpaseo/paseo/blob/v0.17.4/docs/plugins.md)

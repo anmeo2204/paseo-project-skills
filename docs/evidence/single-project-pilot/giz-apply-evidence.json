@@ -1,0 +1,111 @@
+{
+  "capturedAt": "2026-11-27T13:12:11.071Z",
+  "operationId": "7f826c811411786157ec6fa9c52c9b41",
+  "operation": {
+    "status": "operation",
+    "operationId": "7f826c811411786157ec6fa9c52c9b41",
+    "planDigest": "a9e805ff8633c9d8761dacf7728aa5751cb355da46e8bda7cbfacadbbf0033b4",
+    "phase": "completed",
+    "code": "none",
+    "targetMutated": true,
+    "requiresPreview": false,
+    "durability": "fsync_completed",
+    "ledger": [
+      {
+        "destination": ".agents/skills/debug-regression",
+        "kind": "directory",
+        "state": "created_verified",
+        "identity": {
+          "dev": "16777234",
+          "ino": "12562568"
+        }
+      },
+      {
+        "destination": ".agents/skills/debug-regression/applicability.json",
+        "kind": "file",
+        "state": "created_verified",
+        "bytesWritten": 67,
+        "identity": {
+          "dev": "16777234",
+          "ino": "12562569"
+        },
+        "expected": {
+          "sha256": "a0cc6e49e3f53754580914558afd68220af1e4883c8d27d9e6245b3475490b29",
+          "mode": 420,
+          "sizeBytes": 67
+        },
+        "canonicalDestination": ".agents/skills/debug-regression/applicability.json"
+      },
+      {
+        "destination": ".agents/skills/debug-regression/SKILL.md",
+        "kind": "file",
+        "state": "created_verified",
+        "bytesWritten": 3639,
+        "identity": {
+          "dev": "16777234",
+          "ino": "12562570"
+        },
+        "expected": {
+          "sha256": "a09e1842c31849c449d678cb87d9c83bb10559f70ad1df7ba943868d8c98fc30",
+          "mode": 420,
+          "sizeBytes": 3639
+        },
+        "canonicalDestination": ".agents/skills/debug-regression/SKILL.md"
+      }
+    ]
+  },
+  "createdFiles": {
+    ".agents/skills/debug-regression/applicability.json": {
+      "kind": "file",
+      "dev": "16777234",
+      "ino": "12562569",
+      "mode": 420,
+      "size": 67,
+      "sha256": "a0cc6e49e3f53754580914558afd68220af1e4883c8d27d9e6245b3475490b29"
+    },
+    ".agents/skills/debug-regression/SKILL.md": {
+      "kind": "file",
+      "dev": "16777234",
+      "ino": "12562570",
+      "mode": 420,
+      "size": 3639,
+      "sha256": "a09e1842c31849c449d678cb87d9c83bb10559f70ad1df7ba943868d8c98fc30"
+    }
+  },
+  "baselinePreserved": {
+    "count": 10,
+    "allMatch": true
+  },
+  "addedUnderSkills": [
+    "debug-regression",
+    "debug-regression/SKILL.md",
+    "debug-regression/applicability.json"
+  ],
+  "gitStatusUntrackedAll": [
+    "?? .agents/skills/debug-regression/SKILL.md",
+    "?? .agents/skills/debug-regression/applicability.json"
+  ],
+  "secondPreviewEligibility": {
+    "status": "no_changes"
+  },
+  "afterOptInDisable": {
+    "disabled": {
+      "command": "disable",
+      "status": "updated",
+      "daemonHome": "<PILOT_TEMP_BASE>/daemon",
+      "policyPath": "<PILOT_TEMP_BASE>/daemon/runtime/project-skills-pilot/enrollment.json",
+      "enabled": false,
+      "canonicalRoot": "<PROJECTS_ROOT>/giz",
+      "policyRevision": "aaae261c87ef37526b4bce2fb096f92639301b533821cd14405512955c4b1d99"
+    },
+    "capability": {
+      "enabled": false
+    },
+    "blockedNewApply": {
+      "status": "error",
+      "code": "receipt_invalid"
+    },
+    "oldStatusStillReadable": true
+  },
+  "mainDaemonUntouched": true
+}
