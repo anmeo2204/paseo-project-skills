@@ -1,0 +1,2639 @@
+{
+  "runtime": {
+    "pid": 315,
+    "ppid": 95494,
+    "hostId": "srv_YGro7k1m_hmi",
+    "context": [
+      "paseo"
+    ],
+    "catalogSource": "https://github.com/anmeo2204/project-skills",
+    "home": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m44-sefrQa/daemon",
+    "node": "24.20.0",
+    "electron": "44.2.0",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "peer": {
+    "pid": 416,
+    "ppid": 95494,
+    "hostId": "srv_YGro7k1m_hmi",
+    "context": [
+      "paseo"
+    ],
+    "catalogSource": "https://github.com/anmeo2204/project-skills",
+    "home": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m44-sefrQa/daemon",
+    "node": "24.20.0",
+    "electron": "44.2.0",
+    "platform": "darwin",
+    "arch": "arm64"
+  },
+  "sdkVersions": {
+    "client": "0.17.4",
+    "plugin": "0.17.4",
+    "protocol": "0.17.4"
+  },
+  "cases": {
+    "contention": {
+      "before": {
+        ".": {
+          "dev": "16777230",
+          "ino": "122760697",
+          "mode": 493
+        },
+        ".agents": {
+          "dev": "16777230",
+          "ino": "122760698",
+          "mode": 493
+        },
+        ".agents/skills": {
+          "dev": "16777230",
+          "ino": "122760699",
+          "mode": 493
+        },
+        ".agents/skills/demo": {
+          "dev": "16777230",
+          "ino": "122760700",
+          "mode": 493
+        },
+        "existing": {
+          "dev": "16777230",
+          "ino": "122760701",
+          "mode": 416,
+          "size": 17,
+          "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+        }
+      },
+      "after": {
+        ".": {
+          "dev": "16777230",
+          "ino": "122760697",
+          "mode": 493
+        },
+        ".agents": {
+          "dev": "16777230",
+          "ino": "122760698",
+          "mode": 493
+        },
+        ".agents/skills": {
+          "dev": "16777230",
+          "ino": "122760699",
+          "mode": 493
+        },
+        ".agents/skills/demo": {
+          "dev": "16777230",
+          "ino": "122760700",
+          "mode": 493
+        },
+        ".agents/skills/demo/SKILL.md": {
+          "dev": "16777230",
+          "ino": "122760725",
+          "mode": 420,
+          "size": 45,
+          "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a"
+        },
+        ".agents/skills/demo/a-data.bin": {
+          "dev": "16777230",
+          "ino": "122760719",
+          "mode": 420,
+          "size": 3,
+          "sha256": "930be0afa8d0193efa7b7021d9234a1420c18a06be3fe05e81a294b7a0bbb2a4"
+        },
+        ".agents/skills/demo/z-run.sh": {
+          "dev": "16777230",
+          "ino": "122760722",
+          "mode": 493,
+          "size": 10,
+          "sha256": "a8076d3d28d21e02012b20eaf7dbf75409a6277134439025f282e368e3305abf"
+        },
+        "existing": {
+          "dev": "16777230",
+          "ino": "122760701",
+          "mode": 416,
+          "size": 17,
+          "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+        }
+      },
+      "winner": {
+        "status": "operation",
+        "operationId": "a0b4f0d821ccccba067855ede7d294f4",
+        "planDigest": "84c0a8c2e90c3f8cc68a4cd0873851487bb8c1e16c7c36060041ebc1f47b62d1",
+        "phase": "completed",
+        "code": "none",
+        "targetMutated": true,
+        "requiresPreview": false,
+        "durability": "fsync_completed",
+        "ledger": [
+          {
+            "destination": ".agents/skills/demo/a-data.bin",
+            "kind": "file",
+            "state": "created_verified",
+            "bytesWritten": 3,
+            "canonicalDestination": ".agents/skills/demo/a-data.bin",
+            "expected": {
+              "sha256": "930be0afa8d0193efa7b7021d9234a1420c18a06be3fe05e81a294b7a0bbb2a4",
+              "mode": 420,
+              "sizeBytes": 3
+            },
+            "identity": {
+              "dev": "16777230",
+              "ino": "122760719"
+            }
+          },
+          {
+            "destination": ".agents/skills/demo/z-run.sh",
+            "kind": "file",
+            "state": "created_verified",
+            "bytesWritten": 10,
+            "canonicalDestination": ".agents/skills/demo/z-run.sh",
+            "expected": {
+              "sha256": "a8076d3d28d21e02012b20eaf7dbf75409a6277134439025f282e368e3305abf",
+              "mode": 493,
+              "sizeBytes": 10
+            },
+            "identity": {
+              "dev": "16777230",
+              "ino": "122760722"
+            }
+          },
+          {
+            "destination": ".agents/skills/demo/SKILL.md",
+            "kind": "file",
+            "state": "created_verified",
+            "bytesWritten": 45,
+            "canonicalDestination": ".agents/skills/demo/SKILL.md",
+            "expected": {
+              "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a",
+              "mode": 420,
+              "sizeBytes": 45
+            },
+            "identity": {
+              "dev": "16777230",
+              "ino": "122760725"
+            }
+          }
+        ]
+      },
+      "peerResult": {
+        "status": "operation",
+        "operationId": "4d845bcf8c656cafdbc8b3945a3c1137",
+        "planDigest": "a3c50744ff5b861aa3e24a46674e995c86a3eaf9dbf69c1480a1ca29770ff903",
+        "phase": "completed",
+        "code": "none",
+        "targetMutated": true,
+        "requiresPreview": false,
+        "durability": "fsync_completed",
+        "ledger": [
+          {
+            "destination": ".agents/skills/demo/a-data.bin",
+            "kind": "file",
+            "state": "created_verified",
+            "bytesWritten": 3,
+            "canonicalDestination": ".agents/skills/demo/a-data.bin",
+            "expected": {
+              "sha256": "930be0afa8d0193efa7b7021d9234a1420c18a06be3fe05e81a294b7a0bbb2a4",
+              "mode": 420,
+              "sizeBytes": 3
+            },
+            "identity": {
+              "dev": "16777230",
+              "ino": "122760738"
+            }
+          },
+          {
+            "destination": ".agents/skills/demo/z-run.sh",
+            "kind": "file",
+            "state": "created_verified",
+            "bytesWritten": 10,
+            "canonicalDestination": ".agents/skills/demo/z-run.sh",
+            "expected": {
+              "sha256": "a8076d3d28d21e02012b20eaf7dbf75409a6277134439025f282e368e3305abf",
+              "mode": 493,
+              "sizeBytes": 10
+            },
+            "identity": {
+              "dev": "16777230",
+              "ino": "122760741"
+            }
+          },
+          {
+            "destination": ".agents/skills/demo/SKILL.md",
+            "kind": "file",
+            "state": "created_verified",
+            "bytesWritten": 45,
+            "canonicalDestination": ".agents/skills/demo/SKILL.md",
+            "expected": {
+              "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a",
+              "mode": 420,
+              "sizeBytes": 45
+            },
+            "identity": {
+              "dev": "16777230",
+              "ino": "122760748"
+            }
+          }
+        ]
+      },
+      "inFlight": {
+        "status": "operation",
+        "operationId": "a0b4f0d821ccccba067855ede7d294f4",
+        "planDigest": "84c0a8c2e90c3f8cc68a4cd0873851487bb8c1e16c7c36060041ebc1f47b62d1",
+        "phase": "preflight",
+        "code": "none",
+        "targetMutated": "unknown",
+        "requiresPreview": false,
+        "durability": "not_confirmed",
+        "ledger": [
+          {
+            "destination": ".agents/skills/demo/a-data.bin",
+            "kind": "file",
+            "state": "not_attempted",
+            "bytesWritten": 0,
+            "expected": {
+              "sha256": "930be0afa8d0193efa7b7021d9234a1420c18a06be3fe05e81a294b7a0bbb2a4",
+              "mode": 420,
+              "sizeBytes": 3
+            },
+            "canonicalDestination": ".agents/skills/demo/a-data.bin"
+          },
+          {
+            "destination": ".agents/skills/demo/z-run.sh",
+            "kind": "file",
+            "state": "not_attempted",
+            "bytesWritten": 0,
+            "expected": {
+              "sha256": "a8076d3d28d21e02012b20eaf7dbf75409a6277134439025f282e368e3305abf",
+              "mode": 493,
+              "sizeBytes": 10
+            },
+            "canonicalDestination": ".agents/skills/demo/z-run.sh"
+          },
+          {
+            "destination": ".agents/skills/demo/SKILL.md",
+            "kind": "file",
+            "state": "not_attempted",
+            "bytesWritten": 0,
+            "expected": {
+              "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a",
+              "mode": 420,
+              "sizeBytes": 45
+            },
+            "canonicalDestination": ".agents/skills/demo/SKILL.md"
+          }
+        ]
+      },
+      "lock": {
+        "dev": "16777230",
+        "ino": "122760709",
+        "mode": 384,
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "stale": [
+      {
+        "variant": "settings",
+        "result": {
+          "status": "operation",
+          "operationId": "377c8c04f50af4000873baa7b02cb4d8",
+          "planDigest": "c2adf38851d7856f8d2827056f33fdbbc2162c12b9ce5460ae537f642b8da878",
+          "phase": "failed_before_write",
+          "code": "stale_plan",
+          "targetMutated": false,
+          "requiresPreview": true,
+          "durability": "not_confirmed",
+          "ledger": [
+            {
+              "destination": ".agents/skills/demo/a-data.bin",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "canonicalDestination": ".agents/skills/demo/a-data.bin",
+              "expected": {
+                "sha256": "930be0afa8d0193efa7b7021d9234a1420c18a06be3fe05e81a294b7a0bbb2a4",
+                "mode": 420,
+                "sizeBytes": 3
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/z-run.sh",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "canonicalDestination": ".agents/skills/demo/z-run.sh",
+              "expected": {
+                "sha256": "a8076d3d28d21e02012b20eaf7dbf75409a6277134439025f282e368e3305abf",
+                "mode": 493,
+                "sizeBytes": 10
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/SKILL.md",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "canonicalDestination": ".agents/skills/demo/SKILL.md",
+              "expected": {
+                "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a",
+                "mode": 420,
+                "sizeBytes": 45
+              }
+            }
+          ]
+        },
+        "before": {
+          ".": {
+            "dev": "16777230",
+            "ino": "122760751",
+            "mode": 493
+          },
+          ".agents": {
+            "dev": "16777230",
+            "ino": "122760752",
+            "mode": 493
+          },
+          ".agents/skills": {
+            "dev": "16777230",
+            "ino": "122760753",
+            "mode": 493
+          },
+          ".agents/skills/demo": {
+            "dev": "16777230",
+            "ino": "122760754",
+            "mode": 493
+          },
+          "existing": {
+            "dev": "16777230",
+            "ino": "122760755",
+            "mode": 416,
+            "size": 17,
+            "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+          }
+        },
+        "after": {
+          ".": {
+            "dev": "16777230",
+            "ino": "122760751",
+            "mode": 493
+          },
+          ".agents": {
+            "dev": "16777230",
+            "ino": "122760752",
+            "mode": 493
+          },
+          ".agents/skills": {
+            "dev": "16777230",
+            "ino": "122760753",
+            "mode": 493
+          },
+          ".agents/skills/demo": {
+            "dev": "16777230",
+            "ino": "122760754",
+            "mode": 493
+          },
+          "existing": {
+            "dev": "16777230",
+            "ino": "122760755",
+            "mode": 416,
+            "size": 17,
+            "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+          }
+        }
+      },
+      {
+        "variant": "sha",
+        "result": {
+          "status": "operation",
+          "operationId": "60917548860b4c014a80356da3321abc",
+          "planDigest": "7c4bee1038ad90e053bd73f813d17d57a70d4f9fb0ffa1f7f2a3666f548c4209",
+          "phase": "failed_before_write",
+          "code": "stale_plan",
+          "targetMutated": false,
+          "requiresPreview": true,
+          "durability": "not_confirmed",
+          "ledger": [
+            {
+              "destination": ".agents/skills/demo/a-data.bin",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "canonicalDestination": ".agents/skills/demo/a-data.bin",
+              "expected": {
+                "sha256": "930be0afa8d0193efa7b7021d9234a1420c18a06be3fe05e81a294b7a0bbb2a4",
+                "mode": 420,
+                "sizeBytes": 3
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/z-run.sh",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "canonicalDestination": ".agents/skills/demo/z-run.sh",
+              "expected": {
+                "sha256": "a8076d3d28d21e02012b20eaf7dbf75409a6277134439025f282e368e3305abf",
+                "mode": 493,
+                "sizeBytes": 10
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/SKILL.md",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "canonicalDestination": ".agents/skills/demo/SKILL.md",
+              "expected": {
+                "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a",
+                "mode": 420,
+                "sizeBytes": 45
+              }
+            }
+          ]
+        },
+        "before": {
+          ".": {
+            "dev": "16777230",
+            "ino": "122760763",
+            "mode": 493
+          },
+          ".agents": {
+            "dev": "16777230",
+            "ino": "122760764",
+            "mode": 493
+          },
+          ".agents/skills": {
+            "dev": "16777230",
+            "ino": "122760765",
+            "mode": 493
+          },
+          ".agents/skills/demo": {
+            "dev": "16777230",
+            "ino": "122760766",
+            "mode": 493
+          },
+          "existing": {
+            "dev": "16777230",
+            "ino": "122760767",
+            "mode": 416,
+            "size": 17,
+            "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+          }
+        },
+        "after": {
+          ".": {
+            "dev": "16777230",
+            "ino": "122760763",
+            "mode": 493
+          },
+          ".agents": {
+            "dev": "16777230",
+            "ino": "122760764",
+            "mode": 493
+          },
+          ".agents/skills": {
+            "dev": "16777230",
+            "ino": "122760765",
+            "mode": 493
+          },
+          ".agents/skills/demo": {
+            "dev": "16777230",
+            "ino": "122760766",
+            "mode": 493
+          },
+          "existing": {
+            "dev": "16777230",
+            "ino": "122760767",
+            "mode": 416,
+            "size": 17,
+            "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+          }
+        }
+      },
+      {
+        "variant": "read_set",
+        "result": {
+          "status": "operation",
+          "operationId": "0dfec0448c2cf15c13ef460a43f89c6d",
+          "planDigest": "f13a3a6009fb439a90483b6bda34420cd85a1b56f129132a405ba96dfd0dfef6",
+          "phase": "failed_before_write",
+          "code": "stale_plan",
+          "targetMutated": false,
+          "requiresPreview": true,
+          "durability": "not_confirmed",
+          "ledger": [
+            {
+              "destination": ".agents/skills/demo/a-data.bin",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "canonicalDestination": ".agents/skills/demo/a-data.bin",
+              "expected": {
+                "sha256": "930be0afa8d0193efa7b7021d9234a1420c18a06be3fe05e81a294b7a0bbb2a4",
+                "mode": 420,
+                "sizeBytes": 3
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/z-run.sh",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "canonicalDestination": ".agents/skills/demo/z-run.sh",
+              "expected": {
+                "sha256": "a8076d3d28d21e02012b20eaf7dbf75409a6277134439025f282e368e3305abf",
+                "mode": 493,
+                "sizeBytes": 10
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/SKILL.md",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "canonicalDestination": ".agents/skills/demo/SKILL.md",
+              "expected": {
+                "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a",
+                "mode": 420,
+                "sizeBytes": 45
+              }
+            }
+          ]
+        },
+        "before": {
+          ".": {
+            "dev": "16777230",
+            "ino": "122760775",
+            "mode": 493
+          },
+          ".agents": {
+            "dev": "16777230",
+            "ino": "122760776",
+            "mode": 493
+          },
+          ".agents/skills": {
+            "dev": "16777230",
+            "ino": "122760777",
+            "mode": 493
+          },
+          ".agents/skills/demo": {
+            "dev": "16777230",
+            "ino": "122760778",
+            "mode": 493
+          },
+          ".agents/skills/demo/SKILL.md": {
+            "dev": "16777230",
+            "ino": "122760780",
+            "mode": 416,
+            "size": 14,
+            "sha256": "afddc790c3b279df274f872cf2b1e2d058019d3446f297dda10f863facbdc474"
+          },
+          "existing": {
+            "dev": "16777230",
+            "ino": "122760779",
+            "mode": 416,
+            "size": 17,
+            "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+          }
+        },
+        "after": {
+          ".": {
+            "dev": "16777230",
+            "ino": "122760775",
+            "mode": 493
+          },
+          ".agents": {
+            "dev": "16777230",
+            "ino": "122760776",
+            "mode": 493
+          },
+          ".agents/skills": {
+            "dev": "16777230",
+            "ino": "122760777",
+            "mode": 493
+          },
+          ".agents/skills/demo": {
+            "dev": "16777230",
+            "ino": "122760778",
+            "mode": 493
+          },
+          ".agents/skills/demo/SKILL.md": {
+            "dev": "16777230",
+            "ino": "122760780",
+            "mode": 416,
+            "size": 14,
+            "sha256": "afddc790c3b279df274f872cf2b1e2d058019d3446f297dda10f863facbdc474"
+          },
+          "existing": {
+            "dev": "16777230",
+            "ino": "122760779",
+            "mode": 416,
+            "size": 17,
+            "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+          }
+        }
+      },
+      {
+        "variant": "kiro",
+        "result": {
+          "status": "operation",
+          "operationId": "9b080ce310855f3c29e0f1390e783acb",
+          "planDigest": "2657a8588c5f0a90b4971525d9db127911096546a5a02c76b33504ede2e2477a",
+          "phase": "failed_before_write",
+          "code": "stale_plan",
+          "targetMutated": false,
+          "requiresPreview": true,
+          "durability": "not_confirmed",
+          "ledger": [
+            {
+              "destination": ".kiro",
+              "kind": "directory",
+              "state": "not_attempted"
+            },
+            {
+              "destination": ".kiro/skills",
+              "kind": "directory",
+              "state": "not_attempted"
+            },
+            {
+              "destination": ".kiro/skills/demo",
+              "kind": "directory",
+              "state": "not_attempted"
+            },
+            {
+              "destination": ".agents/skills/demo/a-data.bin",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "canonicalDestination": ".agents/skills/demo/a-data.bin",
+              "expected": {
+                "sha256": "930be0afa8d0193efa7b7021d9234a1420c18a06be3fe05e81a294b7a0bbb2a4",
+                "mode": 420,
+                "sizeBytes": 3
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/z-run.sh",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "canonicalDestination": ".agents/skills/demo/z-run.sh",
+              "expected": {
+                "sha256": "a8076d3d28d21e02012b20eaf7dbf75409a6277134439025f282e368e3305abf",
+                "mode": 493,
+                "sizeBytes": 10
+              }
+            },
+            {
+              "destination": ".agents/skills/demo/SKILL.md",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "canonicalDestination": ".agents/skills/demo/SKILL.md",
+              "expected": {
+                "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a",
+                "mode": 420,
+                "sizeBytes": 45
+              }
+            },
+            {
+              "destination": ".kiro/skills/demo/a-data.bin",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "canonicalDestination": ".agents/skills/demo/a-data.bin",
+              "expected": {
+                "sha256": "930be0afa8d0193efa7b7021d9234a1420c18a06be3fe05e81a294b7a0bbb2a4",
+                "mode": 420,
+                "sizeBytes": 3
+              }
+            },
+            {
+              "destination": ".kiro/skills/demo/z-run.sh",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "canonicalDestination": ".agents/skills/demo/z-run.sh",
+              "expected": {
+                "sha256": "a8076d3d28d21e02012b20eaf7dbf75409a6277134439025f282e368e3305abf",
+                "mode": 493,
+                "sizeBytes": 10
+              }
+            },
+            {
+              "destination": ".kiro/skills/demo/SKILL.md",
+              "kind": "file",
+              "state": "not_attempted",
+              "bytesWritten": 0,
+              "canonicalDestination": ".agents/skills/demo/SKILL.md",
+              "expected": {
+                "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a",
+                "mode": 420,
+                "sizeBytes": 45
+              }
+            }
+          ]
+        },
+        "before": {
+          ".": {
+            "dev": "16777230",
+            "ino": "122760788",
+            "mode": 493
+          },
+          ".agents": {
+            "dev": "16777230",
+            "ino": "122760789",
+            "mode": 493
+          },
+          ".agents/skills": {
+            "dev": "16777230",
+            "ino": "122760790",
+            "mode": 493
+          },
+          ".agents/skills/demo": {
+            "dev": "16777230",
+            "ino": "122760791",
+            "mode": 493
+          },
+          ".git": {
+            "dev": "16777230",
+            "ino": "122760828",
+            "mode": 493
+          },
+          ".git/HEAD": {
+            "dev": "16777230",
+            "ino": "122760859",
+            "mode": 420,
+            "size": 21,
+            "sha256": "28d25bf82af4c0e2b72f50959b2beb859e3e60b9630a5e8c603dad4ddb2b6e80"
+          },
+          ".git/config": {
+            "dev": "16777230",
+            "ino": "122760855",
+            "mode": 420,
+            "size": 137,
+            "sha256": "cae33efdb02cf774435c1ff9cb16bcc1014606908530c6e1dc727615fe3e8cda"
+          },
+          ".git/description": {
+            "dev": "16777230",
+            "ino": "122760831",
+            "mode": 420,
+            "size": 73,
+            "sha256": "85ab6c163d43a17ea9cf7788308bca1466f1b0a8d1cc92e26e9bf63da4062aee"
+          },
+          ".git/hooks": {
+            "dev": "16777230",
+            "ino": "122760832",
+            "mode": 493
+          },
+          ".git/hooks/applypatch-msg.sample": {
+            "dev": "16777230",
+            "ino": "122760837",
+            "mode": 493,
+            "size": 478,
+            "sha256": "0223497a0b8b033aa58a3a521b8629869386cf7ab0e2f101963d328aa62193f7"
+          },
+          ".git/hooks/commit-msg.sample": {
+            "dev": "16777230",
+            "ino": "122760833",
+            "mode": 493,
+            "size": 1972,
+            "sha256": "efc1401b0e99d1ff51494d154d98b46c1e99059bcd8bf9f73cecde19fd3eb23b"
+          },
+          ".git/hooks/fsmonitor-watchman.sample": {
+            "dev": "16777230",
+            "ino": "122760838",
+            "mode": 493,
+            "size": 4611,
+            "sha256": "9159720099ad5595b8e66645cbfd47763c1e920f46e0b50ae75e642bbec57ef0"
+          },
+          ".git/hooks/post-update.sample": {
+            "dev": "16777230",
+            "ino": "122760841",
+            "mode": 493,
+            "size": 189,
+            "sha256": "81765af2daef323061dcbc5e61fc16481cb74b3bac9ad8a174b186523586f6c5"
+          },
+          ".git/hooks/pre-applypatch.sample": {
+            "dev": "16777230",
+            "ino": "122760843",
+            "mode": 493,
+            "size": 424,
+            "sha256": "e15c5b469ea3e0a695bea6f2c82bcf8e62821074939ddd85b77e0007ff165475"
+          },
+          ".git/hooks/pre-commit.sample": {
+            "dev": "16777230",
+            "ino": "122760836",
+            "mode": 493,
+            "size": 1649,
+            "sha256": "57185b7b9f05239d7ab52db045f5b89eb31348d7b2177eab214f5eb872e1971b"
+          },
+          ".git/hooks/pre-merge-commit.sample": {
+            "dev": "16777230",
+            "ino": "122760842",
+            "mode": 493,
+            "size": 416,
+            "sha256": "d3825a70337940ebbd0a5c072984e13245920cdf8898bd225c8d27a6dfc9cb53"
+          },
+          ".git/hooks/pre-push.sample": {
+            "dev": "16777230",
+            "ino": "122760844",
+            "mode": 493,
+            "size": 1374,
+            "sha256": "ecce9c7e04d3f5dd9d8ada81753dd1d549a9634b26770042b58dda00217d086a"
+          },
+          ".git/hooks/pre-rebase.sample": {
+            "dev": "16777230",
+            "ino": "122760834",
+            "mode": 493,
+            "size": 4898,
+            "sha256": "4febce867790052338076f4e66cc47efb14879d18097d1d61c8261859eaaa7b3"
+          },
+          ".git/hooks/pre-receive.sample": {
+            "dev": "16777230",
+            "ino": "122760839",
+            "mode": 493,
+            "size": 544,
+            "sha256": "a4c3d2b9c7bb3fd8d1441c31bd4ee71a595d66b44fcf49ddb310252320169989"
+          },
+          ".git/hooks/prepare-commit-msg.sample": {
+            "dev": "16777230",
+            "ino": "122760840",
+            "mode": 493,
+            "size": 1492,
+            "sha256": "e9ddcaa4189fddd25ed97fc8c789eca7b6ca16390b2392ae3276f0c8e1aa4619"
+          },
+          ".git/hooks/push-to-checkout.sample": {
+            "dev": "16777230",
+            "ino": "122760846",
+            "mode": 493,
+            "size": 2783,
+            "sha256": "a53d0741798b287c6dd7afa64aee473f305e65d3f49463bb9d7408ec3b12bf5f"
+          },
+          ".git/hooks/sendemail-validate.sample": {
+            "dev": "16777230",
+            "ino": "122760835",
+            "mode": 493,
+            "size": 2308,
+            "sha256": "44ebfc923dc5466bc009602f0ecf067b9c65459abfe8868ddc49b78e6ced7a92"
+          },
+          ".git/hooks/update.sample": {
+            "dev": "16777230",
+            "ino": "122760845",
+            "mode": 493,
+            "size": 3650,
+            "sha256": "8d5f2fa83e103cf08b57eaa67521df9194f45cbdbcb37da52ad586097a14d106"
+          },
+          ".git/info": {
+            "dev": "16777230",
+            "ino": "122760829",
+            "mode": 493
+          },
+          ".git/info/exclude": {
+            "dev": "16777230",
+            "ino": "122760830",
+            "mode": 420,
+            "size": 240,
+            "sha256": "6671fe83b7a07c8932ee89164d1f2793b2318058eb8b98dc5c06ee0a5a3b0ec1"
+          },
+          ".git/objects": {
+            "dev": "16777230",
+            "ino": "122760860",
+            "mode": 493
+          },
+          ".git/objects/info": {
+            "dev": "16777230",
+            "ino": "122760862",
+            "mode": 493
+          },
+          ".git/objects/pack": {
+            "dev": "16777230",
+            "ino": "122760861",
+            "mode": 493
+          },
+          ".git/refs": {
+            "dev": "16777230",
+            "ino": "122760856",
+            "mode": 493
+          },
+          ".git/refs/heads": {
+            "dev": "16777230",
+            "ino": "122760857",
+            "mode": 493
+          },
+          ".git/refs/tags": {
+            "dev": "16777230",
+            "ino": "122760858",
+            "mode": 493
+          },
+          "existing": {
+            "dev": "16777230",
+            "ino": "122760792",
+            "mode": 416,
+            "size": 17,
+            "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+          }
+        },
+        "after": {
+          ".": {
+            "dev": "16777230",
+            "ino": "122760788",
+            "mode": 493
+          },
+          ".agents": {
+            "dev": "16777230",
+            "ino": "122760789",
+            "mode": 493
+          },
+          ".agents/skills": {
+            "dev": "16777230",
+            "ino": "122760790",
+            "mode": 493
+          },
+          ".agents/skills/demo": {
+            "dev": "16777230",
+            "ino": "122760791",
+            "mode": 493
+          },
+          ".git": {
+            "dev": "16777230",
+            "ino": "122760828",
+            "mode": 493
+          },
+          ".git/HEAD": {
+            "dev": "16777230",
+            "ino": "122760859",
+            "mode": 420,
+            "size": 21,
+            "sha256": "28d25bf82af4c0e2b72f50959b2beb859e3e60b9630a5e8c603dad4ddb2b6e80"
+          },
+          ".git/config": {
+            "dev": "16777230",
+            "ino": "122760855",
+            "mode": 420,
+            "size": 137,
+            "sha256": "cae33efdb02cf774435c1ff9cb16bcc1014606908530c6e1dc727615fe3e8cda"
+          },
+          ".git/description": {
+            "dev": "16777230",
+            "ino": "122760831",
+            "mode": 420,
+            "size": 73,
+            "sha256": "85ab6c163d43a17ea9cf7788308bca1466f1b0a8d1cc92e26e9bf63da4062aee"
+          },
+          ".git/hooks": {
+            "dev": "16777230",
+            "ino": "122760832",
+            "mode": 493
+          },
+          ".git/hooks/applypatch-msg.sample": {
+            "dev": "16777230",
+            "ino": "122760837",
+            "mode": 493,
+            "size": 478,
+            "sha256": "0223497a0b8b033aa58a3a521b8629869386cf7ab0e2f101963d328aa62193f7"
+          },
+          ".git/hooks/commit-msg.sample": {
+            "dev": "16777230",
+            "ino": "122760833",
+            "mode": 493,
+            "size": 1972,
+            "sha256": "efc1401b0e99d1ff51494d154d98b46c1e99059bcd8bf9f73cecde19fd3eb23b"
+          },
+          ".git/hooks/fsmonitor-watchman.sample": {
+            "dev": "16777230",
+            "ino": "122760838",
+            "mode": 493,
+            "size": 4611,
+            "sha256": "9159720099ad5595b8e66645cbfd47763c1e920f46e0b50ae75e642bbec57ef0"
+          },
+          ".git/hooks/post-update.sample": {
+            "dev": "16777230",
+            "ino": "122760841",
+            "mode": 493,
+            "size": 189,
+            "sha256": "81765af2daef323061dcbc5e61fc16481cb74b3bac9ad8a174b186523586f6c5"
+          },
+          ".git/hooks/pre-applypatch.sample": {
+            "dev": "16777230",
+            "ino": "122760843",
+            "mode": 493,
+            "size": 424,
+            "sha256": "e15c5b469ea3e0a695bea6f2c82bcf8e62821074939ddd85b77e0007ff165475"
+          },
+          ".git/hooks/pre-commit.sample": {
+            "dev": "16777230",
+            "ino": "122760836",
+            "mode": 493,
+            "size": 1649,
+            "sha256": "57185b7b9f05239d7ab52db045f5b89eb31348d7b2177eab214f5eb872e1971b"
+          },
+          ".git/hooks/pre-merge-commit.sample": {
+            "dev": "16777230",
+            "ino": "122760842",
+            "mode": 493,
+            "size": 416,
+            "sha256": "d3825a70337940ebbd0a5c072984e13245920cdf8898bd225c8d27a6dfc9cb53"
+          },
+          ".git/hooks/pre-push.sample": {
+            "dev": "16777230",
+            "ino": "122760844",
+            "mode": 493,
+            "size": 1374,
+            "sha256": "ecce9c7e04d3f5dd9d8ada81753dd1d549a9634b26770042b58dda00217d086a"
+          },
+          ".git/hooks/pre-rebase.sample": {
+            "dev": "16777230",
+            "ino": "122760834",
+            "mode": 493,
+            "size": 4898,
+            "sha256": "4febce867790052338076f4e66cc47efb14879d18097d1d61c8261859eaaa7b3"
+          },
+          ".git/hooks/pre-receive.sample": {
+            "dev": "16777230",
+            "ino": "122760839",
+            "mode": 493,
+            "size": 544,
+            "sha256": "a4c3d2b9c7bb3fd8d1441c31bd4ee71a595d66b44fcf49ddb310252320169989"
+          },
+          ".git/hooks/prepare-commit-msg.sample": {
+            "dev": "16777230",
+            "ino": "122760840",
+            "mode": 493,
+            "size": 1492,
+            "sha256": "e9ddcaa4189fddd25ed97fc8c789eca7b6ca16390b2392ae3276f0c8e1aa4619"
+          },
+          ".git/hooks/push-to-checkout.sample": {
+            "dev": "16777230",
+            "ino": "122760846",
+            "mode": 493,
+            "size": 2783,
+            "sha256": "a53d0741798b287c6dd7afa64aee473f305e65d3f49463bb9d7408ec3b12bf5f"
+          },
+          ".git/hooks/sendemail-validate.sample": {
+            "dev": "16777230",
+            "ino": "122760835",
+            "mode": 493,
+            "size": 2308,
+            "sha256": "44ebfc923dc5466bc009602f0ecf067b9c65459abfe8868ddc49b78e6ced7a92"
+          },
+          ".git/hooks/update.sample": {
+            "dev": "16777230",
+            "ino": "122760845",
+            "mode": 493,
+            "size": 3650,
+            "sha256": "8d5f2fa83e103cf08b57eaa67521df9194f45cbdbcb37da52ad586097a14d106"
+          },
+          ".git/info": {
+            "dev": "16777230",
+            "ino": "122760829",
+            "mode": 493
+          },
+          ".git/info/exclude": {
+            "dev": "16777230",
+            "ino": "122760830",
+            "mode": 420,
+            "size": 240,
+            "sha256": "6671fe83b7a07c8932ee89164d1f2793b2318058eb8b98dc5c06ee0a5a3b0ec1"
+          },
+          ".git/objects": {
+            "dev": "16777230",
+            "ino": "122760860",
+            "mode": 493
+          },
+          ".git/objects/info": {
+            "dev": "16777230",
+            "ino": "122760862",
+            "mode": 493
+          },
+          ".git/objects/pack": {
+            "dev": "16777230",
+            "ino": "122760861",
+            "mode": 493
+          },
+          ".git/refs": {
+            "dev": "16777230",
+            "ino": "122760856",
+            "mode": 493
+          },
+          ".git/refs/heads": {
+            "dev": "16777230",
+            "ino": "122760857",
+            "mode": 493
+          },
+          ".git/refs/tags": {
+            "dev": "16777230",
+            "ino": "122760858",
+            "mode": 493
+          },
+          "existing": {
+            "dev": "16777230",
+            "ino": "122760792",
+            "mode": 416,
+            "size": 17,
+            "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+          }
+        }
+      },
+      {
+        "variant": "conflict",
+        "result": {
+          "status": "error",
+          "code": "plan_not_applicable"
+        },
+        "before": {
+          ".": {
+            "dev": "16777230",
+            "ino": "122760870",
+            "mode": 493
+          },
+          ".agents": {
+            "dev": "16777230",
+            "ino": "122760871",
+            "mode": 493
+          },
+          ".agents/skills": {
+            "dev": "16777230",
+            "ino": "122760872",
+            "mode": 493
+          },
+          ".agents/skills/demo": {
+            "dev": "16777230",
+            "ino": "122760873",
+            "mode": 493
+          },
+          ".agents/skills/demo/SKILL.md": {
+            "dev": "16777230",
+            "ino": "122760875",
+            "mode": 416,
+            "size": 16,
+            "sha256": "15d07bc9afa826f65238e1ce2ae3007665acb383e50895a77d51aafd49e47bd6"
+          },
+          "existing": {
+            "dev": "16777230",
+            "ino": "122760874",
+            "mode": 416,
+            "size": 17,
+            "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+          }
+        },
+        "after": {
+          ".": {
+            "dev": "16777230",
+            "ino": "122760870",
+            "mode": 493
+          },
+          ".agents": {
+            "dev": "16777230",
+            "ino": "122760871",
+            "mode": 493
+          },
+          ".agents/skills": {
+            "dev": "16777230",
+            "ino": "122760872",
+            "mode": 493
+          },
+          ".agents/skills/demo": {
+            "dev": "16777230",
+            "ino": "122760873",
+            "mode": 493
+          },
+          ".agents/skills/demo/SKILL.md": {
+            "dev": "16777230",
+            "ino": "122760875",
+            "mode": 416,
+            "size": 16,
+            "sha256": "15d07bc9afa826f65238e1ce2ae3007665acb383e50895a77d51aafd49e47bd6"
+          },
+          "existing": {
+            "dev": "16777230",
+            "ino": "122760874",
+            "mode": 416,
+            "size": 17,
+            "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+          }
+        }
+      },
+      {
+        "variant": "blocked",
+        "result": {
+          "status": "error",
+          "code": "plan_not_applicable"
+        },
+        "before": {
+          ".": {
+            "dev": "16777230",
+            "ino": "122760876",
+            "mode": 493
+          },
+          ".agents": {
+            "dev": "16777230",
+            "ino": "122760877",
+            "mode": 493
+          },
+          ".agents/skills": {
+            "dev": "16777230",
+            "ino": "122760878",
+            "mode": 493
+          },
+          ".agents/skills/demo": {
+            "dev": "16777230",
+            "ino": "122760879",
+            "mode": 493
+          },
+          ".agents/skills/demo/SKILL.md": {
+            "dev": "16777230",
+            "ino": "122760881",
+            "mode": 493,
+            "link": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m44-sefrQa/stale-blocked/existing"
+          },
+          "existing": {
+            "dev": "16777230",
+            "ino": "122760880",
+            "mode": 416,
+            "size": 17,
+            "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+          }
+        },
+        "after": {
+          ".": {
+            "dev": "16777230",
+            "ino": "122760876",
+            "mode": 493
+          },
+          ".agents": {
+            "dev": "16777230",
+            "ino": "122760877",
+            "mode": 493
+          },
+          ".agents/skills": {
+            "dev": "16777230",
+            "ino": "122760878",
+            "mode": 493
+          },
+          ".agents/skills/demo": {
+            "dev": "16777230",
+            "ino": "122760879",
+            "mode": 493
+          },
+          ".agents/skills/demo/SKILL.md": {
+            "dev": "16777230",
+            "ino": "122760881",
+            "mode": 493,
+            "link": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m44-sefrQa/stale-blocked/existing"
+          },
+          "existing": {
+            "dev": "16777230",
+            "ino": "122760880",
+            "mode": 416,
+            "size": 17,
+            "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+          }
+        }
+      }
+    ],
+    "kiro": {
+      "result": {
+        "status": "operation",
+        "operationId": "7ce85280708a11bbbca417e9ce46ed21",
+        "planDigest": "453d5659c3cb2153cf31a9839ef83082d78323107080630f42ddc3636f0f40ee",
+        "phase": "completed",
+        "code": "none",
+        "targetMutated": true,
+        "requiresPreview": false,
+        "durability": "fsync_completed",
+        "ledger": [
+          {
+            "destination": ".kiro",
+            "kind": "directory",
+            "state": "created_verified",
+            "identity": {
+              "dev": "16777230",
+              "ino": "122760930"
+            }
+          },
+          {
+            "destination": ".kiro/skills",
+            "kind": "directory",
+            "state": "created_verified",
+            "identity": {
+              "dev": "16777230",
+              "ino": "122760933"
+            }
+          },
+          {
+            "destination": ".kiro/skills/demo",
+            "kind": "directory",
+            "state": "created_verified",
+            "identity": {
+              "dev": "16777230",
+              "ino": "122760936"
+            }
+          },
+          {
+            "destination": ".agents/skills/demo/a-data.bin",
+            "kind": "file",
+            "state": "created_verified",
+            "bytesWritten": 3,
+            "canonicalDestination": ".agents/skills/demo/a-data.bin",
+            "expected": {
+              "sha256": "930be0afa8d0193efa7b7021d9234a1420c18a06be3fe05e81a294b7a0bbb2a4",
+              "mode": 420,
+              "sizeBytes": 3
+            },
+            "identity": {
+              "dev": "16777230",
+              "ino": "122760939"
+            }
+          },
+          {
+            "destination": ".agents/skills/demo/z-run.sh",
+            "kind": "file",
+            "state": "created_verified",
+            "bytesWritten": 10,
+            "canonicalDestination": ".agents/skills/demo/z-run.sh",
+            "expected": {
+              "sha256": "a8076d3d28d21e02012b20eaf7dbf75409a6277134439025f282e368e3305abf",
+              "mode": 493,
+              "sizeBytes": 10
+            },
+            "identity": {
+              "dev": "16777230",
+              "ino": "122760942"
+            }
+          },
+          {
+            "destination": ".agents/skills/demo/SKILL.md",
+            "kind": "file",
+            "state": "created_verified",
+            "bytesWritten": 45,
+            "canonicalDestination": ".agents/skills/demo/SKILL.md",
+            "expected": {
+              "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a",
+              "mode": 420,
+              "sizeBytes": 45
+            },
+            "identity": {
+              "dev": "16777230",
+              "ino": "122760945"
+            }
+          },
+          {
+            "destination": ".kiro/skills/demo/a-data.bin",
+            "kind": "file",
+            "state": "created_verified",
+            "bytesWritten": 3,
+            "canonicalDestination": ".agents/skills/demo/a-data.bin",
+            "expected": {
+              "sha256": "930be0afa8d0193efa7b7021d9234a1420c18a06be3fe05e81a294b7a0bbb2a4",
+              "mode": 420,
+              "sizeBytes": 3
+            },
+            "identity": {
+              "dev": "16777230",
+              "ino": "122760948"
+            }
+          },
+          {
+            "destination": ".kiro/skills/demo/z-run.sh",
+            "kind": "file",
+            "state": "created_verified",
+            "bytesWritten": 10,
+            "canonicalDestination": ".agents/skills/demo/z-run.sh",
+            "expected": {
+              "sha256": "a8076d3d28d21e02012b20eaf7dbf75409a6277134439025f282e368e3305abf",
+              "mode": 493,
+              "sizeBytes": 10
+            },
+            "identity": {
+              "dev": "16777230",
+              "ino": "122760951"
+            }
+          },
+          {
+            "destination": ".kiro/skills/demo/SKILL.md",
+            "kind": "file",
+            "state": "created_verified",
+            "bytesWritten": 45,
+            "canonicalDestination": ".agents/skills/demo/SKILL.md",
+            "expected": {
+              "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a",
+              "mode": 420,
+              "sizeBytes": 45
+            },
+            "identity": {
+              "dev": "16777230",
+              "ino": "122760954"
+            }
+          }
+        ]
+      },
+      "before": {
+        ".": {
+          "dev": "16777230",
+          "ino": "122760882",
+          "mode": 493
+        },
+        ".agents": {
+          "dev": "16777230",
+          "ino": "122760883",
+          "mode": 493
+        },
+        ".agents/skills": {
+          "dev": "16777230",
+          "ino": "122760884",
+          "mode": 493
+        },
+        ".agents/skills/demo": {
+          "dev": "16777230",
+          "ino": "122760885",
+          "mode": 493
+        },
+        ".git": {
+          "dev": "16777230",
+          "ino": "122760887",
+          "mode": 493
+        },
+        ".git/HEAD": {
+          "dev": "16777230",
+          "ino": "122760918",
+          "mode": 420,
+          "size": 21,
+          "sha256": "28d25bf82af4c0e2b72f50959b2beb859e3e60b9630a5e8c603dad4ddb2b6e80"
+        },
+        ".git/config": {
+          "dev": "16777230",
+          "ino": "122760914",
+          "mode": 420,
+          "size": 137,
+          "sha256": "cae33efdb02cf774435c1ff9cb16bcc1014606908530c6e1dc727615fe3e8cda"
+        },
+        ".git/description": {
+          "dev": "16777230",
+          "ino": "122760890",
+          "mode": 420,
+          "size": 73,
+          "sha256": "85ab6c163d43a17ea9cf7788308bca1466f1b0a8d1cc92e26e9bf63da4062aee"
+        },
+        ".git/hooks": {
+          "dev": "16777230",
+          "ino": "122760891",
+          "mode": 493
+        },
+        ".git/hooks/applypatch-msg.sample": {
+          "dev": "16777230",
+          "ino": "122760896",
+          "mode": 493,
+          "size": 478,
+          "sha256": "0223497a0b8b033aa58a3a521b8629869386cf7ab0e2f101963d328aa62193f7"
+        },
+        ".git/hooks/commit-msg.sample": {
+          "dev": "16777230",
+          "ino": "122760892",
+          "mode": 493,
+          "size": 1972,
+          "sha256": "efc1401b0e99d1ff51494d154d98b46c1e99059bcd8bf9f73cecde19fd3eb23b"
+        },
+        ".git/hooks/fsmonitor-watchman.sample": {
+          "dev": "16777230",
+          "ino": "122760897",
+          "mode": 493,
+          "size": 4611,
+          "sha256": "9159720099ad5595b8e66645cbfd47763c1e920f46e0b50ae75e642bbec57ef0"
+        },
+        ".git/hooks/post-update.sample": {
+          "dev": "16777230",
+          "ino": "122760900",
+          "mode": 493,
+          "size": 189,
+          "sha256": "81765af2daef323061dcbc5e61fc16481cb74b3bac9ad8a174b186523586f6c5"
+        },
+        ".git/hooks/pre-applypatch.sample": {
+          "dev": "16777230",
+          "ino": "122760902",
+          "mode": 493,
+          "size": 424,
+          "sha256": "e15c5b469ea3e0a695bea6f2c82bcf8e62821074939ddd85b77e0007ff165475"
+        },
+        ".git/hooks/pre-commit.sample": {
+          "dev": "16777230",
+          "ino": "122760895",
+          "mode": 493,
+          "size": 1649,
+          "sha256": "57185b7b9f05239d7ab52db045f5b89eb31348d7b2177eab214f5eb872e1971b"
+        },
+        ".git/hooks/pre-merge-commit.sample": {
+          "dev": "16777230",
+          "ino": "122760901",
+          "mode": 493,
+          "size": 416,
+          "sha256": "d3825a70337940ebbd0a5c072984e13245920cdf8898bd225c8d27a6dfc9cb53"
+        },
+        ".git/hooks/pre-push.sample": {
+          "dev": "16777230",
+          "ino": "122760903",
+          "mode": 493,
+          "size": 1374,
+          "sha256": "ecce9c7e04d3f5dd9d8ada81753dd1d549a9634b26770042b58dda00217d086a"
+        },
+        ".git/hooks/pre-rebase.sample": {
+          "dev": "16777230",
+          "ino": "122760893",
+          "mode": 493,
+          "size": 4898,
+          "sha256": "4febce867790052338076f4e66cc47efb14879d18097d1d61c8261859eaaa7b3"
+        },
+        ".git/hooks/pre-receive.sample": {
+          "dev": "16777230",
+          "ino": "122760898",
+          "mode": 493,
+          "size": 544,
+          "sha256": "a4c3d2b9c7bb3fd8d1441c31bd4ee71a595d66b44fcf49ddb310252320169989"
+        },
+        ".git/hooks/prepare-commit-msg.sample": {
+          "dev": "16777230",
+          "ino": "122760899",
+          "mode": 493,
+          "size": 1492,
+          "sha256": "e9ddcaa4189fddd25ed97fc8c789eca7b6ca16390b2392ae3276f0c8e1aa4619"
+        },
+        ".git/hooks/push-to-checkout.sample": {
+          "dev": "16777230",
+          "ino": "122760905",
+          "mode": 493,
+          "size": 2783,
+          "sha256": "a53d0741798b287c6dd7afa64aee473f305e65d3f49463bb9d7408ec3b12bf5f"
+        },
+        ".git/hooks/sendemail-validate.sample": {
+          "dev": "16777230",
+          "ino": "122760894",
+          "mode": 493,
+          "size": 2308,
+          "sha256": "44ebfc923dc5466bc009602f0ecf067b9c65459abfe8868ddc49b78e6ced7a92"
+        },
+        ".git/hooks/update.sample": {
+          "dev": "16777230",
+          "ino": "122760904",
+          "mode": 493,
+          "size": 3650,
+          "sha256": "8d5f2fa83e103cf08b57eaa67521df9194f45cbdbcb37da52ad586097a14d106"
+        },
+        ".git/info": {
+          "dev": "16777230",
+          "ino": "122760888",
+          "mode": 493
+        },
+        ".git/info/exclude": {
+          "dev": "16777230",
+          "ino": "122760889",
+          "mode": 420,
+          "size": 240,
+          "sha256": "6671fe83b7a07c8932ee89164d1f2793b2318058eb8b98dc5c06ee0a5a3b0ec1"
+        },
+        ".git/objects": {
+          "dev": "16777230",
+          "ino": "122760919",
+          "mode": 493
+        },
+        ".git/objects/info": {
+          "dev": "16777230",
+          "ino": "122760921",
+          "mode": 493
+        },
+        ".git/objects/pack": {
+          "dev": "16777230",
+          "ino": "122760920",
+          "mode": 493
+        },
+        ".git/refs": {
+          "dev": "16777230",
+          "ino": "122760915",
+          "mode": 493
+        },
+        ".git/refs/heads": {
+          "dev": "16777230",
+          "ino": "122760916",
+          "mode": 493
+        },
+        ".git/refs/tags": {
+          "dev": "16777230",
+          "ino": "122760917",
+          "mode": 493
+        },
+        "existing": {
+          "dev": "16777230",
+          "ino": "122760886",
+          "mode": 416,
+          "size": 17,
+          "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+        }
+      },
+      "after": {
+        ".": {
+          "dev": "16777230",
+          "ino": "122760882",
+          "mode": 493
+        },
+        ".agents": {
+          "dev": "16777230",
+          "ino": "122760883",
+          "mode": 493
+        },
+        ".agents/skills": {
+          "dev": "16777230",
+          "ino": "122760884",
+          "mode": 493
+        },
+        ".agents/skills/demo": {
+          "dev": "16777230",
+          "ino": "122760885",
+          "mode": 493
+        },
+        ".agents/skills/demo/SKILL.md": {
+          "dev": "16777230",
+          "ino": "122760945",
+          "mode": 420,
+          "size": 45,
+          "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a"
+        },
+        ".agents/skills/demo/a-data.bin": {
+          "dev": "16777230",
+          "ino": "122760939",
+          "mode": 420,
+          "size": 3,
+          "sha256": "930be0afa8d0193efa7b7021d9234a1420c18a06be3fe05e81a294b7a0bbb2a4"
+        },
+        ".agents/skills/demo/z-run.sh": {
+          "dev": "16777230",
+          "ino": "122760942",
+          "mode": 493,
+          "size": 10,
+          "sha256": "a8076d3d28d21e02012b20eaf7dbf75409a6277134439025f282e368e3305abf"
+        },
+        ".git": {
+          "dev": "16777230",
+          "ino": "122760887",
+          "mode": 493
+        },
+        ".git/HEAD": {
+          "dev": "16777230",
+          "ino": "122760918",
+          "mode": 420,
+          "size": 21,
+          "sha256": "28d25bf82af4c0e2b72f50959b2beb859e3e60b9630a5e8c603dad4ddb2b6e80"
+        },
+        ".git/config": {
+          "dev": "16777230",
+          "ino": "122760914",
+          "mode": 420,
+          "size": 137,
+          "sha256": "cae33efdb02cf774435c1ff9cb16bcc1014606908530c6e1dc727615fe3e8cda"
+        },
+        ".git/description": {
+          "dev": "16777230",
+          "ino": "122760890",
+          "mode": 420,
+          "size": 73,
+          "sha256": "85ab6c163d43a17ea9cf7788308bca1466f1b0a8d1cc92e26e9bf63da4062aee"
+        },
+        ".git/hooks": {
+          "dev": "16777230",
+          "ino": "122760891",
+          "mode": 493
+        },
+        ".git/hooks/applypatch-msg.sample": {
+          "dev": "16777230",
+          "ino": "122760896",
+          "mode": 493,
+          "size": 478,
+          "sha256": "0223497a0b8b033aa58a3a521b8629869386cf7ab0e2f101963d328aa62193f7"
+        },
+        ".git/hooks/commit-msg.sample": {
+          "dev": "16777230",
+          "ino": "122760892",
+          "mode": 493,
+          "size": 1972,
+          "sha256": "efc1401b0e99d1ff51494d154d98b46c1e99059bcd8bf9f73cecde19fd3eb23b"
+        },
+        ".git/hooks/fsmonitor-watchman.sample": {
+          "dev": "16777230",
+          "ino": "122760897",
+          "mode": 493,
+          "size": 4611,
+          "sha256": "9159720099ad5595b8e66645cbfd47763c1e920f46e0b50ae75e642bbec57ef0"
+        },
+        ".git/hooks/post-update.sample": {
+          "dev": "16777230",
+          "ino": "122760900",
+          "mode": 493,
+          "size": 189,
+          "sha256": "81765af2daef323061dcbc5e61fc16481cb74b3bac9ad8a174b186523586f6c5"
+        },
+        ".git/hooks/pre-applypatch.sample": {
+          "dev": "16777230",
+          "ino": "122760902",
+          "mode": 493,
+          "size": 424,
+          "sha256": "e15c5b469ea3e0a695bea6f2c82bcf8e62821074939ddd85b77e0007ff165475"
+        },
+        ".git/hooks/pre-commit.sample": {
+          "dev": "16777230",
+          "ino": "122760895",
+          "mode": 493,
+          "size": 1649,
+          "sha256": "57185b7b9f05239d7ab52db045f5b89eb31348d7b2177eab214f5eb872e1971b"
+        },
+        ".git/hooks/pre-merge-commit.sample": {
+          "dev": "16777230",
+          "ino": "122760901",
+          "mode": 493,
+          "size": 416,
+          "sha256": "d3825a70337940ebbd0a5c072984e13245920cdf8898bd225c8d27a6dfc9cb53"
+        },
+        ".git/hooks/pre-push.sample": {
+          "dev": "16777230",
+          "ino": "122760903",
+          "mode": 493,
+          "size": 1374,
+          "sha256": "ecce9c7e04d3f5dd9d8ada81753dd1d549a9634b26770042b58dda00217d086a"
+        },
+        ".git/hooks/pre-rebase.sample": {
+          "dev": "16777230",
+          "ino": "122760893",
+          "mode": 493,
+          "size": 4898,
+          "sha256": "4febce867790052338076f4e66cc47efb14879d18097d1d61c8261859eaaa7b3"
+        },
+        ".git/hooks/pre-receive.sample": {
+          "dev": "16777230",
+          "ino": "122760898",
+          "mode": 493,
+          "size": 544,
+          "sha256": "a4c3d2b9c7bb3fd8d1441c31bd4ee71a595d66b44fcf49ddb310252320169989"
+        },
+        ".git/hooks/prepare-commit-msg.sample": {
+          "dev": "16777230",
+          "ino": "122760899",
+          "mode": 493,
+          "size": 1492,
+          "sha256": "e9ddcaa4189fddd25ed97fc8c789eca7b6ca16390b2392ae3276f0c8e1aa4619"
+        },
+        ".git/hooks/push-to-checkout.sample": {
+          "dev": "16777230",
+          "ino": "122760905",
+          "mode": 493,
+          "size": 2783,
+          "sha256": "a53d0741798b287c6dd7afa64aee473f305e65d3f49463bb9d7408ec3b12bf5f"
+        },
+        ".git/hooks/sendemail-validate.sample": {
+          "dev": "16777230",
+          "ino": "122760894",
+          "mode": 493,
+          "size": 2308,
+          "sha256": "44ebfc923dc5466bc009602f0ecf067b9c65459abfe8868ddc49b78e6ced7a92"
+        },
+        ".git/hooks/update.sample": {
+          "dev": "16777230",
+          "ino": "122760904",
+          "mode": 493,
+          "size": 3650,
+          "sha256": "8d5f2fa83e103cf08b57eaa67521df9194f45cbdbcb37da52ad586097a14d106"
+        },
+        ".git/info": {
+          "dev": "16777230",
+          "ino": "122760888",
+          "mode": 493
+        },
+        ".git/info/exclude": {
+          "dev": "16777230",
+          "ino": "122760889",
+          "mode": 420,
+          "size": 240,
+          "sha256": "6671fe83b7a07c8932ee89164d1f2793b2318058eb8b98dc5c06ee0a5a3b0ec1"
+        },
+        ".git/objects": {
+          "dev": "16777230",
+          "ino": "122760919",
+          "mode": 493
+        },
+        ".git/objects/info": {
+          "dev": "16777230",
+          "ino": "122760921",
+          "mode": 493
+        },
+        ".git/objects/pack": {
+          "dev": "16777230",
+          "ino": "122760920",
+          "mode": 493
+        },
+        ".git/refs": {
+          "dev": "16777230",
+          "ino": "122760915",
+          "mode": 493
+        },
+        ".git/refs/heads": {
+          "dev": "16777230",
+          "ino": "122760916",
+          "mode": 493
+        },
+        ".git/refs/tags": {
+          "dev": "16777230",
+          "ino": "122760917",
+          "mode": 493
+        },
+        ".kiro": {
+          "dev": "16777230",
+          "ino": "122760930",
+          "mode": 493
+        },
+        ".kiro/skills": {
+          "dev": "16777230",
+          "ino": "122760933",
+          "mode": 493
+        },
+        ".kiro/skills/demo": {
+          "dev": "16777230",
+          "ino": "122760936",
+          "mode": 493
+        },
+        ".kiro/skills/demo/SKILL.md": {
+          "dev": "16777230",
+          "ino": "122760954",
+          "mode": 420,
+          "size": 45,
+          "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a"
+        },
+        ".kiro/skills/demo/a-data.bin": {
+          "dev": "16777230",
+          "ino": "122760948",
+          "mode": 420,
+          "size": 3,
+          "sha256": "930be0afa8d0193efa7b7021d9234a1420c18a06be3fe05e81a294b7a0bbb2a4"
+        },
+        ".kiro/skills/demo/z-run.sh": {
+          "dev": "16777230",
+          "ino": "122760951",
+          "mode": 493,
+          "size": 10,
+          "sha256": "a8076d3d28d21e02012b20eaf7dbf75409a6277134439025f282e368e3305abf"
+        },
+        "existing": {
+          "dev": "16777230",
+          "ino": "122760886",
+          "mode": 416,
+          "size": 17,
+          "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+        }
+      }
+    },
+    "late": {
+      "collision": {
+        "status": "operation",
+        "operationId": "b3193895cfd454ae1e223de53b7b07ac",
+        "planDigest": "cbbcba8777830046f33fb19a766f942c0f63e285e2bb12e1f420a700b846d938",
+        "phase": "failed_before_write",
+        "code": "destination_exists",
+        "targetMutated": false,
+        "requiresPreview": true,
+        "durability": "not_confirmed",
+        "ledger": [
+          {
+            "destination": ".agents/skills/demo/a-data.bin",
+            "kind": "file",
+            "state": "not_attempted",
+            "bytesWritten": 0,
+            "canonicalDestination": ".agents/skills/demo/a-data.bin",
+            "expected": {
+              "sha256": "930be0afa8d0193efa7b7021d9234a1420c18a06be3fe05e81a294b7a0bbb2a4",
+              "mode": 420,
+              "sizeBytes": 3
+            }
+          },
+          {
+            "destination": ".agents/skills/demo/z-run.sh",
+            "kind": "file",
+            "state": "not_attempted",
+            "bytesWritten": 0,
+            "canonicalDestination": ".agents/skills/demo/z-run.sh",
+            "expected": {
+              "sha256": "a8076d3d28d21e02012b20eaf7dbf75409a6277134439025f282e368e3305abf",
+              "mode": 493,
+              "sizeBytes": 10
+            }
+          },
+          {
+            "destination": ".agents/skills/demo/SKILL.md",
+            "kind": "file",
+            "state": "not_attempted",
+            "bytesWritten": 0,
+            "canonicalDestination": ".agents/skills/demo/SKILL.md",
+            "expected": {
+              "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a",
+              "mode": 420,
+              "sizeBytes": 45
+            }
+          }
+        ]
+      },
+      "before": {
+        ".": {
+          "dev": "16777230",
+          "ino": "122760957",
+          "mode": 493
+        },
+        ".agents": {
+          "dev": "16777230",
+          "ino": "122760958",
+          "mode": 493
+        },
+        ".agents/skills": {
+          "dev": "16777230",
+          "ino": "122760959",
+          "mode": 493
+        },
+        ".agents/skills/demo": {
+          "dev": "16777230",
+          "ino": "122760960",
+          "mode": 493
+        },
+        ".agents/skills/demo/a-data.bin": {
+          "dev": "16777230",
+          "ino": "122760969",
+          "mode": 416,
+          "size": 17,
+          "sha256": "b263e1713768beb23a130ccf513626bdeec0c4c14f3266aca698a5d746d7a1d7"
+        },
+        "existing": {
+          "dev": "16777230",
+          "ino": "122760961",
+          "mode": 416,
+          "size": 17,
+          "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+        }
+      },
+      "after": {
+        ".": {
+          "dev": "16777230",
+          "ino": "122760957",
+          "mode": 493
+        },
+        ".agents": {
+          "dev": "16777230",
+          "ino": "122760958",
+          "mode": 493
+        },
+        ".agents/skills": {
+          "dev": "16777230",
+          "ino": "122760959",
+          "mode": 493
+        },
+        ".agents/skills/demo": {
+          "dev": "16777230",
+          "ino": "122760960",
+          "mode": 493
+        },
+        ".agents/skills/demo/a-data.bin": {
+          "dev": "16777230",
+          "ino": "122760969",
+          "mode": 416,
+          "size": 17,
+          "sha256": "b263e1713768beb23a130ccf513626bdeec0c4c14f3266aca698a5d746d7a1d7"
+        },
+        "existing": {
+          "dev": "16777230",
+          "ino": "122760961",
+          "mode": 416,
+          "size": 17,
+          "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+        }
+      }
+    },
+    "journal": {
+      "result": {
+        "status": "error",
+        "code": "journal_unavailable"
+      },
+      "retry": {
+        "status": "operation",
+        "operationId": "49eb62dfd09cf01f559e3cbff4551479",
+        "planDigest": "4e82c607472091766a8e6de03438c5d4c8674f2e7ef08f9ca0797f41ca57edec",
+        "phase": "completed",
+        "code": "none",
+        "targetMutated": true,
+        "requiresPreview": false,
+        "durability": "fsync_completed",
+        "ledger": [
+          {
+            "destination": ".agents/skills/demo/a-data.bin",
+            "kind": "file",
+            "state": "created_verified",
+            "bytesWritten": 3,
+            "canonicalDestination": ".agents/skills/demo/a-data.bin",
+            "expected": {
+              "sha256": "930be0afa8d0193efa7b7021d9234a1420c18a06be3fe05e81a294b7a0bbb2a4",
+              "mode": 420,
+              "sizeBytes": 3
+            },
+            "identity": {
+              "dev": "16777230",
+              "ino": "122760995"
+            }
+          },
+          {
+            "destination": ".agents/skills/demo/z-run.sh",
+            "kind": "file",
+            "state": "created_verified",
+            "bytesWritten": 10,
+            "canonicalDestination": ".agents/skills/demo/z-run.sh",
+            "expected": {
+              "sha256": "a8076d3d28d21e02012b20eaf7dbf75409a6277134439025f282e368e3305abf",
+              "mode": 493,
+              "sizeBytes": 10
+            },
+            "identity": {
+              "dev": "16777230",
+              "ino": "122760998"
+            }
+          },
+          {
+            "destination": ".agents/skills/demo/SKILL.md",
+            "kind": "file",
+            "state": "created_verified",
+            "bytesWritten": 45,
+            "canonicalDestination": ".agents/skills/demo/SKILL.md",
+            "expected": {
+              "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a",
+              "mode": 420,
+              "sizeBytes": 45
+            },
+            "identity": {
+              "dev": "16777230",
+              "ino": "122761001"
+            }
+          }
+        ]
+      },
+      "before": {
+        ".": {
+          "dev": "16777230",
+          "ino": "122760973",
+          "mode": 493
+        },
+        ".agents": {
+          "dev": "16777230",
+          "ino": "122760974",
+          "mode": 493
+        },
+        ".agents/skills": {
+          "dev": "16777230",
+          "ino": "122760975",
+          "mode": 493
+        },
+        ".agents/skills/demo": {
+          "dev": "16777230",
+          "ino": "122760976",
+          "mode": 493
+        },
+        "existing": {
+          "dev": "16777230",
+          "ino": "122760977",
+          "mode": 416,
+          "size": 17,
+          "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+        }
+      },
+      "after": {
+        ".": {
+          "dev": "16777230",
+          "ino": "122760973",
+          "mode": 493
+        },
+        ".agents": {
+          "dev": "16777230",
+          "ino": "122760974",
+          "mode": 493
+        },
+        ".agents/skills": {
+          "dev": "16777230",
+          "ino": "122760975",
+          "mode": 493
+        },
+        ".agents/skills/demo": {
+          "dev": "16777230",
+          "ino": "122760976",
+          "mode": 493
+        },
+        "existing": {
+          "dev": "16777230",
+          "ino": "122760977",
+          "mode": 416,
+          "size": 17,
+          "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+        }
+      }
+    },
+    "partial": {
+      "result": {
+        "status": "operation",
+        "operationId": "8eccc1e2a45f65ecd876f0d4d38abd15",
+        "planDigest": "88503dd77efe17e50578540a8796bbf0016062b7e61273b760409364fcf4e535",
+        "phase": "partial_failure",
+        "code": "write_failed",
+        "targetMutated": true,
+        "requiresPreview": true,
+        "durability": "not_confirmed",
+        "ledger": [
+          {
+            "destination": ".agents/skills/demo/a-data.bin",
+            "kind": "file",
+            "state": "created_incomplete",
+            "bytesWritten": 1,
+            "canonicalDestination": ".agents/skills/demo/a-data.bin",
+            "expected": {
+              "sha256": "930be0afa8d0193efa7b7021d9234a1420c18a06be3fe05e81a294b7a0bbb2a4",
+              "mode": 420,
+              "sizeBytes": 3
+            },
+            "identity": {
+              "dev": "16777230",
+              "ino": "122761016"
+            }
+          },
+          {
+            "destination": ".agents/skills/demo/z-run.sh",
+            "kind": "file",
+            "state": "not_attempted",
+            "bytesWritten": 0,
+            "canonicalDestination": ".agents/skills/demo/z-run.sh",
+            "expected": {
+              "sha256": "a8076d3d28d21e02012b20eaf7dbf75409a6277134439025f282e368e3305abf",
+              "mode": 493,
+              "sizeBytes": 10
+            }
+          },
+          {
+            "destination": ".agents/skills/demo/SKILL.md",
+            "kind": "file",
+            "state": "not_attempted",
+            "bytesWritten": 0,
+            "canonicalDestination": ".agents/skills/demo/SKILL.md",
+            "expected": {
+              "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a",
+              "mode": 420,
+              "sizeBytes": 45
+            }
+          }
+        ]
+      },
+      "before": {
+        ".": {
+          "dev": "16777230",
+          "ino": "122761004",
+          "mode": 493
+        },
+        ".agents": {
+          "dev": "16777230",
+          "ino": "122761005",
+          "mode": 493
+        },
+        ".agents/skills": {
+          "dev": "16777230",
+          "ino": "122761006",
+          "mode": 493
+        },
+        ".agents/skills/demo": {
+          "dev": "16777230",
+          "ino": "122761007",
+          "mode": 493
+        },
+        "existing": {
+          "dev": "16777230",
+          "ino": "122761008",
+          "mode": 416,
+          "size": 17,
+          "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+        }
+      },
+      "after": {
+        ".": {
+          "dev": "16777230",
+          "ino": "122761004",
+          "mode": 493
+        },
+        ".agents": {
+          "dev": "16777230",
+          "ino": "122761005",
+          "mode": 493
+        },
+        ".agents/skills": {
+          "dev": "16777230",
+          "ino": "122761006",
+          "mode": 493
+        },
+        ".agents/skills/demo": {
+          "dev": "16777230",
+          "ino": "122761007",
+          "mode": 493
+        },
+        ".agents/skills/demo/a-data.bin": {
+          "dev": "16777230",
+          "ino": "122761016",
+          "mode": 384,
+          "size": 1,
+          "sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d"
+        },
+        "existing": {
+          "dev": "16777230",
+          "ino": "122761008",
+          "mode": 416,
+          "size": 17,
+          "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+        }
+      }
+    },
+    "lostReply": {
+      "lost": {
+        "failure": "transport_failure"
+      },
+      "terminal": {
+        "status": "operation",
+        "operationId": "c81a58efcc074a6d8608d89f884f9d64",
+        "planDigest": "29fc6b240406c882fbae7246b3b45192521e6c05546c317d7a27b914256bb97c",
+        "phase": "completed",
+        "code": "none",
+        "targetMutated": true,
+        "requiresPreview": false,
+        "durability": "fsync_completed",
+        "ledger": [
+          {
+            "destination": ".agents/skills/demo/a-data.bin",
+            "kind": "file",
+            "state": "created_verified",
+            "bytesWritten": 3,
+            "identity": {
+              "dev": "16777230",
+              "ino": "122761031"
+            },
+            "expected": {
+              "sha256": "930be0afa8d0193efa7b7021d9234a1420c18a06be3fe05e81a294b7a0bbb2a4",
+              "mode": 420,
+              "sizeBytes": 3
+            },
+            "canonicalDestination": ".agents/skills/demo/a-data.bin"
+          },
+          {
+            "destination": ".agents/skills/demo/z-run.sh",
+            "kind": "file",
+            "state": "created_verified",
+            "bytesWritten": 10,
+            "identity": {
+              "dev": "16777230",
+              "ino": "122761035"
+            },
+            "expected": {
+              "sha256": "a8076d3d28d21e02012b20eaf7dbf75409a6277134439025f282e368e3305abf",
+              "mode": 493,
+              "sizeBytes": 10
+            },
+            "canonicalDestination": ".agents/skills/demo/z-run.sh"
+          },
+          {
+            "destination": ".agents/skills/demo/SKILL.md",
+            "kind": "file",
+            "state": "created_verified",
+            "bytesWritten": 45,
+            "identity": {
+              "dev": "16777230",
+              "ino": "122761038"
+            },
+            "expected": {
+              "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a",
+              "mode": 420,
+              "sizeBytes": 45
+            },
+            "canonicalDestination": ".agents/skills/demo/SKILL.md"
+          }
+        ]
+      },
+      "before": {
+        ".": {
+          "dev": "16777230",
+          "ino": "122761018",
+          "mode": 493
+        },
+        ".agents": {
+          "dev": "16777230",
+          "ino": "122761019",
+          "mode": 493
+        },
+        ".agents/skills": {
+          "dev": "16777230",
+          "ino": "122761020",
+          "mode": 493
+        },
+        ".agents/skills/demo": {
+          "dev": "16777230",
+          "ino": "122761021",
+          "mode": 493
+        },
+        "existing": {
+          "dev": "16777230",
+          "ino": "122761022",
+          "mode": 416,
+          "size": 17,
+          "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+        }
+      },
+      "after": {
+        ".": {
+          "dev": "16777230",
+          "ino": "122761018",
+          "mode": 493
+        },
+        ".agents": {
+          "dev": "16777230",
+          "ino": "122761019",
+          "mode": 493
+        },
+        ".agents/skills": {
+          "dev": "16777230",
+          "ino": "122761020",
+          "mode": 493
+        },
+        ".agents/skills/demo": {
+          "dev": "16777230",
+          "ino": "122761021",
+          "mode": 493
+        },
+        ".agents/skills/demo/SKILL.md": {
+          "dev": "16777230",
+          "ino": "122761038",
+          "mode": 420,
+          "size": 45,
+          "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a"
+        },
+        ".agents/skills/demo/a-data.bin": {
+          "dev": "16777230",
+          "ino": "122761031",
+          "mode": 420,
+          "size": 3,
+          "sha256": "930be0afa8d0193efa7b7021d9234a1420c18a06be3fe05e81a294b7a0bbb2a4"
+        },
+        ".agents/skills/demo/z-run.sh": {
+          "dev": "16777230",
+          "ino": "122761035",
+          "mode": 493,
+          "size": 10,
+          "sha256": "a8076d3d28d21e02012b20eaf7dbf75409a6277134439025f282e368e3305abf"
+        },
+        "existing": {
+          "dev": "16777230",
+          "ino": "122761022",
+          "mode": 416,
+          "size": 17,
+          "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+        }
+      }
+    },
+    "restart": {
+      "restarted": {
+        "pid": 1382,
+        "ppid": 929,
+        "hostId": "srv_YGro7k1m_hmi",
+        "context": [
+          "paseo"
+        ],
+        "catalogSource": "https://github.com/anmeo2204/project-skills",
+        "home": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m44-sefrQa/daemon",
+        "node": "24.20.0",
+        "electron": "44.2.0",
+        "platform": "darwin",
+        "arch": "arm64"
+      },
+      "crashReply": {
+        "failure": "handler_error"
+      },
+      "writing": {
+        "status": "operation",
+        "operationId": "30760ca58ade7da7328d240768cb16a4",
+        "planDigest": "7cbc64a915e735d854ba0261afdf122cdd77177446d7c4d0b8adab145950fefd",
+        "phase": "writing",
+        "code": "none",
+        "targetMutated": "unknown",
+        "requiresPreview": false,
+        "durability": "not_confirmed",
+        "ledger": [
+          {
+            "destination": ".agents/skills/demo/a-data.bin",
+            "kind": "file",
+            "state": "ownership_unknown",
+            "bytesWritten": 0,
+            "expected": {
+              "sha256": "930be0afa8d0193efa7b7021d9234a1420c18a06be3fe05e81a294b7a0bbb2a4",
+              "mode": 420,
+              "sizeBytes": 3
+            },
+            "canonicalDestination": ".agents/skills/demo/a-data.bin"
+          },
+          {
+            "destination": ".agents/skills/demo/z-run.sh",
+            "kind": "file",
+            "state": "not_attempted",
+            "bytesWritten": 0,
+            "expected": {
+              "sha256": "a8076d3d28d21e02012b20eaf7dbf75409a6277134439025f282e368e3305abf",
+              "mode": 493,
+              "sizeBytes": 10
+            },
+            "canonicalDestination": ".agents/skills/demo/z-run.sh"
+          },
+          {
+            "destination": ".agents/skills/demo/SKILL.md",
+            "kind": "file",
+            "state": "not_attempted",
+            "bytesWritten": 0,
+            "expected": {
+              "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a",
+              "mode": 420,
+              "sizeBytes": 45
+            },
+            "canonicalDestination": ".agents/skills/demo/SKILL.md"
+          }
+        ]
+      },
+      "recovered": {
+        "status": "operation",
+        "operationId": "30760ca58ade7da7328d240768cb16a4",
+        "planDigest": "7cbc64a915e735d854ba0261afdf122cdd77177446d7c4d0b8adab145950fefd",
+        "phase": "recovery_required",
+        "code": "terminal_record_missing",
+        "targetMutated": "unknown",
+        "requiresPreview": true,
+        "durability": "not_confirmed",
+        "ledger": [
+          {
+            "destination": ".agents/skills/demo/a-data.bin",
+            "kind": "file",
+            "state": "ownership_unknown",
+            "bytesWritten": 0,
+            "expected": {
+              "sha256": "930be0afa8d0193efa7b7021d9234a1420c18a06be3fe05e81a294b7a0bbb2a4",
+              "mode": 420,
+              "sizeBytes": 3
+            },
+            "canonicalDestination": ".agents/skills/demo/a-data.bin"
+          },
+          {
+            "destination": ".agents/skills/demo/z-run.sh",
+            "kind": "file",
+            "state": "not_attempted",
+            "bytesWritten": 0,
+            "expected": {
+              "sha256": "a8076d3d28d21e02012b20eaf7dbf75409a6277134439025f282e368e3305abf",
+              "mode": 493,
+              "sizeBytes": 10
+            },
+            "canonicalDestination": ".agents/skills/demo/z-run.sh"
+          },
+          {
+            "destination": ".agents/skills/demo/SKILL.md",
+            "kind": "file",
+            "state": "not_attempted",
+            "bytesWritten": 0,
+            "expected": {
+              "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a",
+              "mode": 420,
+              "sizeBytes": 45
+            },
+            "canonicalDestination": ".agents/skills/demo/SKILL.md"
+          }
+        ]
+      },
+      "before": {
+        ".": {
+          "dev": "16777230",
+          "ino": "122761043",
+          "mode": 493
+        },
+        ".agents": {
+          "dev": "16777230",
+          "ino": "122761044",
+          "mode": 493
+        },
+        ".agents/skills": {
+          "dev": "16777230",
+          "ino": "122761045",
+          "mode": 493
+        },
+        ".agents/skills/demo": {
+          "dev": "16777230",
+          "ino": "122761046",
+          "mode": 493
+        },
+        "existing": {
+          "dev": "16777230",
+          "ino": "122761047",
+          "mode": 416,
+          "size": 17,
+          "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+        }
+      },
+      "after": {
+        ".": {
+          "dev": "16777230",
+          "ino": "122761043",
+          "mode": 493
+        },
+        ".agents": {
+          "dev": "16777230",
+          "ino": "122761044",
+          "mode": 493
+        },
+        ".agents/skills": {
+          "dev": "16777230",
+          "ino": "122761045",
+          "mode": 493
+        },
+        ".agents/skills/demo": {
+          "dev": "16777230",
+          "ino": "122761046",
+          "mode": 493
+        },
+        ".agents/skills/demo/a-data.bin": {
+          "dev": "16777230",
+          "ino": "122761055",
+          "mode": 384,
+          "size": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "existing": {
+          "dev": "16777230",
+          "ino": "122761047",
+          "mode": 416,
+          "size": 17,
+          "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+        }
+      },
+      "terminalRetry": {
+        "status": "operation",
+        "operationId": "c81a58efcc074a6d8608d89f884f9d64",
+        "planDigest": "29fc6b240406c882fbae7246b3b45192521e6c05546c317d7a27b914256bb97c",
+        "phase": "completed",
+        "code": "none",
+        "targetMutated": true,
+        "requiresPreview": false,
+        "durability": "fsync_completed",
+        "ledger": [
+          {
+            "destination": ".agents/skills/demo/a-data.bin",
+            "kind": "file",
+            "state": "created_verified",
+            "bytesWritten": 3,
+            "identity": {
+              "dev": "16777230",
+              "ino": "122761031"
+            },
+            "expected": {
+              "sha256": "930be0afa8d0193efa7b7021d9234a1420c18a06be3fe05e81a294b7a0bbb2a4",
+              "mode": 420,
+              "sizeBytes": 3
+            },
+            "canonicalDestination": ".agents/skills/demo/a-data.bin"
+          },
+          {
+            "destination": ".agents/skills/demo/z-run.sh",
+            "kind": "file",
+            "state": "created_verified",
+            "bytesWritten": 10,
+            "identity": {
+              "dev": "16777230",
+              "ino": "122761035"
+            },
+            "expected": {
+              "sha256": "a8076d3d28d21e02012b20eaf7dbf75409a6277134439025f282e368e3305abf",
+              "mode": 493,
+              "sizeBytes": 10
+            },
+            "canonicalDestination": ".agents/skills/demo/z-run.sh"
+          },
+          {
+            "destination": ".agents/skills/demo/SKILL.md",
+            "kind": "file",
+            "state": "created_verified",
+            "bytesWritten": 45,
+            "identity": {
+              "dev": "16777230",
+              "ino": "122761038"
+            },
+            "expected": {
+              "sha256": "a1436990d8dd536b3df36fdbb9f15084443e3e7538bedbe6ff0a3805c11f241a",
+              "mode": 420,
+              "sizeBytes": 45
+            },
+            "canonicalDestination": ".agents/skills/demo/SKILL.md"
+          }
+        ]
+      },
+      "lockReusedAfterRestart": true,
+      "privateOrphanRemovedByHarness": true
+    }
+  }
+}

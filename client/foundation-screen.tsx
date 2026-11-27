@@ -8,6 +8,7 @@ import { catalogSettings } from "../shared/catalog-settings";
 import { foundationStatusRpc, validateDirectoryRpc } from "../shared/rpc";
 import { CatalogSection } from "./catalog-section";
 import { Action, Detail, Section } from "./controls";
+import { FixtureOperations, useFixtureApproval } from "./fixture-approval";
 import { ProviderSelection, type ProviderId } from "./provider-selection";
 import { RecommendationRun } from "./recommendation-run";
 import { TargetPicker, type Target } from "./target-picker";
@@ -23,6 +24,7 @@ const directoryErrors = {
 export function FoundationScreen({ theme, layout, host }: PluginScreenProps) {
   const status = useHosts().find((entry) => entry.serverId === host.id)?.status;
   const disconnected = status !== "online";
+  const fixture = useFixtureApproval();
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: theme.colors.surface0 }}
@@ -35,6 +37,7 @@ export function FoundationScreen({ theme, layout, host }: PluginScreenProps) {
           <Section theme={theme} title="Target Providers"><Detail theme={theme}>Connect to the host to discover providers.</Detail></Section>
           <Section theme={theme} title="Skill Catalog"><Detail theme={theme}>Host settings are unavailable.</Detail></Section>
         </> : <HostScreen key={host.id} theme={theme} hostId={host.id} hostLabel={host.label} />}
+        {fixture && <FixtureOperations theme={theme} host={host} online={!disconnected} />}
       </View>
     </ScrollView>
   );

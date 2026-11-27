@@ -2,9 +2,11 @@ import type { PluginTheme } from "@getpaseo/plugin";
 import { useRpc } from "@getpaseo/plugin/client";
 import { useLayoutEffect, useRef, useState } from "react";
 import { providerPreviewRpc } from "../shared/rpc";
-import { providerPreviewResultSchema, type PreviewErrorCode, type ProviderPreviewResult } from "../shared/preview";
+import { providerPreviewResultSchema, type ProviderPreviewResult } from "../shared/preview";
 import type { SelectionIntentV1 } from "../shared/selection-intent";
 import { Action, Detail, Section } from "./controls";
+import { FixtureApprovalPreview, useFixtureApproval } from "./fixture-approval";
+import { previewErrors, previewIntentKey, invalidResult } from "./preview-presentation";
 import { PreviewResults } from "./preview-results";
 
 type Ready = Extract<ProviderPreviewResult, { status: "ready" }>;
@@ -14,29 +16,14 @@ type Run = { attempt: Attempt } & (
   | { phase: "error"; message: string }
   | { phase: "complete"; result: Ready }
 );
-const errors: Record<PreviewErrorCode, string> = {
-  invalid_selection: "The selection is invalid. Run Scan & Recommend and select skills again.",
-  host_mismatch: "The selected host no longer matches. Reconnect and scan again.",
-  settings_changed: "The saved catalog settings changed. Run Scan & Recommend again.",
-  catalog_mismatch: "The pinned catalog changed. Run Scan & Recommend again.",
-  catalog_unavailable: "The catalog is unavailable on this host. Check its saved revision and try again.",
-  invalid_catalog: "The selected catalog package could not be validated. Check the catalog revision.",
-  invalid_target: "The target directory is no longer valid. Select and validate it again.",
-  target_changed: "The target changed on this host. Select and scan it again.",
-  limit_exceeded: "The preview exceeded its resource limits. Select fewer skills and try again.",
-  busy: "The host is finishing another preview. Wait a moment and try again.",
-  cancelled: "The host cancelled this preview. Try again when it is ready.",
-  host_io_error: "The host could not read the preview destinations. Check access and try again.",
-};
-const invalidResult = "The preview result could not be verified. Try again.";
-const intentKey = (intent: SelectionIntentV1) => JSON.stringify({ ...intent,
-  selectedSkillIds: [...intent.selectedSkillIds].sort(), targetProviderIds: [...intent.targetProviderIds].sort() });
+type PreviewProps = { theme: PluginTheme; intent: SelectionIntentV1; generation: string; disabled?: boolean };
+export function PreviewRun(props: PreviewProps) {
+  return useFixtureApproval() ? <FixtureApprovalPreview {...props} /> : <ReadOnlyPreview {...props} />;
+}
 
-export function PreviewRun({ theme, intent, generation, disabled = false }: {
-  theme: PluginTheme; intent: SelectionIntentV1; generation: string; disabled?: boolean;
-}) {
+function ReadOnlyPreview({ theme, intent, generation, disabled = false }: PreviewProps) {
   const preview = useRpc(providerPreviewRpc);
-  const scope = JSON.stringify([generation, intentKey(intent), disabled]);
+  const scope = JSON.stringify([generation, previewIntentKey(intent), disabled]);
   const active = useRef<Attempt | null>(null);
   const [run, setRun] = useState<Run | null>(null);
   const visible = run?.attempt.scope === scope ? run : null;
@@ -62,8 +49,8 @@ export function PreviewRun({ theme, intent, generation, disabled = false }: {
       if (active.current !== attempt) return;
       const parsed = providerPreviewResultSchema.safeParse(raw);
       if (!parsed.success) return fail(invalidResult);
-      if (parsed.data.status === "error") return fail(errors[parsed.data.code]);
-      if (intentKey(parsed.data.intent) !== intentKey(intent)) return fail(invalidResult);
+      if (parsed.data.status === "error") return fail(previewErrors[parsed.data.code]);
+      if (previewIntentKey(parsed.data.intent) !== previewIntentKey(intent)) return fail(invalidResult);
       active.current = null;
       setRun({ attempt, phase: "complete", result: parsed.data });
     } catch { fail("Could not receive a preview from this host. Check the connection and try again."); }

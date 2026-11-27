@@ -1,5 +1,5 @@
 import { createHash, randomBytes } from "node:crypto";
-import { previewManifestSchema, providerPreviewV2ResultSchema, receiptLimits,
+import { previewManifestSchema, providerPreviewV2ResultSchema, receiptLimits, receiptPolicy,
   type PreviewManifest, type PreviewReceipt, type ProviderPreviewV2Result } from "../shared/preview-receipt";
 import { PreviewError } from "./preview-reader";
 import { previewLimits } from "./preview-limits";
@@ -21,7 +21,7 @@ export const manifestDigest = (manifest: PreviewManifest) => createHash("sha256"
 const randomToken = () => randomBytes(32).toString("hex");
 type Source = { destination: string; bytes: Buffer };
 type RecordValue = { receipt: PreviewReceipt; manifestJson: string; sources: Map<string, Buffer>; bytes: number; expires: number };
-type Options = { now?: () => number; wallNow?: () => number; limits?: typeof receiptLimits; responseBytes?: number };
+type Options = { now?: () => number; wallNow?: () => number; limits?: typeof receiptLimits; responseBytes?: number; fixtureApply?: (target: string) => boolean };
 
 // Installation-process lifetime, not a cross-process coordinator or caller identity.
 // Durable fixture claims live in the operation journal.
@@ -46,6 +46,9 @@ export class PreviewReceiptStore {
   private prune() {
     for (const [id, record] of this.records) if (this.now() >= record.expires) this.remove(id);
   }
+  get policy() {
+    return { ...receiptPolicy, writeCapability: this.options.fixtureApply ? "fixture_m4_5" as const : receiptPolicy.writeCapability };
+  }
   issue(raw: PreviewManifest, sourceFiles: Source[]): Extract<ProviderPreviewV2Result, { status: "ready" }> {
     const manifest = previewManifestSchema.parse(raw);
     if (manifest.epoch !== this.epoch || manifest.installationInstanceId !== this.installationInstanceId) throw new PreviewError("host_io_error");
@@ -67,14 +70,18 @@ export class PreviewReceiptStore {
     const receipt = { previewId: randomToken(), planDigest: manifestDigest(manifest), epoch: this.epoch,
       viewNonce: manifest.viewNonce, issuedAt, expiresAt: issuedAt + this.limits.ttlMs };
     const entries = [...manifest.plan.entries, ...manifest.plan.derivedEntries];
-    const reasons: Extract<ProviderPreviewV2Result, { status: "ready" }>["applyEligibility"]["reasons"] = ["write_capability_unavailable"];
+    const reasons: Extract<Extract<ProviderPreviewV2Result, { status: "ready" }>["applyEligibility"], { status: "ineligible" }>["reasons"] = [];
+    if (!this.options.fixtureApply?.(manifest.plan.intent.canonicalDirectory)) reasons.push("write_capability_unavailable");
+    if (manifest.policy.writeCapability !== this.policy.writeCapability) throw new PreviewError("host_io_error");
     if (entries.some((entry) => entry.status === "conflict")) reasons.push("plan_conflict");
     if (entries.some((entry) => entry.status === "blocked")) reasons.push("plan_blocked");
     if (manifest.readSet.some((item) => item.observation.state === "unverified" ||
       item.observation.state === "present" && item.observation.kind === "unsafe")) reasons.push("observations_unverified");
+    const blocked = reasons.some(reason => reason !== "write_capability_unavailable");
+    const plannedEffect = blocked ? "not_applicable" : entries.some(entry => entry.status === "create") ? "create_only" : "no_changes";
     const result = providerPreviewV2ResultSchema.options[0].parse({ status: "ready", schemaVersion: 2, manifest, receipt,
-      applyEligibility: { status: "ineligible", reasons },
-      plannedEffect: reasons.length > 1 ? "not_applicable" : entries.some((entry) => entry.status === "create") ? "create_only" : "no_changes" });
+      applyEligibility: reasons.length ? { status: "ineligible", reasons } : { status: plannedEffect === "create_only" ? "eligible" : "no_changes" },
+      plannedEffect });
     if (Buffer.byteLength(JSON.stringify(result)) > (this.options.responseBytes ?? previewLimits.responseBytes)) throw new PreviewError("limit_exceeded");
     // Only a fully validated, bounded response may evict or publish a receipt.
     this.prune();

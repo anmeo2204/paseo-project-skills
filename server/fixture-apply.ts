@@ -5,7 +5,7 @@ import { lstatSync, realpathSync } from "node:fs";
 import { applyCreateInputSchema, applyStatusInputSchema, type ApplyOutput, type ApplyOperation, type ApplyCreateInput } from "../shared/apply";
 import { createCanonicalPreviewHandler } from "./canonical-preview";
 import { ApplyJournal, type ApplyJournalRecord } from "./apply-journal";
-import { canonicalSerialize, manifestDigest, type PreviewReceiptStore } from "./preview-receipts";
+import { canonicalSerialize, manifestDigest, PreviewReceiptStore } from "./preview-receipts";
 import { fixtureWriterRequest, type NativeControls, type NativeWriterRequest, type NativeWriterResult } from "./native-writer-contract";
 import { runFixtureWriter, type FixtureWriterOptions } from "./native-writer";
 
@@ -17,6 +17,10 @@ const beneath = (base: string, path: string) => {
   const name = relative(base, path);
   return name !== "" && name !== ".." && !name.startsWith("../") && !isAbsolute(name);
 };
+export function isFixtureApplyTarget(base: string, target: string, home = process.env.PASEO_HOME) {
+  return Boolean(home && beneath(base, home) && beneath(base, target) && target !== home &&
+    !beneath(home, target) && !beneath(target, home));
+}
 const pending = (operation: ApplyOperation) =>
   operation.phase === "accepted" || operation.phase === "preflight" || operation.phase === "writing";
 const recovery = (operation: ApplyOperation): ApplyOperation => ({
@@ -50,7 +54,10 @@ export function createFixtureApply(config: FixtureConfiguration) {
   const journal = new ApplyJournal(coordinator);
   const active = new Map<string, { requestHash: string; done: Promise<ApplyOutput> }>();
   const stop = new AbortController();
-  const revalidation = createCanonicalPreviewHandler(config.settings, config.catalog);
+  const allowsTarget = (target: string) => isFixtureApplyTarget(base, target, home);
+  const revalidation = createCanonicalPreviewHandler(config.settings, config.catalog, {
+    receiptStore: new PreviewReceiptStore(config.receipts.policy.writeCapability === "fixture_m4_5" ? { fixtureApply: allowsTarget } : {}),
+  });
   const host = async (context: Context) => (await context.paseo.hosts.list()).self.serverId;
 
   const visible = (record: ApplyJournalRecord | undefined, hostId: string) =>
@@ -76,10 +83,7 @@ export function createFixtureApply(config: FixtureConfiguration) {
     const receipt = config.receipts.inspectApply(binding);
     if (receipt.status !== "ready") return error("receipt_invalid");
     const { manifest, sources } = receipt;
-    if (!beneath(base, manifest.plan.intent.canonicalDirectory) ||
-        manifest.plan.intent.canonicalDirectory === home ||
-        beneath(home!, manifest.plan.intent.canonicalDirectory) || beneath(manifest.plan.intent.canonicalDirectory, home!))
-      return error("unsupported_environment");
+    if (!allowsTarget(manifest.plan.intent.canonicalDirectory)) return error("unsupported_environment");
     const entries = [...manifest.plan.entries, ...manifest.plan.derivedEntries];
     if (entries.some(item => item.status === "conflict" || item.status === "blocked") ||
         manifest.readSet.some(item => item.observation.state === "unverified" ||

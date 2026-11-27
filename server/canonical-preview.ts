@@ -15,7 +15,7 @@ import { PreviewError, PreviewReader, type PreviewFs } from "./preview-reader";
 import { compare } from "./project-reader";
 import { validateDirectory } from "./validate-directory";
 import { prepareProviderPreview } from "./provider-adapters";
-import { providerPreviewV2InputSchema, providerPreviewV2ResultSchema, receiptPolicy, receiptLimits,
+import { providerPreviewV2InputSchema, providerPreviewV2ResultSchema, receiptLimits,
   type ProviderPreviewV2Result, type PreviewManifest } from "../shared/preview-receipt";
 import { PreviewReceiptStore, canonicalSerialize } from "./preview-receipts";
 import { ReceiptObservations } from "./receipt-observations";
@@ -200,7 +200,7 @@ export function createCanonicalPreviewHandler(
             readSet: observations.snapshot(), sources: sources.map(({ destination, canonicalDestination, file }) => ({
               destination, canonicalDestination, blobSha: file.blobSha, ...fingerprint(file.bytes, file.mode === "100755" ? 0o755 : 0o644),
               mode: file.mode === "100755" ? 0o755 as const : 0o644 as const,
-            })), gitProof: finalProof, policy: { ...receiptPolicy, previewBudgets: options.limits ?? previewLimits },
+            })), gitProof: finalProof, policy: { ...receipts.policy, previewBudgets: options.limits ?? previewLimits },
           };
           result.reader.checkpoint();
           return receipts.issue(JSON.parse(JSON.stringify(manifest)), sources.map(({ destination, file }) => ({ destination, bytes: file.bytes })));

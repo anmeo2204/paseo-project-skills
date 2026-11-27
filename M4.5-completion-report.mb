@@ -1,0 +1,45 @@
+# M4.5 — Explicit Approval UI & Operation Tracking
+
+**PASS trong phạm vi fixture · 2026-11-27 · baseline `ddbb045`, branch `main`.**
+
+Đã đối chiếu [proposal M4.1](M4.1-safe-apply-contract-proposal.md), các báo cáo [M4.2](M4.2-completion-report.md), [M4.3](M4.3-completion-report.md), [M4.4](M4.4-completion-report.md), [Apply/Status contracts](shared/apply.ts) và lifecycle của Preview hiện có. Product entrypoints giữ nguyên. Approval và write capability chỉ được bật trong plugin fixture do driver lắp ráp dưới profile và daemon home tạm.
+
+## Preview và xác nhận
+
+- Foundation UI dùng `preview.providers.v2` khi được fixture contribution cấp scope. Trang review hiển thị host, target, full SHA, skills/providers, eligibility, directory effects mode `0755`, canonical/derived file effects, diffs, fingerprints và giới hạn Kiro. File effects, directory effects và ledger phân trang 25 mục.
+- Receipt chỉ được review khi response qua strict schema, khớp host/intent, nonce, epoch và thời hạn. UI chỉ cho xác nhận plan create-only đủ điều kiện của fixture. Conflict, blocked, observations không xác minh được và no-op đều không thể submit. Daemon tiếp tục kiểm expiry, receipt binding và filesystem tại admission. Fixture ngoài phạm vi target cho phép vẫn Preview-only.
+- Đổi host, target, settings, selection/provider generation hoặc chạy Preview mới làm mất quyền xác nhận cũ. A → B → A yêu cầu Preview lại. Handler xác nhận kiểm lại object review đang hiển thị và expiry, đánh dấu review đã dùng đồng bộ, tạo operation ID ngẫu nhiên 128 bit, lưu tracker trước transport và gửi đúng năm field theo Apply contract.
+- Confirmation yêu cầu thao tác riêng sau khi review. Với Kiro limited, confirmation nói rõ chỉ tạo canonical files. Back to preview quay lại review để người dùng tiếp tục đọc.
+
+## Theo dõi operation
+
+[Tracker](client/apply-tracker.ts) nằm ở fixture client contribution, ngoài Preview và HostScreen. Record gắn host ID, installation slot, receipt instance, target, SHA, digest và operation ID. Đổi host, target, selection hoặc unmount giữ operation trong lifetime của contribution. Đóng màn hình không yêu cầu hủy ghi. Tracker chưa lưu qua việc thoát Desktop, reload toàn renderer hoặc unload plugin.
+
+Khi có kết nối ở đúng host/slot, remount hoặc reconnect truy vấn `apply.status.v1` cho các operation chưa kết thúc. Người dùng cũng có thể chủ động kiểm tra status. Lượt status của kết nối cũ bị bỏ qua nếu đã qua offline/reconnect. Mất reply hoặc status không xác minh được hiển thị **Outcome unknown**, giữ ledger gần nhất nếu có. UI không tự gửi lại Apply.
+
+**Busy before admission** tách khỏi accepted/preflight/writing. Kết quả terminal hiển thị completed, failed before writing, partial failure hoặc recovery required. Ledger ghi từng file/directory theo evidence gồm created verified, incomplete, unchanged, not attempted, destination changed hoặc ownership unverified. UI hướng dẫn đối soát target và chạy Preview lại khi cần. UI giữ trạng thái chưa xác định nếu daemon chưa cung cấp kết quả có thể xác minh.
+
+## Nghiệm thu
+
+- **Controlled transport trên production components:** receipt sai nonce/hết hạn bị chặn, conflict/blocked khóa toàn plan, stale confirm A → B → A bị bỏ, double-submit chỉ có một request và tracker đã tồn tại trước transport. Host switch và unmount giữ operation. Reconnect chỉ gọi Status trên scope gốc, kể cả khi status của kết nối cũ chưa trả. Kiểm tra busy, unknown, completed, failed before write, partial và recovery. Plan 600 file trong compact renderer truy cập được theo trang.
+- **Desktop/daemon thật:** Paseo **0.17.5**, SDK client/plugin/protocol **0.17.4**, macOS **27.2.1 (26B131)**, arm64, local APFS case-insensitive. Driver mở profile Desktop riêng, cài fixture contribution dùng cùng Foundation components, và điều khiển UI bằng DevTools của profile tạm. Daemon dùng catalog fixture, Preview v2 thật, native writer và journal thật. Kiểm tra stale confirm A → B → A, Enter/Space trên control đã focus, plan 33 file qua hai trang và Kiro canonical-only. Panel operation ở viewport **520×720** có chiều rộng và scroll width cùng **483 px**.
+- **Desktop target evidence:** completed khớp hash/mode/inode trong ledger. Double-click ở ca partial sinh đúng một journal record cho lượt đó. `ENOSPC` sau byte đầu trả partial và giữ các leaf sau ở not attempted. Kill helper sau exclusive create trả recovery required, leaf rỗng còn lại và UI hiển thị ownership unverified. Existing sentinel giữ nguyên hash, mode và inode ở cả ba fixture. Profile tạm đã đóng, daemon đã dừng.
+- **Chưa xác minh trên Desktop:** multi-host switch, mất reply qua kết nối thật và reconnect/remount tới host gốc, stale status response, failed-before-write và outcome-unknown presentation. Các ca này đã được kiểm bằng controlled transport. Ca recovery Desktop kill helper khi plugin parent còn sống. Restart daemon sau khi kill plugin parent và mất terminal reply đã được tái kiểm qua M4.4 daemon driver, không qua Desktop UI. Kiểm tra keyboard tập trung vào activation và focusability của các control đã thử.
+- **Typecheck và full suite 156/156 PASS**, 0 fail/cancel/skip. M4.4 daemon regression pass lại 8 nhóm.
+
+## Trước release
+
+Journal retention/prune terminal **24 giờ chưa được triển khai ở M4.4**. Fixture tiếp tục giữ tối đa 64 records, mỗi record tối đa 2 MiB, rồi từ chối admission mới. Product tiếp tục Preview-only, không đăng ký Apply/Status. Không stage, commit hoặc push.
+
+```sh
+npm run typecheck
+npm test
+node scripts/m45-desktop-acceptance.mjs
+node scripts/m44-runtime-acceptance.mjs
+```
+
+- [Desktop acceptance và before/after fingerprints](docs/evidence/m4.5/desktop-acceptance.json)
+- [Desktop và daemon cleanup](docs/evidence/m4.5/desktop-cleanup.json)
+- [Full test log](docs/evidence/m4.5/tests.log)
+- [M4.4 daemon regression](docs/evidence/m4.5/daemon-regression.json)
+- [Baseline và SHA-256 của source/evidence](docs/evidence/m4.5/source-sha256.json)

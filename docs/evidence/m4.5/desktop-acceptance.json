@@ -1,0 +1,1874 @@
+{
+  "paseoVersion": "0.17.5",
+  "sdkVersions": {
+    "client": "0.17.4",
+    "plugin": "0.17.4",
+    "protocol": "0.17.4"
+  },
+  "testing": {
+    "staleSelectionABA": true,
+    "keyboardEnterAndSpace": true,
+    "compactOperationPanel": {
+      "width": 520,
+      "height": 720,
+      "containerWidth": 483,
+      "scrollWidth": 483,
+      "visible": true
+    },
+    "originalViewport": {
+      "width": 1200,
+      "height": 800
+    },
+    "paginated33FilePlan": true,
+    "doubleClickJournalCount": 2,
+    "kiroCanonicalOnly": true
+  },
+  "completed": {
+    "before": {
+      ".": {
+        "dev": "16777230",
+        "ino": "122761255",
+        "mode": 448
+      },
+      "existing.txt": {
+        "dev": "16777230",
+        "ino": "122761256",
+        "mode": 416,
+        "size": 17,
+        "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+      }
+    },
+    "after": {
+      ".": {
+        "dev": "16777230",
+        "ino": "122761255",
+        "mode": 448
+      },
+      ".agents": {
+        "dev": "16777230",
+        "ino": "122764599",
+        "mode": 493
+      },
+      ".agents/skills": {
+        "dev": "16777230",
+        "ino": "122764606",
+        "mode": 493
+      },
+      ".agents/skills/demo": {
+        "dev": "16777230",
+        "ino": "122764610",
+        "mode": 493
+      },
+      ".agents/skills/demo/SKILL.md": {
+        "dev": "16777230",
+        "ino": "122764816",
+        "mode": 420,
+        "size": 55,
+        "sha256": "f8fc3cdf64d8db985068fcb655e9c016cbe5b05529723f7db6e1f95c49093994"
+      },
+      ".agents/skills/demo/file-00.txt": {
+        "dev": "16777230",
+        "ino": "122764614",
+        "mode": 420,
+        "size": 10,
+        "sha256": "b1ec8ed9c34d6968be18c5454f5f79d6c335b5c0c0219d0c6b3fc390eb1729ff"
+      },
+      ".agents/skills/demo/file-01.txt": {
+        "dev": "16777230",
+        "ino": "122764617",
+        "mode": 420,
+        "size": 10,
+        "sha256": "b4e06242b4ebe288438af40a36f6669935e871c34957867aa16bfe64855ce298"
+      },
+      ".agents/skills/demo/file-02.txt": {
+        "dev": "16777230",
+        "ino": "122764620",
+        "mode": 420,
+        "size": 10,
+        "sha256": "4114ce9773fd441a58c1e16b3fa2a54f3b9aac6525ea08832b290196dce278a1"
+      },
+      ".agents/skills/demo/file-03.txt": {
+        "dev": "16777230",
+        "ino": "122764623",
+        "mode": 420,
+        "size": 10,
+        "sha256": "d19eeac50c671cfe3a4c2cf8abe818cf6e552206d00c6345b5451bfbc66443c1"
+      },
+      ".agents/skills/demo/file-04.txt": {
+        "dev": "16777230",
+        "ino": "122764626",
+        "mode": 420,
+        "size": 10,
+        "sha256": "695f168e30157ec794ec7af6da257290fe22eff923859073d1a6404deca5b8be"
+      },
+      ".agents/skills/demo/file-05.txt": {
+        "dev": "16777230",
+        "ino": "122764629",
+        "mode": 420,
+        "size": 10,
+        "sha256": "a12ffeeb1998c491bdecf3f2e37ccb38d68adfc250ea3252e8b791620106b87f"
+      },
+      ".agents/skills/demo/file-06.txt": {
+        "dev": "16777230",
+        "ino": "122764632",
+        "mode": 420,
+        "size": 10,
+        "sha256": "6f08e0db9619a42a1e8968fc3fe4d328531fe0850b0b6dcebe5f4217adeb3e91"
+      },
+      ".agents/skills/demo/file-07.txt": {
+        "dev": "16777230",
+        "ino": "122764635",
+        "mode": 420,
+        "size": 10,
+        "sha256": "63311121522c967a0c1c121c955900c95bf9e410790e66a2b000dc0034dc9126"
+      },
+      ".agents/skills/demo/file-08.txt": {
+        "dev": "16777230",
+        "ino": "122764638",
+        "mode": 420,
+        "size": 10,
+        "sha256": "df84dd99d98b24b551eed891c2f075d1e9635b29759d056d2960720318889db8"
+      },
+      ".agents/skills/demo/file-09.txt": {
+        "dev": "16777230",
+        "ino": "122764646",
+        "mode": 420,
+        "size": 10,
+        "sha256": "c43ee37048e9bfa2bcbcc925ece36ca947b6e41fe2274dc29b705ece601ef4f4"
+      },
+      ".agents/skills/demo/file-10.txt": {
+        "dev": "16777230",
+        "ino": "122764657",
+        "mode": 420,
+        "size": 11,
+        "sha256": "595049da01eda63aec700987405f8101af5731e2d815946b3c26c76bf630dafd"
+      },
+      ".agents/skills/demo/file-11.txt": {
+        "dev": "16777230",
+        "ino": "122764660",
+        "mode": 420,
+        "size": 11,
+        "sha256": "ad752309b90da854c09234266b5752b8b25c65c95c0fd87a34e761ae5d964fd8"
+      },
+      ".agents/skills/demo/file-12.txt": {
+        "dev": "16777230",
+        "ino": "122764671",
+        "mode": 420,
+        "size": 11,
+        "sha256": "d23b0e761276956a4edfbf92347a7f9c7402be345a41e1297a9d1f4b0c3a0ccd"
+      },
+      ".agents/skills/demo/file-13.txt": {
+        "dev": "16777230",
+        "ino": "122764681",
+        "mode": 420,
+        "size": 11,
+        "sha256": "7969e5cfd6002fca3f800c327854c44c9df5e04cbe3a4f94f73ce6598b9db695"
+      },
+      ".agents/skills/demo/file-14.txt": {
+        "dev": "16777230",
+        "ino": "122764694",
+        "mode": 420,
+        "size": 11,
+        "sha256": "fdbf591a13fdf56be646682f0570bf74e84c1384383d9d8e3a2b3f1e7523d3a0"
+      },
+      ".agents/skills/demo/file-15.txt": {
+        "dev": "16777230",
+        "ino": "122764698",
+        "mode": 420,
+        "size": 11,
+        "sha256": "c0153f36f397397e12f6b0143db5282ec069a8e9fd8f6671bb70ec1cd1bf6e2b"
+      },
+      ".agents/skills/demo/file-16.txt": {
+        "dev": "16777230",
+        "ino": "122764705",
+        "mode": 420,
+        "size": 11,
+        "sha256": "ce6e12575c401ffd17cebbfe0cfe6fccf9fab2c389c36729a9ec8c8124ea8b20"
+      },
+      ".agents/skills/demo/file-17.txt": {
+        "dev": "16777230",
+        "ino": "122764729",
+        "mode": 420,
+        "size": 11,
+        "sha256": "b005353a0ac3911ebccb9986a8c041f35c4db77489f0d1b98fea6fb93e01713e"
+      },
+      ".agents/skills/demo/file-18.txt": {
+        "dev": "16777230",
+        "ino": "122764733",
+        "mode": 420,
+        "size": 11,
+        "sha256": "15e2f573b8d36c4afb940316cb6937692562a353696aed1e874de201ea585f38"
+      },
+      ".agents/skills/demo/file-19.txt": {
+        "dev": "16777230",
+        "ino": "122764737",
+        "mode": 420,
+        "size": 11,
+        "sha256": "57282ceefaeb350a61c78022e83c29b05e987d195c506baa767208939d47b48e"
+      },
+      ".agents/skills/demo/file-20.txt": {
+        "dev": "16777230",
+        "ino": "122764746",
+        "mode": 420,
+        "size": 11,
+        "sha256": "a533cfb96b6dd93578f64a31f33fca58a5108134ba6c19d3fb0cf818f8f34301"
+      },
+      ".agents/skills/demo/file-21.txt": {
+        "dev": "16777230",
+        "ino": "122764753",
+        "mode": 420,
+        "size": 11,
+        "sha256": "b5cf7d36634eabb3146389363a27797d17cbc425ddb281b9f5ab69e52b5cfa6a"
+      },
+      ".agents/skills/demo/file-22.txt": {
+        "dev": "16777230",
+        "ino": "122764756",
+        "mode": 420,
+        "size": 11,
+        "sha256": "5b1df3eb80fa7f7a1ca85deeedd30d22c710899ca4aca6cd0e959b6a3791d02c"
+      },
+      ".agents/skills/demo/file-23.txt": {
+        "dev": "16777230",
+        "ino": "122764759",
+        "mode": 420,
+        "size": 11,
+        "sha256": "25784d88df4b74757351a5b199426c5d58bc91c84ac57ee28c25589bb307ac0b"
+      },
+      ".agents/skills/demo/file-24.txt": {
+        "dev": "16777230",
+        "ino": "122764762",
+        "mode": 420,
+        "size": 11,
+        "sha256": "04886eb7d7964aeb2fa13bc765ed3bb5f298ac45f59068a2e5b2acef4643259b"
+      },
+      ".agents/skills/demo/file-25.txt": {
+        "dev": "16777230",
+        "ino": "122764765",
+        "mode": 420,
+        "size": 11,
+        "sha256": "440601d96a574248be69a835caf1af82d043fe817e70318b6c1da56159f74455"
+      },
+      ".agents/skills/demo/file-26.txt": {
+        "dev": "16777230",
+        "ino": "122764768",
+        "mode": 420,
+        "size": 11,
+        "sha256": "eb4c68abcd32e203f80bed18f55ca4aef0d539795fa7e78e397ad5bf418425dc"
+      },
+      ".agents/skills/demo/file-27.txt": {
+        "dev": "16777230",
+        "ino": "122764776",
+        "mode": 420,
+        "size": 11,
+        "sha256": "bbdd45f5f45a372c3e7499a2d7feb2e1f526b0fca4a2e1948ae042bbfda9a559"
+      },
+      ".agents/skills/demo/file-28.txt": {
+        "dev": "16777230",
+        "ino": "122764784",
+        "mode": 420,
+        "size": 11,
+        "sha256": "e7ff07056645c9151a46a19143f147b5435379dd81f8c3b6cd407e80fb68ec27"
+      },
+      ".agents/skills/demo/file-29.txt": {
+        "dev": "16777230",
+        "ino": "122764799",
+        "mode": 420,
+        "size": 11,
+        "sha256": "9a455a455993d9165c062dcc18bb805ca228238f3532e8305ec91c7c588d2fc6"
+      },
+      ".agents/skills/demo/file-30.txt": {
+        "dev": "16777230",
+        "ino": "122764807",
+        "mode": 420,
+        "size": 11,
+        "sha256": "2ecaf1853f79030ef4ee2125c65158f3d06dab942a73bdd825349917bd379519"
+      },
+      ".agents/skills/demo/file-31.txt": {
+        "dev": "16777230",
+        "ino": "122764812",
+        "mode": 493,
+        "size": 11,
+        "sha256": "23298e456ff717fdb3bdfeed3f57cb9ec08d60c55a0a933269e6d7c46ab06949"
+      },
+      "existing.txt": {
+        "dev": "16777230",
+        "ino": "122761256",
+        "mode": 416,
+        "size": 17,
+        "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+      }
+    },
+    "text": "New workspace\nHistory\nSearch\nSchedules\nApproval Fixture\nNo projects yet\nAdd a project to get started\nAdd project\nImport session\n25% 5h\n5% wk\n25% 5h\n5% wk\n25% 5h\n5% wk\n25%\n5%\nApproval Fixture\nTarget Project\nPaseo host: An’s Mac mini\nChoose project or workspace\nAbsolute path on the host\nUse directory\nManual directory · Directory\nTarget directory: /private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m45-6XD6Wl/completed\nTarget Providers\nCodex\nready\nCursor\nunavailable\nKiro\nunavailable\nAntigravity\nloading\nChoose installation targets for later. Runtime status is informational and scanning works without a provider.\nSkill Catalog\nSource repository\nhttps://github.com/anmeo2204/project-skills\nCatalog revision\nTag names only, or a 40-character commit SHA. Revisions are saved without checking existence.\nSave revision\nSaved on this host: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nScan & Recommend\nPinned catalog: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nScan & Recommend\nRecommendation Results\nTarget: /private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m45-6XD6Wl/completed\nCatalog: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nRecommendations describe project fit. Task applicability has not been assessed.\n1 skills have no applicability rule in this catalog revision.\nNo positive matches. Open Unknown to review and select skills manually.\nSelected skills: 1\nSelect Recommended\nClear Selection\nRecommended (0)\nOptional (0)\nUnknown (1)\ndemo\nFixture skill\nUnknown · Not observed in scan\nThis catalog revision has no applicability rule for the skill.\nDetails for demo\nPreview Changes\nPreview Changes\nPlanned Changes\nHost: srv__TDvZmIxA9On\nTarget: /private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m45-6XD6Wl/completed\nPinned SHA: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nSkills selected: demo\nTarget providers: kiro\n3 directories to create · 33 files to create · 0 unchanged\nEligible for create-only approval.\nCreate directory · .agents · mode 0755\nCreate directory · .agents/skills · mode 0755\nCreate directory · .agents/skills/demo · mode 0755\nPreview Results\nTarget: /private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m45-6XD6Wl/completed\nPinned catalog: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nCreate: 33 · Unchanged: 0 · Conflict: 0 · Blocked: 0\nCanonical files (33)\nPrevious canonical files\nNext canonical files\n1–25 of 33\nCreate · .agents/skills/demo/SKILL.md\nPreview details for .agents/skills/demo/SKILL.md\nCreate · .agents/skills/demo/file-00.txt\nPreview details for .agents/skills/demo/file-00.txt\nCreate · .agents/skills/demo/file-01.txt\nPreview details for .agents/skills/demo/file-01.txt\nCreate · .agents/skills/demo/file-02.txt\nPreview details for .agents/skills/demo/file-02.txt\nCreate · .agents/skills/demo/file-03.txt\nPreview details for .agents/skills/demo/file-03.txt\nCreate · .agents/skills/demo/file-04.txt\nPreview details for .agents/skills/demo/file-04.txt\nCreate · .agents/skills/demo/file-05.txt\nPreview details for .agents/skills/demo/file-05.txt\nCreate · .agents/skills/demo/file-06.txt\nPreview details for .agents/skills/demo/file-06.txt\nCreate · .agents/skills/demo/file-07.txt\nPreview details for .agents/skills/demo/file-07.txt\nCreate · .agents/skills/demo/file-08.txt\nPreview details for .agents/skills/demo/file-08.txt\nCreate · .agents/skills/demo/file-09.txt\nPreview details for .agents/skills/demo/file-09.txt\nCreate · .agents/skills/demo/file-10.txt\nPreview details for .agents/skills/demo/file-10.txt\nCreate · .agents/skills/demo/file-11.txt\nPreview details for .agents/skills/demo/file-11.txt\nCreate · .agents/skills/demo/file-12.txt\nPreview details for .agents/skills/demo/file-12.txt\nCreate · .agents/skills/demo/file-13.txt\nPreview details for .agents/skills/demo/file-13.txt\nCreate · .agents/skills/demo/file-14.txt\nPreview details for .agents/skills/demo/file-14.txt\nCreate · .agents/skills/demo/file-15.txt\nPreview details for .agents/skills/demo/file-15.txt\nCreate · .agents/skills/demo/file-16.txt\nPreview details for .agents/skills/demo/file-16.txt\nCreate · .agents/skills/demo/file-17.txt\nPreview details for .agents/skills/demo/file-17.txt\nCreate · .agents/skills/demo/file-18.txt\nPreview details for .agents/skills/demo/file-18.txt\nCreate · .agents/skills/demo/file-19.txt\nPreview details for .agents/skills/demo/file-19.txt\nCreate · .agents/skills/demo/file-20.txt\nPreview details for .agents/skills/demo/file-20.txt\nCreate · .agents/skills/demo/file-21.txt\nPreview details for .agents/skills/demo/file-21.txt\nCreate · .agents/skills/demo/file-22.txt\nPreview details for .agents/skills/demo/file-22.txt\nCreate · .agents/skills/demo/file-23.txt\nPreview details for .agents/skills/demo/file-23.txt\nKiro derived files (0)\nKiro · limited\nKiro is limited: this target is a nested workspace, non-Git directory, or its Git root could not be confirmed. No Kiro files are proposed.\nKiro native discovery was verified only with session CWD at root and mode kiro_default. Preview does not change session CWD or configuration.\ndemo: Kiro package deferred because the selected target could not be confirmed as a Git repo/worktree root.\nM3.1 historical verification for Kiro\nPreview diagnostics\ndemo: Kiro compatibility is limited at this target; no derived package is proposed.\nCreate-only Approval\nSubmitted. Follow the operation below. Closing this screen does not cancel it.\nReview create-only approval\nCheck connection\nApply Operations\nCompleted\nsrv__TDvZmIxA9On · /private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m45-6XD6Wl/completed\nOperation a102f7590a7486ba71987aba6d50b65a\nTarget mutation recorded.\nOperation ledger\nPrevious ledger entries\nNext ledger entries\n1–25 of 36\nCreated and verified · directory · .agents\nCreated and verified · directory · .agents/skills\nCreated and verified · directory · .agents/skills/demo\nCreated and verified · file · .agents/skills/demo/file-00.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-01.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-02.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-03.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-04.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-05.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-06.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-07.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-08.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-09.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-10.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-11.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-12.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-13.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-14.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-15.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-16.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-17.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-18.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-19.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-20.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-21.txt · 11 bytes recorded"
+  },
+  "partial": {
+    "before": {
+      ".": {
+        "dev": "16777230",
+        "ino": "122761257",
+        "mode": 448
+      },
+      "existing.txt": {
+        "dev": "16777230",
+        "ino": "122761258",
+        "mode": 416,
+        "size": 17,
+        "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+      }
+    },
+    "after": {
+      ".": {
+        "dev": "16777230",
+        "ino": "122761257",
+        "mode": 448
+      },
+      ".agents": {
+        "dev": "16777230",
+        "ino": "122764936",
+        "mode": 493
+      },
+      ".agents/skills": {
+        "dev": "16777230",
+        "ino": "122764944",
+        "mode": 493
+      },
+      ".agents/skills/demo": {
+        "dev": "16777230",
+        "ino": "122764947",
+        "mode": 493
+      },
+      ".agents/skills/demo/file-00.txt": {
+        "dev": "16777230",
+        "ino": "122764962",
+        "mode": 420,
+        "size": 10,
+        "sha256": "b1ec8ed9c34d6968be18c5454f5f79d6c335b5c0c0219d0c6b3fc390eb1729ff"
+      },
+      ".agents/skills/demo/file-01.txt": {
+        "dev": "16777230",
+        "ino": "122764973",
+        "mode": 384,
+        "size": 1,
+        "sha256": "252f10c83610ebca1a059c0bae8255eba2f95be4d1d7bcfa89d7248a82d9f111"
+      },
+      "existing.txt": {
+        "dev": "16777230",
+        "ino": "122761258",
+        "mode": 416,
+        "size": 17,
+        "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+      }
+    },
+    "text": "New workspace\nHistory\nSearch\nSchedules\nApproval Fixture\nNo projects yet\nAdd a project to get started\nAdd project\nImport session\n25% 5h\n5% wk\n25% 5h\n5% wk\n25% 5h\n5% wk\n25%\n5%\nApproval Fixture\nTarget Project\nPaseo host: An’s Mac mini\nChoose project or workspace\nAbsolute path on the host\nUse directory\nManual directory · Directory\nTarget directory: /private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m45-6XD6Wl/partial\nTarget Providers\nCodex\nloading\nCursor\nunavailable\nKiro\nunavailable\nAntigravity\nloading\nChoose installation targets for later. Runtime status is informational and scanning works without a provider.\nSkill Catalog\nSource repository\nhttps://github.com/anmeo2204/project-skills\nCatalog revision\nTag names only, or a 40-character commit SHA. Revisions are saved without checking existence.\nSave revision\nSaved on this host: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nScan & Recommend\nPinned catalog: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nScan & Recommend\nRecommendation Results\nTarget: /private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m45-6XD6Wl/partial\nCatalog: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nRecommendations describe project fit. Task applicability has not been assessed.\n1 skills have no applicability rule in this catalog revision.\nNo positive matches. Open Unknown to review and select skills manually.\nSelected skills: 1\nSelect Recommended\nClear Selection\nRecommended (0)\nOptional (0)\nUnknown (1)\ndemo\nFixture skill\nUnknown · Not observed in scan\nThis catalog revision has no applicability rule for the skill.\nDetails for demo\nPreview Changes\nPreview Changes\nPlanned Changes\nHost: srv__TDvZmIxA9On\nTarget: /private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m45-6XD6Wl/partial\nPinned SHA: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nSkills selected: demo\nTarget providers: None\n3 directories to create · 33 files to create · 0 unchanged\nEligible for create-only approval.\nCreate directory · .agents · mode 0755\nCreate directory · .agents/skills · mode 0755\nCreate directory · .agents/skills/demo · mode 0755\nPreview Results\nTarget: /private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m45-6XD6Wl/partial\nPinned catalog: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nCreate: 33 · Unchanged: 0 · Conflict: 0 · Blocked: 0\nCanonical files (33)\nPrevious canonical files\nNext canonical files\n1–25 of 33\nCreate · .agents/skills/demo/SKILL.md\nPreview details for .agents/skills/demo/SKILL.md\nCreate · .agents/skills/demo/file-00.txt\nPreview details for .agents/skills/demo/file-00.txt\nCreate · .agents/skills/demo/file-01.txt\nPreview details for .agents/skills/demo/file-01.txt\nCreate · .agents/skills/demo/file-02.txt\nPreview details for .agents/skills/demo/file-02.txt\nCreate · .agents/skills/demo/file-03.txt\nPreview details for .agents/skills/demo/file-03.txt\nCreate · .agents/skills/demo/file-04.txt\nPreview details for .agents/skills/demo/file-04.txt\nCreate · .agents/skills/demo/file-05.txt\nPreview details for .agents/skills/demo/file-05.txt\nCreate · .agents/skills/demo/file-06.txt\nPreview details for .agents/skills/demo/file-06.txt\nCreate · .agents/skills/demo/file-07.txt\nPreview details for .agents/skills/demo/file-07.txt\nCreate · .agents/skills/demo/file-08.txt\nPreview details for .agents/skills/demo/file-08.txt\nCreate · .agents/skills/demo/file-09.txt\nPreview details for .agents/skills/demo/file-09.txt\nCreate · .agents/skills/demo/file-10.txt\nPreview details for .agents/skills/demo/file-10.txt\nCreate · .agents/skills/demo/file-11.txt\nPreview details for .agents/skills/demo/file-11.txt\nCreate · .agents/skills/demo/file-12.txt\nPreview details for .agents/skills/demo/file-12.txt\nCreate · .agents/skills/demo/file-13.txt\nPreview details for .agents/skills/demo/file-13.txt\nCreate · .agents/skills/demo/file-14.txt\nPreview details for .agents/skills/demo/file-14.txt\nCreate · .agents/skills/demo/file-15.txt\nPreview details for .agents/skills/demo/file-15.txt\nCreate · .agents/skills/demo/file-16.txt\nPreview details for .agents/skills/demo/file-16.txt\nCreate · .agents/skills/demo/file-17.txt\nPreview details for .agents/skills/demo/file-17.txt\nCreate · .agents/skills/demo/file-18.txt\nPreview details for .agents/skills/demo/file-18.txt\nCreate · .agents/skills/demo/file-19.txt\nPreview details for .agents/skills/demo/file-19.txt\nCreate · .agents/skills/demo/file-20.txt\nPreview details for .agents/skills/demo/file-20.txt\nCreate · .agents/skills/demo/file-21.txt\nPreview details for .agents/skills/demo/file-21.txt\nCreate · .agents/skills/demo/file-22.txt\nPreview details for .agents/skills/demo/file-22.txt\nCreate · .agents/skills/demo/file-23.txt\nPreview details for .agents/skills/demo/file-23.txt\nKiro derived files (0)\nCanonical preview only. No target providers selected.\nCreate-only Approval\nSubmitted. Follow the operation below. Closing this screen does not cancel it.\nReview create-only approval\nCheck connection\nApply Operations\nStopped after a partial write\nsrv__TDvZmIxA9On · /private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m45-6XD6Wl/partial\nOperation db3c5a076deee6f9d377074283fad766\nCheck the files and directories below against the target, then run Preview again.\nResult code: write_failed\nTarget mutation recorded.\nOperation ledger\nPrevious ledger entries\nNext ledger entries\n1–25 of 36\nCreated and verified · directory · .agents\nCreated and verified · directory · .agents/skills\nCreated and verified · directory · .agents/skills/demo\nCreated and verified · file · .agents/skills/demo/file-00.txt · 10 bytes recorded\nCreated, incomplete · file · .agents/skills/demo/file-01.txt · 1 bytes recorded\nNot attempted · file · .agents/skills/demo/file-02.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-03.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-04.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-05.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-06.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-07.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-08.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-09.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-10.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-11.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-12.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-13.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-14.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-15.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-16.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-17.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-18.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-19.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-20.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-21.txt · 0 bytes recorded\nCompleted\nsrv__TDvZmIxA9On · /private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m45-6XD6Wl/completed\nOperation a102f7590a7486ba71987aba6d50b65a\nTarget mutation recorded.\nOperation ledger\nPrevious ledger entries\nNext ledger entries\n1–25 of 36\nCreated and verified · directory · .agents\nCreated and verified · directory · .agents/skills\nCreated and verified · directory · .agents/skills/demo\nCreated and verified · file · .agents/skills/demo/file-00.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-01.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-02.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-03.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-04.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-05.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-06.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-07.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-08.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-09.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-10.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-11.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-12.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-13.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-14.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-15.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-16.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-17.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-18.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-19.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-20.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-21.txt · 11 bytes recorded"
+  },
+  "recovery": {
+    "before": {
+      ".": {
+        "dev": "16777230",
+        "ino": "122761259",
+        "mode": 448
+      },
+      "existing.txt": {
+        "dev": "16777230",
+        "ino": "122761260",
+        "mode": 416,
+        "size": 17,
+        "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+      }
+    },
+    "after": {
+      ".": {
+        "dev": "16777230",
+        "ino": "122761259",
+        "mode": 448
+      },
+      ".agents": {
+        "dev": "16777230",
+        "ino": "122765067",
+        "mode": 493
+      },
+      ".agents/skills": {
+        "dev": "16777230",
+        "ino": "122765071",
+        "mode": 493
+      },
+      ".agents/skills/demo": {
+        "dev": "16777230",
+        "ino": "122765079",
+        "mode": 493
+      },
+      ".agents/skills/demo/file-00.txt": {
+        "dev": "16777230",
+        "ino": "122765085",
+        "mode": 420,
+        "size": 10,
+        "sha256": "b1ec8ed9c34d6968be18c5454f5f79d6c335b5c0c0219d0c6b3fc390eb1729ff"
+      },
+      ".agents/skills/demo/file-01.txt": {
+        "dev": "16777230",
+        "ino": "122765104",
+        "mode": 384,
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "existing.txt": {
+        "dev": "16777230",
+        "ino": "122761260",
+        "mode": 416,
+        "size": 17,
+        "sha256": "045fb44cee04078207fa90c147ef82b3dc5c406113a527b52c2b3828fbaefed8"
+      }
+    },
+    "text": "New workspace\nHistory\nSearch\nSchedules\nApproval Fixture\nNo projects yet\nAdd a project to get started\nAdd project\nImport session\n25% 5h\n5% wk\n25% 5h\n5% wk\n25% 5h\n5% wk\n25%\n5%\nApproval Fixture\nTarget Project\nPaseo host: An’s Mac mini\nChoose project or workspace\nAbsolute path on the host\nUse directory\nManual directory · Directory\nTarget directory: /private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m45-6XD6Wl/recovery\nTarget Providers\nCodex\nloading\nCursor\nunavailable\nKiro\nunavailable\nAntigravity\nloading\nChoose installation targets for later. Runtime status is informational and scanning works without a provider.\nSkill Catalog\nSource repository\nhttps://github.com/anmeo2204/project-skills\nCatalog revision\nTag names only, or a 40-character commit SHA. Revisions are saved without checking existence.\nSave revision\nSaved on this host: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nScan & Recommend\nPinned catalog: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nScan & Recommend\nRecommendation Results\nTarget: /private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m45-6XD6Wl/recovery\nCatalog: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nRecommendations describe project fit. Task applicability has not been assessed.\n1 skills have no applicability rule in this catalog revision.\nNo positive matches. Open Unknown to review and select skills manually.\nSelected skills: 1\nSelect Recommended\nClear Selection\nRecommended (0)\nOptional (0)\nUnknown (1)\ndemo\nFixture skill\nUnknown · Not observed in scan\nThis catalog revision has no applicability rule for the skill.\nDetails for demo\nPreview Changes\nPreview Changes\nPlanned Changes\nHost: srv__TDvZmIxA9On\nTarget: /private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m45-6XD6Wl/recovery\nPinned SHA: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nSkills selected: demo\nTarget providers: None\n3 directories to create · 33 files to create · 0 unchanged\nEligible for create-only approval.\nCreate directory · .agents · mode 0755\nCreate directory · .agents/skills · mode 0755\nCreate directory · .agents/skills/demo · mode 0755\nPreview Results\nTarget: /private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m45-6XD6Wl/recovery\nPinned catalog: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nCreate: 33 · Unchanged: 0 · Conflict: 0 · Blocked: 0\nCanonical files (33)\nPrevious canonical files\nNext canonical files\n1–25 of 33\nCreate · .agents/skills/demo/SKILL.md\nPreview details for .agents/skills/demo/SKILL.md\nCreate · .agents/skills/demo/file-00.txt\nPreview details for .agents/skills/demo/file-00.txt\nCreate · .agents/skills/demo/file-01.txt\nPreview details for .agents/skills/demo/file-01.txt\nCreate · .agents/skills/demo/file-02.txt\nPreview details for .agents/skills/demo/file-02.txt\nCreate · .agents/skills/demo/file-03.txt\nPreview details for .agents/skills/demo/file-03.txt\nCreate · .agents/skills/demo/file-04.txt\nPreview details for .agents/skills/demo/file-04.txt\nCreate · .agents/skills/demo/file-05.txt\nPreview details for .agents/skills/demo/file-05.txt\nCreate · .agents/skills/demo/file-06.txt\nPreview details for .agents/skills/demo/file-06.txt\nCreate · .agents/skills/demo/file-07.txt\nPreview details for .agents/skills/demo/file-07.txt\nCreate · .agents/skills/demo/file-08.txt\nPreview details for .agents/skills/demo/file-08.txt\nCreate · .agents/skills/demo/file-09.txt\nPreview details for .agents/skills/demo/file-09.txt\nCreate · .agents/skills/demo/file-10.txt\nPreview details for .agents/skills/demo/file-10.txt\nCreate · .agents/skills/demo/file-11.txt\nPreview details for .agents/skills/demo/file-11.txt\nCreate · .agents/skills/demo/file-12.txt\nPreview details for .agents/skills/demo/file-12.txt\nCreate · .agents/skills/demo/file-13.txt\nPreview details for .agents/skills/demo/file-13.txt\nCreate · .agents/skills/demo/file-14.txt\nPreview details for .agents/skills/demo/file-14.txt\nCreate · .agents/skills/demo/file-15.txt\nPreview details for .agents/skills/demo/file-15.txt\nCreate · .agents/skills/demo/file-16.txt\nPreview details for .agents/skills/demo/file-16.txt\nCreate · .agents/skills/demo/file-17.txt\nPreview details for .agents/skills/demo/file-17.txt\nCreate · .agents/skills/demo/file-18.txt\nPreview details for .agents/skills/demo/file-18.txt\nCreate · .agents/skills/demo/file-19.txt\nPreview details for .agents/skills/demo/file-19.txt\nCreate · .agents/skills/demo/file-20.txt\nPreview details for .agents/skills/demo/file-20.txt\nCreate · .agents/skills/demo/file-21.txt\nPreview details for .agents/skills/demo/file-21.txt\nCreate · .agents/skills/demo/file-22.txt\nPreview details for .agents/skills/demo/file-22.txt\nCreate · .agents/skills/demo/file-23.txt\nPreview details for .agents/skills/demo/file-23.txt\nKiro derived files (0)\nCanonical preview only. No target providers selected.\nCreate-only Approval\nSubmitted. Follow the operation below. Closing this screen does not cancel it.\nReview create-only approval\nCheck connection\nApply Operations\nRecovery required\nsrv__TDvZmIxA9On · /private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m45-6XD6Wl/recovery\nOperation 4b5f9b95bce7e89e2d0fbc7c0b3fd24a\nCheck the files and directories below against the target, then run Preview again.\nResult code: terminal_record_missing\nTarget mutation is unknown.\nOperation ledger\nPrevious ledger entries\nNext ledger entries\n1–25 of 36\nCreated and verified · directory · .agents\nCreated and verified · directory · .agents/skills\nCreated and verified · directory · .agents/skills/demo\nCreated and verified · file · .agents/skills/demo/file-00.txt · 10 bytes recorded\nOwnership unverified · file · .agents/skills/demo/file-01.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-02.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-03.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-04.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-05.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-06.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-07.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-08.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-09.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-10.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-11.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-12.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-13.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-14.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-15.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-16.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-17.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-18.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-19.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-20.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-21.txt · 0 bytes recorded\nStopped after a partial write\nsrv__TDvZmIxA9On · /private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m45-6XD6Wl/partial\nOperation db3c5a076deee6f9d377074283fad766\nCheck the files and directories below against the target, then run Preview again.\nResult code: write_failed\nTarget mutation recorded.\nOperation ledger\nPrevious ledger entries\nNext ledger entries\n1–25 of 36\nCreated and verified · directory · .agents\nCreated and verified · directory · .agents/skills\nCreated and verified · directory · .agents/skills/demo\nCreated and verified · file · .agents/skills/demo/file-00.txt · 10 bytes recorded\nCreated, incomplete · file · .agents/skills/demo/file-01.txt · 1 bytes recorded\nNot attempted · file · .agents/skills/demo/file-02.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-03.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-04.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-05.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-06.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-07.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-08.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-09.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-10.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-11.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-12.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-13.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-14.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-15.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-16.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-17.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-18.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-19.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-20.txt · 0 bytes recorded\nNot attempted · file · .agents/skills/demo/file-21.txt · 0 bytes recorded\nCompleted\nsrv__TDvZmIxA9On · /private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m45-6XD6Wl/completed\nOperation a102f7590a7486ba71987aba6d50b65a\nTarget mutation recorded.\nOperation ledger\nPrevious ledger entries\nNext ledger entries\n1–25 of 36\nCreated and verified · directory · .agents\nCreated and verified · directory · .agents/skills\nCreated and verified · directory · .agents/skills/demo\nCreated and verified · file · .agents/skills/demo/file-00.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-01.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-02.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-03.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-04.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-05.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-06.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-07.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-08.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-09.txt · 10 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-10.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-11.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-12.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-13.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-14.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-15.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-16.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-17.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-18.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-19.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-20.txt · 11 bytes recorded\nCreated and verified · file · .agents/skills/demo/file-21.txt · 11 bytes recorded"
+  },
+  "journal": [
+    {
+      "status": "operation",
+      "operationId": "4b5f9b95bce7e89e2d0fbc7c0b3fd24a",
+      "planDigest": "e3b4980da97f3433fe701dc114486bff310a9ea3296e0bbc25e94f964eb2d1ef",
+      "phase": "recovery_required",
+      "code": "terminal_record_missing",
+      "targetMutated": "unknown",
+      "requiresPreview": true,
+      "durability": "not_confirmed",
+      "ledger": [
+        {
+          "destination": ".agents",
+          "kind": "directory",
+          "state": "created_verified",
+          "identity": {
+            "dev": "16777230",
+            "ino": "122765067"
+          }
+        },
+        {
+          "destination": ".agents/skills",
+          "kind": "directory",
+          "state": "created_verified",
+          "identity": {
+            "dev": "16777230",
+            "ino": "122765071"
+          }
+        },
+        {
+          "destination": ".agents/skills/demo",
+          "kind": "directory",
+          "state": "created_verified",
+          "identity": {
+            "dev": "16777230",
+            "ino": "122765079"
+          }
+        },
+        {
+          "destination": ".agents/skills/demo/file-00.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 10,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122765085"
+          },
+          "expected": {
+            "sha256": "b1ec8ed9c34d6968be18c5454f5f79d6c335b5c0c0219d0c6b3fc390eb1729ff",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-00.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-01.txt",
+          "kind": "file",
+          "state": "ownership_unknown",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "b4e06242b4ebe288438af40a36f6669935e871c34957867aa16bfe64855ce298",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-01.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-02.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "4114ce9773fd441a58c1e16b3fa2a54f3b9aac6525ea08832b290196dce278a1",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-02.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-03.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "d19eeac50c671cfe3a4c2cf8abe818cf6e552206d00c6345b5451bfbc66443c1",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-03.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-04.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "695f168e30157ec794ec7af6da257290fe22eff923859073d1a6404deca5b8be",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-04.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-05.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "a12ffeeb1998c491bdecf3f2e37ccb38d68adfc250ea3252e8b791620106b87f",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-05.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-06.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "6f08e0db9619a42a1e8968fc3fe4d328531fe0850b0b6dcebe5f4217adeb3e91",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-06.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-07.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "63311121522c967a0c1c121c955900c95bf9e410790e66a2b000dc0034dc9126",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-07.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-08.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "df84dd99d98b24b551eed891c2f075d1e9635b29759d056d2960720318889db8",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-08.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-09.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "c43ee37048e9bfa2bcbcc925ece36ca947b6e41fe2274dc29b705ece601ef4f4",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-09.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-10.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "595049da01eda63aec700987405f8101af5731e2d815946b3c26c76bf630dafd",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-10.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-11.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "ad752309b90da854c09234266b5752b8b25c65c95c0fd87a34e761ae5d964fd8",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-11.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-12.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "d23b0e761276956a4edfbf92347a7f9c7402be345a41e1297a9d1f4b0c3a0ccd",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-12.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-13.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "7969e5cfd6002fca3f800c327854c44c9df5e04cbe3a4f94f73ce6598b9db695",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-13.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-14.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "fdbf591a13fdf56be646682f0570bf74e84c1384383d9d8e3a2b3f1e7523d3a0",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-14.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-15.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "c0153f36f397397e12f6b0143db5282ec069a8e9fd8f6671bb70ec1cd1bf6e2b",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-15.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-16.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "ce6e12575c401ffd17cebbfe0cfe6fccf9fab2c389c36729a9ec8c8124ea8b20",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-16.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-17.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "b005353a0ac3911ebccb9986a8c041f35c4db77489f0d1b98fea6fb93e01713e",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-17.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-18.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "15e2f573b8d36c4afb940316cb6937692562a353696aed1e874de201ea585f38",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-18.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-19.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "57282ceefaeb350a61c78022e83c29b05e987d195c506baa767208939d47b48e",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-19.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-20.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "a533cfb96b6dd93578f64a31f33fca58a5108134ba6c19d3fb0cf818f8f34301",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-20.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-21.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "b5cf7d36634eabb3146389363a27797d17cbc425ddb281b9f5ab69e52b5cfa6a",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-21.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-22.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "5b1df3eb80fa7f7a1ca85deeedd30d22c710899ca4aca6cd0e959b6a3791d02c",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-22.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-23.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "25784d88df4b74757351a5b199426c5d58bc91c84ac57ee28c25589bb307ac0b",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-23.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-24.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "04886eb7d7964aeb2fa13bc765ed3bb5f298ac45f59068a2e5b2acef4643259b",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-24.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-25.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "440601d96a574248be69a835caf1af82d043fe817e70318b6c1da56159f74455",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-25.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-26.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "eb4c68abcd32e203f80bed18f55ca4aef0d539795fa7e78e397ad5bf418425dc",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-26.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-27.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "bbdd45f5f45a372c3e7499a2d7feb2e1f526b0fca4a2e1948ae042bbfda9a559",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-27.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-28.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "e7ff07056645c9151a46a19143f147b5435379dd81f8c3b6cd407e80fb68ec27",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-28.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-29.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "9a455a455993d9165c062dcc18bb805ca228238f3532e8305ec91c7c588d2fc6",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-29.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-30.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "2ecaf1853f79030ef4ee2125c65158f3d06dab942a73bdd825349917bd379519",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-30.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-31.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "23298e456ff717fdb3bdfeed3f57cb9ec08d60c55a0a933269e6d7c46ab06949",
+            "mode": 493,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-31.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/SKILL.md",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "f8fc3cdf64d8db985068fcb655e9c016cbe5b05529723f7db6e1f95c49093994",
+            "mode": 420,
+            "sizeBytes": 55
+          },
+          "canonicalDestination": ".agents/skills/demo/SKILL.md"
+        }
+      ]
+    },
+    {
+      "status": "operation",
+      "operationId": "a102f7590a7486ba71987aba6d50b65a",
+      "planDigest": "eebbc484ed60b93e7200b5b579cf72af8ee960e4db1dbe001bd1ba9ee507a776",
+      "phase": "completed",
+      "code": "none",
+      "targetMutated": true,
+      "requiresPreview": false,
+      "durability": "fsync_completed",
+      "ledger": [
+        {
+          "destination": ".agents",
+          "kind": "directory",
+          "state": "created_verified",
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764599"
+          }
+        },
+        {
+          "destination": ".agents/skills",
+          "kind": "directory",
+          "state": "created_verified",
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764606"
+          }
+        },
+        {
+          "destination": ".agents/skills/demo",
+          "kind": "directory",
+          "state": "created_verified",
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764610"
+          }
+        },
+        {
+          "destination": ".agents/skills/demo/file-00.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 10,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764614"
+          },
+          "expected": {
+            "sha256": "b1ec8ed9c34d6968be18c5454f5f79d6c335b5c0c0219d0c6b3fc390eb1729ff",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-00.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-01.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 10,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764617"
+          },
+          "expected": {
+            "sha256": "b4e06242b4ebe288438af40a36f6669935e871c34957867aa16bfe64855ce298",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-01.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-02.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 10,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764620"
+          },
+          "expected": {
+            "sha256": "4114ce9773fd441a58c1e16b3fa2a54f3b9aac6525ea08832b290196dce278a1",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-02.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-03.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 10,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764623"
+          },
+          "expected": {
+            "sha256": "d19eeac50c671cfe3a4c2cf8abe818cf6e552206d00c6345b5451bfbc66443c1",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-03.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-04.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 10,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764626"
+          },
+          "expected": {
+            "sha256": "695f168e30157ec794ec7af6da257290fe22eff923859073d1a6404deca5b8be",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-04.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-05.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 10,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764629"
+          },
+          "expected": {
+            "sha256": "a12ffeeb1998c491bdecf3f2e37ccb38d68adfc250ea3252e8b791620106b87f",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-05.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-06.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 10,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764632"
+          },
+          "expected": {
+            "sha256": "6f08e0db9619a42a1e8968fc3fe4d328531fe0850b0b6dcebe5f4217adeb3e91",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-06.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-07.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 10,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764635"
+          },
+          "expected": {
+            "sha256": "63311121522c967a0c1c121c955900c95bf9e410790e66a2b000dc0034dc9126",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-07.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-08.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 10,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764638"
+          },
+          "expected": {
+            "sha256": "df84dd99d98b24b551eed891c2f075d1e9635b29759d056d2960720318889db8",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-08.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-09.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 10,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764646"
+          },
+          "expected": {
+            "sha256": "c43ee37048e9bfa2bcbcc925ece36ca947b6e41fe2274dc29b705ece601ef4f4",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-09.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-10.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 11,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764657"
+          },
+          "expected": {
+            "sha256": "595049da01eda63aec700987405f8101af5731e2d815946b3c26c76bf630dafd",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-10.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-11.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 11,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764660"
+          },
+          "expected": {
+            "sha256": "ad752309b90da854c09234266b5752b8b25c65c95c0fd87a34e761ae5d964fd8",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-11.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-12.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 11,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764671"
+          },
+          "expected": {
+            "sha256": "d23b0e761276956a4edfbf92347a7f9c7402be345a41e1297a9d1f4b0c3a0ccd",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-12.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-13.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 11,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764681"
+          },
+          "expected": {
+            "sha256": "7969e5cfd6002fca3f800c327854c44c9df5e04cbe3a4f94f73ce6598b9db695",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-13.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-14.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 11,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764694"
+          },
+          "expected": {
+            "sha256": "fdbf591a13fdf56be646682f0570bf74e84c1384383d9d8e3a2b3f1e7523d3a0",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-14.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-15.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 11,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764698"
+          },
+          "expected": {
+            "sha256": "c0153f36f397397e12f6b0143db5282ec069a8e9fd8f6671bb70ec1cd1bf6e2b",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-15.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-16.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 11,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764705"
+          },
+          "expected": {
+            "sha256": "ce6e12575c401ffd17cebbfe0cfe6fccf9fab2c389c36729a9ec8c8124ea8b20",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-16.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-17.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 11,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764729"
+          },
+          "expected": {
+            "sha256": "b005353a0ac3911ebccb9986a8c041f35c4db77489f0d1b98fea6fb93e01713e",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-17.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-18.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 11,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764733"
+          },
+          "expected": {
+            "sha256": "15e2f573b8d36c4afb940316cb6937692562a353696aed1e874de201ea585f38",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-18.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-19.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 11,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764737"
+          },
+          "expected": {
+            "sha256": "57282ceefaeb350a61c78022e83c29b05e987d195c506baa767208939d47b48e",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-19.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-20.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 11,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764746"
+          },
+          "expected": {
+            "sha256": "a533cfb96b6dd93578f64a31f33fca58a5108134ba6c19d3fb0cf818f8f34301",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-20.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-21.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 11,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764753"
+          },
+          "expected": {
+            "sha256": "b5cf7d36634eabb3146389363a27797d17cbc425ddb281b9f5ab69e52b5cfa6a",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-21.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-22.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 11,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764756"
+          },
+          "expected": {
+            "sha256": "5b1df3eb80fa7f7a1ca85deeedd30d22c710899ca4aca6cd0e959b6a3791d02c",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-22.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-23.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 11,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764759"
+          },
+          "expected": {
+            "sha256": "25784d88df4b74757351a5b199426c5d58bc91c84ac57ee28c25589bb307ac0b",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-23.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-24.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 11,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764762"
+          },
+          "expected": {
+            "sha256": "04886eb7d7964aeb2fa13bc765ed3bb5f298ac45f59068a2e5b2acef4643259b",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-24.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-25.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 11,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764765"
+          },
+          "expected": {
+            "sha256": "440601d96a574248be69a835caf1af82d043fe817e70318b6c1da56159f74455",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-25.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-26.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 11,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764768"
+          },
+          "expected": {
+            "sha256": "eb4c68abcd32e203f80bed18f55ca4aef0d539795fa7e78e397ad5bf418425dc",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-26.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-27.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 11,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764776"
+          },
+          "expected": {
+            "sha256": "bbdd45f5f45a372c3e7499a2d7feb2e1f526b0fca4a2e1948ae042bbfda9a559",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-27.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-28.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 11,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764784"
+          },
+          "expected": {
+            "sha256": "e7ff07056645c9151a46a19143f147b5435379dd81f8c3b6cd407e80fb68ec27",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-28.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-29.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 11,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764799"
+          },
+          "expected": {
+            "sha256": "9a455a455993d9165c062dcc18bb805ca228238f3532e8305ec91c7c588d2fc6",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-29.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-30.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 11,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764807"
+          },
+          "expected": {
+            "sha256": "2ecaf1853f79030ef4ee2125c65158f3d06dab942a73bdd825349917bd379519",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-30.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-31.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 11,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764812"
+          },
+          "expected": {
+            "sha256": "23298e456ff717fdb3bdfeed3f57cb9ec08d60c55a0a933269e6d7c46ab06949",
+            "mode": 493,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-31.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/SKILL.md",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 55,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764816"
+          },
+          "expected": {
+            "sha256": "f8fc3cdf64d8db985068fcb655e9c016cbe5b05529723f7db6e1f95c49093994",
+            "mode": 420,
+            "sizeBytes": 55
+          },
+          "canonicalDestination": ".agents/skills/demo/SKILL.md"
+        }
+      ]
+    },
+    {
+      "status": "operation",
+      "operationId": "db3c5a076deee6f9d377074283fad766",
+      "planDigest": "57eb8efed38d2d1b2439820bcfcc4cf4aab1b09ebd060ae43e87cb3d38d07250",
+      "phase": "partial_failure",
+      "code": "write_failed",
+      "targetMutated": true,
+      "requiresPreview": true,
+      "durability": "not_confirmed",
+      "ledger": [
+        {
+          "destination": ".agents",
+          "kind": "directory",
+          "state": "created_verified",
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764936"
+          }
+        },
+        {
+          "destination": ".agents/skills",
+          "kind": "directory",
+          "state": "created_verified",
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764944"
+          }
+        },
+        {
+          "destination": ".agents/skills/demo",
+          "kind": "directory",
+          "state": "created_verified",
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764947"
+          }
+        },
+        {
+          "destination": ".agents/skills/demo/file-00.txt",
+          "kind": "file",
+          "state": "created_verified",
+          "bytesWritten": 10,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764962"
+          },
+          "expected": {
+            "sha256": "b1ec8ed9c34d6968be18c5454f5f79d6c335b5c0c0219d0c6b3fc390eb1729ff",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-00.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-01.txt",
+          "kind": "file",
+          "state": "created_incomplete",
+          "bytesWritten": 1,
+          "identity": {
+            "dev": "16777230",
+            "ino": "122764973"
+          },
+          "expected": {
+            "sha256": "b4e06242b4ebe288438af40a36f6669935e871c34957867aa16bfe64855ce298",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-01.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-02.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "4114ce9773fd441a58c1e16b3fa2a54f3b9aac6525ea08832b290196dce278a1",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-02.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-03.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "d19eeac50c671cfe3a4c2cf8abe818cf6e552206d00c6345b5451bfbc66443c1",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-03.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-04.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "695f168e30157ec794ec7af6da257290fe22eff923859073d1a6404deca5b8be",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-04.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-05.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "a12ffeeb1998c491bdecf3f2e37ccb38d68adfc250ea3252e8b791620106b87f",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-05.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-06.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "6f08e0db9619a42a1e8968fc3fe4d328531fe0850b0b6dcebe5f4217adeb3e91",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-06.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-07.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "63311121522c967a0c1c121c955900c95bf9e410790e66a2b000dc0034dc9126",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-07.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-08.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "df84dd99d98b24b551eed891c2f075d1e9635b29759d056d2960720318889db8",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-08.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-09.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "c43ee37048e9bfa2bcbcc925ece36ca947b6e41fe2274dc29b705ece601ef4f4",
+            "mode": 420,
+            "sizeBytes": 10
+          },
+          "canonicalDestination": ".agents/skills/demo/file-09.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-10.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "595049da01eda63aec700987405f8101af5731e2d815946b3c26c76bf630dafd",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-10.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-11.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "ad752309b90da854c09234266b5752b8b25c65c95c0fd87a34e761ae5d964fd8",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-11.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-12.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "d23b0e761276956a4edfbf92347a7f9c7402be345a41e1297a9d1f4b0c3a0ccd",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-12.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-13.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "7969e5cfd6002fca3f800c327854c44c9df5e04cbe3a4f94f73ce6598b9db695",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-13.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-14.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "fdbf591a13fdf56be646682f0570bf74e84c1384383d9d8e3a2b3f1e7523d3a0",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-14.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-15.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "c0153f36f397397e12f6b0143db5282ec069a8e9fd8f6671bb70ec1cd1bf6e2b",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-15.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-16.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "ce6e12575c401ffd17cebbfe0cfe6fccf9fab2c389c36729a9ec8c8124ea8b20",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-16.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-17.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "b005353a0ac3911ebccb9986a8c041f35c4db77489f0d1b98fea6fb93e01713e",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-17.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-18.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "15e2f573b8d36c4afb940316cb6937692562a353696aed1e874de201ea585f38",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-18.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-19.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "57282ceefaeb350a61c78022e83c29b05e987d195c506baa767208939d47b48e",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-19.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-20.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "a533cfb96b6dd93578f64a31f33fca58a5108134ba6c19d3fb0cf818f8f34301",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-20.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-21.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "b5cf7d36634eabb3146389363a27797d17cbc425ddb281b9f5ab69e52b5cfa6a",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-21.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-22.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "5b1df3eb80fa7f7a1ca85deeedd30d22c710899ca4aca6cd0e959b6a3791d02c",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-22.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-23.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "25784d88df4b74757351a5b199426c5d58bc91c84ac57ee28c25589bb307ac0b",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-23.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-24.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "04886eb7d7964aeb2fa13bc765ed3bb5f298ac45f59068a2e5b2acef4643259b",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-24.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-25.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "440601d96a574248be69a835caf1af82d043fe817e70318b6c1da56159f74455",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-25.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-26.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "eb4c68abcd32e203f80bed18f55ca4aef0d539795fa7e78e397ad5bf418425dc",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-26.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-27.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "bbdd45f5f45a372c3e7499a2d7feb2e1f526b0fca4a2e1948ae042bbfda9a559",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-27.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-28.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "e7ff07056645c9151a46a19143f147b5435379dd81f8c3b6cd407e80fb68ec27",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-28.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-29.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "9a455a455993d9165c062dcc18bb805ca228238f3532e8305ec91c7c588d2fc6",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-29.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-30.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "2ecaf1853f79030ef4ee2125c65158f3d06dab942a73bdd825349917bd379519",
+            "mode": 420,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-30.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/file-31.txt",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "23298e456ff717fdb3bdfeed3f57cb9ec08d60c55a0a933269e6d7c46ab06949",
+            "mode": 493,
+            "sizeBytes": 11
+          },
+          "canonicalDestination": ".agents/skills/demo/file-31.txt"
+        },
+        {
+          "destination": ".agents/skills/demo/SKILL.md",
+          "kind": "file",
+          "state": "not_attempted",
+          "bytesWritten": 0,
+          "expected": {
+            "sha256": "f8fc3cdf64d8db985068fcb655e9c016cbe5b05529723f7db6e1f95c49093994",
+            "mode": 420,
+            "sizeBytes": 55
+          },
+          "canonicalDestination": ".agents/skills/demo/SKILL.md"
+        }
+      ]
+    }
+  ]
+}

@@ -31,7 +31,7 @@ const policySchema = z.strictObject({
   serializationVersion: z.literal(receiptPolicy.serializationVersion), observationVersion: z.literal(receiptPolicy.observationVersion),
   ttlMs: z.literal(receiptLimits.ttlMs), maxReceipts: z.literal(receiptLimits.receipts),
   maxSourceBytes: z.literal(receiptLimits.sourceBytes), maxRetainedSourceBytes: z.literal(receiptLimits.retainedSourceBytes),
-  callerBinding: z.literal(receiptPolicy.callerBinding), writeCapability: z.literal("unavailable_m4_2"),
+  callerBinding: z.literal(receiptPolicy.callerBinding), writeCapability: z.enum(["unavailable_m4_2", "fixture_m4_5"]),
   previewBudgets: z.strictObject({
     files: z.number().int().nonnegative().max(2048), pathBytes: z.number().int().nonnegative().max(1024),
     pathDepth: z.number().int().nonnegative().max(32), fileBytes: z.number().int().nonnegative().max(1024 * 1024),
@@ -81,9 +81,13 @@ export const providerPreviewV2InputSchema = z.strictObject({ intent: selectionIn
 export const providerPreviewV2ResultSchema = z.discriminatedUnion("status", [
   z.strictObject({
     status: z.literal("ready"), schemaVersion: z.literal(2), manifest: previewManifestSchema, receipt: previewReceiptSchema,
-    applyEligibility: z.strictObject({ status: z.literal("ineligible"), reasons: z.array(z.enum([
-      "write_capability_unavailable", "plan_conflict", "plan_blocked", "observations_unverified",
-    ])).min(1).max(4) }),
+    applyEligibility: z.discriminatedUnion("status", [
+      z.strictObject({ status: z.literal("eligible") }),
+      z.strictObject({ status: z.literal("no_changes") }),
+      z.strictObject({ status: z.literal("ineligible"), reasons: z.array(z.enum([
+        "write_capability_unavailable", "plan_conflict", "plan_blocked", "observations_unverified",
+      ])).min(1).max(4) }),
+    ]),
     plannedEffect: z.enum(["create_only", "no_changes", "not_applicable"]),
   }),
   providerPreviewResultSchema.options[1],

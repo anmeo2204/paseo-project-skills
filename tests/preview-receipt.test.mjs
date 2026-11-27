@@ -290,3 +290,24 @@ test('v2 and M3 endpoints share busy/dispose and never expose writer/status meth
   const closing = h.dispose(); wait.resolve(snapshot()); assert.equal((await running).code, 'cancelled'); await closing;
   assert.equal((await f.run(h)).code, 'cancelled');
 });
+
+test('fixture eligibility requires an allowed target and a wholly applicable create-only plan', async t => {
+  const f = await fixture(t);
+  let targetAllowed = false;
+  const receipts = new PreviewReceiptStore({ fixtureApply: target => targetAllowed && target === f.root });
+  const h = f.handler({ receiptStore: receipts }, undefined, { load: async () => snapshot([skill('demo', [])]) });
+  const preview = async () => ready(await f.run(h));
+  const denied = await preview();
+  assert.deepEqual(denied.applyEligibility, { status: 'ineligible', reasons: ['write_capability_unavailable'] });
+  targetAllowed = true;
+  const eligible = await preview();
+  assert.equal(eligible.manifest.policy.writeCapability, 'fixture_m4_5');
+  assert.equal(eligible.receipt.planDigest, manifestDigest(eligible.manifest));
+  assert.deepEqual(eligible.applyEligibility, { status: 'eligible' });
+  const dest = '.agents/skills/demo/SKILL.md';
+  await f.put(dest, 'foreign');
+  const conflict = await preview();
+  assert.deepEqual(conflict.applyEligibility, { status: 'ineligible', reasons: ['plan_conflict'] });
+  await f.put(dest, skill('demo', []).entrypoint.bytes);
+  assert.deepEqual((await preview()).applyEligibility, { status: 'no_changes' });
+});

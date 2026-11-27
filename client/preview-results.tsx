@@ -3,6 +3,7 @@ import { ScrollView } from "@getpaseo/plugin/client/ui";
 import { useState } from "react";
 import { Text, View } from "react-native";
 import type { DerivedPreviewEntry, PreviewEntry, ProviderPreviewResult, ProviderPreviewStatus } from "../shared/preview";
+import { PagedEffects } from "./paged-effects";
 import { Detail, Disclosure, Section } from "./controls";
 
 type Ready = Extract<ProviderPreviewResult, { status: "ready" }>;
@@ -29,7 +30,7 @@ const diagnosticMessages = {
   inventory_unverified: "Some skill paths were unsafe or changed; their inventory could not be verified.",
 };
 
-export function PreviewResults({ theme, result }: Themed & { result: Ready }) {
+export function PreviewResults({ theme, result, paged = false }: Themed & { result: Ready; paged?: boolean }) {
   const files = [...result.entries, ...result.derivedEntries];
   const noop = files.length > 0 && files.every((entry) => entry.status === "unchanged");
   const limited = result.providers.some((provider) => provider.status === "limited" || provider.skills.some((skill) => skill.status === "deferred"));
@@ -40,9 +41,11 @@ export function PreviewResults({ theme, result }: Themed & { result: Ready }) {
     {noop && limited && <Detail theme={theme}>Some provider packages are limited or deferred; review compatibility below.</Detail>}
     <Detail theme={theme}>Create: {files.filter((e) => e.status === "create").length} · Unchanged: {files.filter((e) => e.status === "unchanged").length} · Conflict: {files.filter((e) => e.status === "conflict").length} · Blocked: {files.filter((e) => e.status === "blocked").length}</Detail>
     <Text accessibilityRole="header" style={{ color: theme.colors.foreground, fontWeight: "600" }}>Canonical files ({result.entries.length})</Text>
-    {result.entries.map((entry) => <FileRow key={entry.destination} theme={theme} entry={entry} />)}
+    {paged ? <PagedEffects theme={theme} label="canonical files" items={result.entries} render={entry => <FileRow key={entry.destination} theme={theme} entry={entry} />} /> :
+      result.entries.map((entry) => <FileRow key={entry.destination} theme={theme} entry={entry} />)}
     <Text accessibilityRole="header" style={{ color: theme.colors.foreground, fontWeight: "600" }}>Kiro derived files ({result.derivedEntries.length})</Text>
-    {result.derivedEntries.map((entry) => <FileRow key={entry.destination} theme={theme} entry={entry} />)}
+    {paged ? <PagedEffects theme={theme} label="derived files" items={result.derivedEntries} render={entry => <FileRow key={entry.destination} theme={theme} entry={entry} />} /> :
+      result.derivedEntries.map((entry) => <FileRow key={entry.destination} theme={theme} entry={entry} />)}
     {result.providers.length === 0 && <Detail theme={theme}>Canonical preview only. No target providers selected.</Detail>}
     {result.providers.map((provider) => <ProviderRow key={provider.providerId} theme={theme} provider={provider} />)}
     {result.diagnostics.length > 0 && <Text accessibilityRole="header" style={{ color: theme.colors.foreground, fontWeight: "600" }}>Preview diagnostics</Text>}

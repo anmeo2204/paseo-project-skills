@@ -1,0 +1,15 @@
+{
+  "desktopExited": true,
+  "status": {
+    "home": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m45-6XD6Wl/daemon",
+    "pid": null,
+    "startedAt": null,
+    "listen": null,
+    "hostname": null,
+    "configuredListen": "127.0.0.1:60530",
+    "localDaemon": "stopped",
+    "desktopManaged": false,
+    "logPath": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m45-6XD6Wl/daemon/daemon.log",
+    "connectedDaemon": "not_probed"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "baseline": "ddbb04546af5d33159d07c8c35c4c2e00d90c6b0",
+  "branch": "main",
+  "host": [
+    "ProductName:\t\tmacOS",
+    "ProductVersion:\t\t27.2.1",
+    "BuildVersion:\t\t26B131"
+  ],
+  "runnerNode": "v22.23.4",
+  "indexUnchanged": true,
+  "productRegistrationAndNativeWriterUnchanged": true,
+  "sourceSha256": {
+    "M4.5-completion-report.mb": "0ef8c7dc2af1a35dfaddc23976f385a3a884d3c180cdcdddf65ab89e6995e4e3",
+    "client/apply-tracker.ts": "75e0c326e871178241ac78b94567094b80a19ee022116546982c103ffbf83223",
+    "client/fixture-approval.tsx": "138769b2c0c9c39c36ebaeb1b8d17e64d63483fb9ab375ec49638db563cbe2f2",
+    "client/foundation-screen.tsx": "1cf958f6a2d04cab9862c227d0d28a1d764a2ac210302a03ce85d2aff95fd59e",
+    "client/paged-effects.tsx": "74dfd65d60c96a47024d6a5d6e81434c6f17daafa4c383b3997924b461cea3e1",
+    "client/preview-presentation.ts": "1232edf4c4b33fc3b3c9e4ea2af08dab036265aea2e35ebe28508e48196a2fdb",
+    "client/preview-results.tsx": "454d5362199333121fb6c7847be26b7b7ba76b2e0e8ea2a03c4458be7445f0c9",
+    "client/preview-run.tsx": "2528ea9cac71017fdf217731b71e47566ebb0947aced1cd39a139fd6b7c4f903",
+    "scripts/m45-desktop-acceptance.mjs": "27cba3adcd49589cbfa39d8bcaad4b4fd02e580e4489caadbf382a1280873454",
+    "server/canonical-preview.ts": "21ea76c53bf03358b5b3d5b1eed4095d2ffbf1993019895217aa6d88b5832c47",
+    "server/fixture-apply.ts": "5acb2793eb3d8825d7be4c1bc99ff8a250adbb8c2d0fd7ae7b5137541d017e8a",
+    "server/preview-receipts.ts": "ce4918f1883925151f193972fdd33fbae0c5579ac7bc642da90a7ca37b6a7658",
+    "shared/preview-receipt.ts": "bfa7f5be410e7986db260a9cd82fcd31c4dfeb5e6a9a87e8630c4f118d09226b",
+    "tests/preview-receipt.test.mjs": "59a2c164f41e76d350fb3aa0e58d8ca16a767928bac29d3365d65fc72e4c31a4",
+    "tests/preview-ui.test.mjs": "724413545b435bec13a17741a52a87f129dc9695cee0f8a6d58efae50a3b3c96"
+  },
+  "evidenceSha256": {
+    "daemon-regression-cleanup.json": "a92678c4e288408ff24c9095cb2ff29890d68f67251cd6340fa8146b04a6289f",
+    "daemon-regression.json": "d68049a8a87e7d57acfd1b0856d59729d5465806e6c8f6f6f85a85240b5d86ba",
+    "desktop-acceptance.json": "8058992cfd833e4647e549ef812d0abcc7eac0f4a6f93acbc2649e60a511fe28",
+    "desktop-cleanup.json": "cdbd7a30b53ba09f1a18b1c414b69a0f3bf3aec0329452f6b6cc5e7bb4c78bd6",
+    "tests.log": "b3862a112ea185aebe32237c6bf2f02c04ab319a27f0b435f90592b86bbf0689"
+  }
+}
