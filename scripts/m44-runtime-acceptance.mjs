@@ -30,6 +30,7 @@ const sha = 'a'.repeat(40);
 const cases = {};
 const sdkIds = ['m44-fixture-a', 'm44-fixture-b'];
 const operationId = () => randomBytes(16).toString('hex');
+const operationIdForRetention = n => n.toString(16).padStart(32,'0');
 const faultIds = Object.fromEntries(['hold','late','journal','crash','reply','partial'].map(key => [key, operationId()]));
 await fs.mkdir(home, { mode: 0o700 });
 await fs.mkdir(join(home, 'runtime'), { mode: 0o700 });
@@ -379,6 +380,33 @@ try {
   await fs.rm(extraction.directory,{recursive:true});
   assert.equal((await createPaseoApi(two).agents.list()).entries.length,0);
   cases.restart = { restarted, crashReply, writing, recovered, before:crashBefore, after:afterCreate, terminalRetry:terminal, lockReusedAfterRestart:true, privateOrphanRemovedByHarness:true };
+  if (process.argv.includes('--retention')) {
+    const journalDir=join(home,'runtime','project-skills-m44');
+    const recordPath=id=>join(journalDir,id+'.json');
+    const all=()=>fs.readdir(journalDir).then(rows=>rows.filter(name=>name.endsWith('.json')));
+    const template=JSON.parse(await fs.readFile(recordPath(crashInput.operationId),'utf8'));
+    for(let i=(await all()).length;i<64;i++){
+      const operationId=operationIdForRetention(i);
+      const row={...template,receiptHash:operationId.padStart(64,'0'), operation:{...template.operation,operationId}};
+      await fs.writeFile(recordPath(operationId),JSON.stringify(row),{mode:0o600,flag:'wx'});
+    }
+    const target=await fixture('retention-target');
+    const input=bound(await preview(two,a,target));
+    const before=await tree(target);
+    const full=await apply(two,a,input);
+    reject(full,'journal_full');
+    assert.deepEqual(await tree(target),before);
+    assert.deepEqual(await apply(two,a,replyInput),terminal);
+    const expiring=JSON.parse(await fs.readFile(recordPath(replyInput.operationId),'utf8'));
+    expiring.settledAt=Date.now()-86400001;
+    await fs.writeFile(recordPath(replyInput.operationId),JSON.stringify(expiring));
+    reject(await status(two,a,replyInput.operationId),'outcome_unknown');
+    const admitted=await apply(two,a,input);phase(admitted,'completed');
+    assert.equal((await all()).length,64);
+    await assert.rejects(fs.lstat(recordPath(replyInput.operationId)),{code:'ENOENT'});
+    assert.deepEqual(await status(two,a,crashInput.operationId),recovered);
+    cases.retention={full,admitted,oldTerminalPruned:true,recoveryKept:true,records:64,before,after:await tree(target)};
+  }
   const logs = await fs.readFile(join(base,'console.log'),'utf8');
   assert.ok(logs.includes('"daemonVersion":"0.17.5"'));
   await fs.writeFile(join(base,'result.json'),JSON.stringify({ runtime, peer, sdkVersions, cases },null,2));

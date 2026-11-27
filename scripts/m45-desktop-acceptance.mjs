@@ -25,6 +25,14 @@ console.log('M4.5 Desktop fixture evidence: ' + base);
 const home = join(base,'daemon'), desktopProfile = join(base,'desktop'), plugin = join(base,'plugin');
 const coordinator = join(home,'runtime/project-skills-m44');
 const id = 'm45-approval-fixture';
+const integrated = process.argv.includes('--integrated');
+const product = join(base,'product');
+if (integrated) {
+  await fs.mkdir(product,{mode:0o700});
+  for (const directory of ['client','server','shared']) await fs.cp(join(repo,directory),join(product,directory),{recursive:true});
+  for (const name of ['paseo-plugin.json','index.client.tsx','index.server.ts']) await fs.copyFile(join(repo,name),join(product,name));
+  await fs.symlink(join(repo,'node_modules'),join(product,'node_modules'));
+}
 const sha = 'a'.repeat(40);
 for (const path of [home,join(home,'runtime'),coordinator,desktopProfile,plugin]) await fs.mkdir(path,{mode:0o700});
 for (const directory of ['client','server','shared']) await fs.cp(join(repo,directory),join(plugin,directory),{recursive:true});
@@ -36,7 +44,7 @@ import { FoundationScreen } from './client/foundation-screen';
 import { FixtureApprovalScope } from './client/fixture-approval';
 import { createOperationTracker } from './client/apply-tracker';
 export default function contribute(client) {
-  const tracker = createOperationTracker();
+  const tracker = createOperationTracker({slot:${JSON.stringify(id)}, storage:()=>globalThis.localStorage});
   const removeScreen = client.addScreen({id:'foundation',title:'Approval Fixture',Component:props=>
     <FixtureApprovalScope slot=${JSON.stringify(id)} tracker={tracker}><FoundationScreen {...props}/></FixtureApprovalScope>});
   const removeSidebar = client.addSidebarHeaderItem({id:'foundation',title:'Approval Fixture',Component:({currentScreen,openScreen})=>
@@ -45,7 +53,7 @@ export default function contribute(client) {
 }`);
 await fs.writeFile(join(plugin,'index.server.ts'),`
 import { createHash } from 'node:crypto';
-import { existsSync } from 'node:fs';
+import { existsSync,appendFileSync,writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { catalogSettings,catalogSource } from './shared/catalog-settings';
 import { catalogLoadRpc,foundationStatusRpc,recommendationEvaluateSubscription,providerPreviewV2Rpc,validateDirectoryRpc } from './shared/rpc';
@@ -58,6 +66,15 @@ import { ProjectScanner } from './server/project-scanner';
 import { loadCatalogForHost } from './server/catalog-rpc';
 import { validateDirectory } from './server/validate-directory';
 const base=${JSON.stringify(base)};
+const audit=(method,input)=>appendFileSync(join(base,'rpc-audit.ndjson'),JSON.stringify({method,operationId:input.operationId,pid:process.pid})+String.fromCharCode(10),{mode:0o600});
+async function gate(name, data) {
+  writeFileSync(join(base,name+'.ready'),JSON.stringify(data),{mode:0o600});
+  for(let i=0;i<400;i++) {
+    if(existsSync(join(base,name+'.release')))return;
+    await new Promise(resolve=>setTimeout(resolve,25));
+  }
+  throw Error('fixture timeout '+name);
+}
 const descriptor = (path,text,mode='100644') => {
   const bytes=Buffer.from(text);
   return {path,bytes,mode,sizeBytes:bytes.length,blobSha:createHash('sha1').update('blob '+bytes.length+'\\0').update(bytes).digest('hex')};
@@ -72,23 +89,45 @@ export default function contribute(server) {
   const receipts=new PreviewReceiptStore({fixtureApply: target=>isFixtureApplyTarget(base,target)});
   const preview=createCanonicalPreviewHandler(settings,catalog,{receiptStore:receipts});
   const scanner=new ProjectScanner();
+  let extraction;
   const apply=createFixtureApply({fixtureBase:base,installation:${JSON.stringify(id)},receipts,settings,catalog,
     environment:{paseoVersion:'0.17.5',sdkVersion:'0.17.4'},
     test:{
       controls:()=>{
         const destination='.agents/skills/demo/file-01.txt';
         if(existsSync(join(base,'inject-partial'))) return {barriers:[],faults:[{point:'write',destination,error:'ENOSPC',afterBytes:1}]};
+        if(existsSync(join(base,'inject-late'))) return {barriers:[{point:'after_create_check',destination:'.agents/skills/demo/file-00.txt'}],faults:[]};
+        if(existsSync(join(base,'inject-switch'))) return {barriers:[{point:'after_create',destination}],faults:[]};
+        if(existsSync(join(base,'inject-restart'))) return {barriers:[{point:'after_create',destination}],faults:[]};
         if(existsSync(join(base,'inject-recovery'))) return {barriers:[{point:'after_create',destination}],faults:[]};
       },
-      onEvent:event=>{if(event.event==='barrier') process.kill(event.pid,'SIGKILL');},
+      onExtracted:async directory=>{const stat=await import('node:fs/promises').then(fs=>fs.lstat(directory,{bigint:true}));extraction={directory,dev:String(stat.dev),ino:String(stat.ino)};},
+      onEvent:async event=>{
+        if(event.event!=='barrier')return;
+        if(existsSync(join(base,'inject-late')))return gate('late-boundary',{point:event.point});
+        if(existsSync(join(base,'inject-switch')))return gate('switch-boundary',{helper:event.pid,parent:process.pid,point:event.point});
+        if(existsSync(join(base,'inject-restart')))return gate('restart-boundary',{helper:event.pid,parent:process.pid,point:event.point,extraction});
+        process.kill(event.pid,'SIGKILL');
+      },
+      afterTerminal:async operation=>{
+        if(existsSync(join(base,'inject-lost'))) await gate('lost-terminal',{operationId:operation.operationId});
+      },
     }});
   server.handle(foundationStatusRpc,()=>({status:'ready'}));
   server.handle(validateDirectoryRpc,validateDirectory);
   server.handle(catalogLoadRpc,()=>loadCatalogForHost(settings,catalog));
   server.handle(recommendationEvaluateSubscription,createRecommendationHandler(settings,catalog,scanner));
   server.handle(providerPreviewV2Rpc,preview.handleProvidersV2);
-  server.handle(applyCreateRpc,apply.create);
-  server.handle(applyStatusRpc,apply.status);
+  server.handle(applyCreateRpc,(input,ctx)=>{audit('apply',input);return apply.create(input,ctx);});
+  server.handle(applyStatusRpc,async(input,ctx)=>{
+    audit('status',input);
+    const result=await apply.status(input,ctx);
+    if(existsSync(join(base,'hold-status-'+input.operationId))){
+      await gate('status-'+input.operationId,{phase:result.phase??result.code});
+      audit('held_status_returned',input);
+    }
+    return result;
+  });
   return async()=>{await apply.dispose(); await preview.dispose(); await scanner.dispose();};
 }`);
 
@@ -103,8 +142,10 @@ const port = await openPort();
 const debug = await openPort();
 await fs.writeFile(join(home,'config.json'),JSON.stringify({version:1,pluginsEnabled:true,
   daemon:{listen:'127.0.0.1:'+port,relay:{enabled:false}},features:{voiceMode:{enabled:false}},
-  plugins:{[id]:{source:'directory',path:plugin,enabled:true}}}));
+  plugins:{[id]:{source:'directory',path:plugin,enabled:true},
+    ...(integrated && {'paseo-project-skills':{source:'directory',path:product,enabled:true}})}}));
 const { createHostClient } = await import(pathToFileURL(join(repo,'node_modules/@getpaseo/client/dist/node/index.js')));
+const { createPaseoApi } = await import(pathToFileURL(join(repo,'node_modules/@getpaseo/client/dist/index.js')));
 const { settingsRpc } = await import(pathToFileURL(join(repo,'node_modules/@getpaseo/plugin/dist/index.js')));
 const sleep = ms => new Promise(resolve=>setTimeout(resolve,ms));
 async function until(fn,label,ms=25000) {
@@ -140,13 +181,14 @@ const desktop=spawn(executable,['--remote-debugging-port='+debug],{
   cwd:base,env:{...process.env,PASEO_HOME:home,PASEO_ELECTRON_USER_DATA_DIR:desktopProfile},stdio:['ignore',log.fd,log.fd],
 });
 await log.close();
-let client, ws, cdp, evaluate;
+let client, ws, cdp, evaluate, peerProcess, peerHome;
+
 try {
-  const target=await until(async()=>{
+  const debugTarget=await until(async()=>{
     try {const list=await (await fetch('http://127.0.0.1:'+debug+'/json/list')).json(); return list.find(item=>item.type==='page');}
     catch { return undefined; }
   },'temporary Desktop DevTools');
-  ws=new WebSocket(target.webSocketDebuggerUrl);
+  ws=new WebSocket(debugTarget.webSocketDebuggerUrl);
   await new Promise((resolve,reject)=>{ws.addEventListener('open',resolve,{once:true});ws.addEventListener('error',reject,{once:true});});
   let sequence=0;
   const pending=new Map();
@@ -172,8 +214,8 @@ try {
     document.addEventListener(type,e=>window.m45Keys.push({type,key:e.key,target:e.target?.textContent?.trim()?.slice(0,100),tag:e.target?.tagName}),true);})()`);
   const text=()=>evaluate('document.body.innerText');
   const waitText=async needle=>until(async()=>{const body=await text();return body.includes(needle) && body;},needle);
-  const buttons=`[...document.querySelectorAll('button,[role=button],[role=checkbox]')]`;
-  const find=(label)=>`${buttons}.find(n=>n.getAttribute('aria-label')===${JSON.stringify(label)}||n.textContent.trim()===${JSON.stringify(label)})`;
+  const buttons=`[...document.querySelectorAll('button,[role=button],[role=checkbox],[role=menuitem],[role=option]')]`;
+  const find=(label)=>`${buttons}.filter(n=>n.getClientRects().length&&!n.closest('[aria-hidden=true]')).find(n=>n.getAttribute('aria-label')===${JSON.stringify(label)}||n.textContent.trim()===${JSON.stringify(label)})`;
   const click=async (label,{double=false}={})=>assert.equal(await evaluate(`(()=>{
     const n=${find(label)};if(!n)return 'missing';if(n.disabled||n.getAttribute('aria-disabled')==='true')return 'disabled';
     n.scrollIntoView({block:'center'});n.click();${double?'n.click();':''}return 'clicked';
@@ -187,12 +229,20 @@ try {
   await until(async()=>{
     try {
       const rows=JSON.parse((await exec(cli,['--home',home,'plugin','ls','--json'],{timeout:2000})).stdout);
-      return rows.some(row=>row.id===id&&row.status==='running');
+      return rows.some(row=>row.id===id&&row.status==='running') &&
+        (!integrated || rows.some(row=>row.id==='paseo-project-skills'&&row.status==='running'));
     } catch { return false; }
   },'Desktop-managed fixture daemon');
   client=createHostClient('127.0.0.1:'+port,{clientId:'m45-desktop-driver',clientType:'cli',reconnect:{enabled:false},
     localCredential:async()=>(await fs.readFile(join(home,'local-credential'),'utf8')).trim()});
   await client.connect();
+  const endpoint = '127.0.0.1:'+port;
+  const connect = async () => {
+    const next=createHostClient(endpoint,{clientId:'m46-reconnect',clientType:'cli',reconnect:{enabled:false},
+      localCredential:async()=>(await fs.readFile(join(home,'local-credential'),'utf8')).trim()});
+    await next.connect();
+    return next;
+  };
   const settings=settingsRpc('catalog');
   const initial=await client.invokePluginRpc(id,settings.read.name,{});
   await client.invokePluginRpc(id,settings.write.name,{revision:initial.revision,values:{catalogRef:sha}});
@@ -202,11 +252,18 @@ try {
   await waitText('Target Project');
 
   const select=async path=>{
-    await evaluate(`(()=>{const n=[...document.querySelectorAll('input')].find(n=>n.getAttribute('aria-label')==='Absolute path on the host');
-      if(!n)throw Error('missing target field');Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,'value').set.call(n,${JSON.stringify(path)});
-      n.dispatchEvent(new Event('input',{bubbles:true}));n.dispatchEvent(new Event('change',{bubbles:true}));})()`);
-    await click('Use directory');
-    await waitText('Target directory: '+path);
+    const input="[...document.querySelectorAll('input')].filter(n=>n.getClientRects().length&&!n.closest('[aria-hidden=true]')).find(n=>n.getAttribute('aria-label')==='Absolute path on the host')";
+    await cdp('Page.bringToFront');
+    await cdp('Emulation.setFocusEmulationEnabled',{enabled:true});
+    let selected=false;
+    for(let i=0;i<3&&!selected;i++){
+      await until(async()=>await evaluate(`(()=>{const n=${input};if(!n)return false;n.scrollIntoView({block:'center'});n.focus();n.select();return document.activeElement===n;})()`),'focus target input',4000);
+      await cdp('Input.insertText',{text:path});
+      await until(async()=>await evaluate(`(${input})?.value===${JSON.stringify(path)}&&${find('Use directory')}?.getAttribute('aria-disabled')!=='true'`),'target input state',3000);
+      await click('Use directory');
+      try {await until(async()=> (await text()).includes('Target directory: '+path),'target validation',3500);selected=true;}
+      catch(error){if(i===2)throw error;}
+    }
     await click('Scan & Recommend');
     await waitText('Recommendation Results');
     if(!await evaluate(`Boolean(${find('Select demo')})`)) await click('Unknown (1)');
@@ -301,9 +358,231 @@ try {
   assert.ok(geometry.visible);assert.equal(geometry.width,520);
   assert.ok(geometry.scrollWidth<=geometry.containerWidth+1,JSON.stringify(geometry));
   await cdp('Emulation.clearDeviceMetricsOverride');
+  const integration = {};
+  if (integrated) {
+    await fs.unlink(join(base,'inject-recovery'));
+    async function approve(path, useKiro = false) {
+      await select(path);
+      if(useKiro) {
+        const label=await evaluate("[...document.querySelectorAll('[role=checkbox]')].map(n=>n.getAttribute('aria-label')).find(label=>label?.startsWith('Kiro, '))");
+        assert.ok(label);
+        await click(label);
+      }
+      await review();
+      await click('Review create-only approval');
+      await click('Confirm create-only');
+    }
+    const audit=async()=> (await fs.readFile(join(base,'rpc-audit.ndjson'),'utf8')).trim().split('\n').map(line=>JSON.parse(line));
+    const readGate=async name=>until(async()=>{
+      try {return JSON.parse(await fs.readFile(join(base,name+'.ready'),'utf8'));} catch {return null;}
+    },name);
+    const release=name=>fs.writeFile(join(base,name+'.release'),'');
+    const openFixture=async()=>{
+      await until(async()=>{try{return await evaluate(`Boolean(${find('Approval Fixture')})`);}catch{return false;}},'fixture sidebar after reload');
+      await click('Approval Fixture');
+      await waitText('Target Project');
+    };
+
+    const reloadFixture=async()=>{
+      const old=await evaluate('performance.timeOrigin');
+      await cdp('Page.reload');
+      await until(async()=>{try{return await evaluate('performance.timeOrigin')!==old;}catch{return false;}},'new renderer');
+      await openFixture();
+    };
+
+    const lateTarget=await target('late-no-clobber');
+    const foreign='.agents/skills/demo/file-00.txt';
+    await fs.mkdir(join(lateTarget,dirname(foreign)),{recursive:true,mode:0o755});
+    await fs.writeFile(join(base,'inject-late'),'');
+    await approve(lateTarget);
+    await readGate('late-boundary');
+    await fs.writeFile(join(lateTarget,foreign),'foreign at boundary',{mode:0o640});
+    const lateBefore=await snapshot(lateTarget);
+    await release('late-boundary');
+    const lateUi=await waitText('Failed before writing');
+    assert.ok(lateUi.includes('destination_exists'));
+    assert.deepEqual(await snapshot(lateTarget),lateBefore);
+    integration.late={before:lateBefore,after:await snapshot(lateTarget),ui:lateUi};
+    await fs.writeFile(join(base,'integration-checkpoints.json'),JSON.stringify(integration,null,2));
+    await fs.unlink(join(base,'inject-late'));
+
+    const repoTarget=await target('kiro-root');
+    await exec('git',['-C',repoTarget,'init','-b','main']);
+    const worktree=join(base,'kiro-worktree');
+    await exec('git',['-C',repoTarget,'worktree','add','--orphan','-b','fixture-linked',worktree]);
+    const nested=join(repoTarget,'nested');
+    await fs.mkdir(nested,{mode:0o755});
+    integration.kiro=[];
+    for (const [kind,path,derived] of [['root',repoTarget,true],['worktree',worktree,true],['nested',nested,false]]) {
+      const before=await snapshot(path);
+      const prior=(await audit()).filter(row=>row.method==='apply').length;
+      await approve(path,true);
+      const submitted=await until(async()=>{const rows=(await audit()).filter(row=>row.method==='apply');return rows.length>prior&&rows.at(-1);},'kiro submit');
+      const result=await until(async()=>{const status=await client.invokePluginRpc(id,'apply.status.v1',{operationId:submitted.operationId});return status.phase==='completed'&&status;},'kiro completed');
+      await until(async()=> (await text()).includes('Completed') && (await text()).includes(submitted.operationId),'Kiro Desktop result');
+      const after=await snapshot(path);
+      for(const [name,value] of Object.entries(before)) assert.deepEqual(after[name],value,name);
+      const files=result.ledger.filter(row=>row.kind==='file');
+      assert.equal(files.filter(row=>row.destination.startsWith('.kiro/')).length,derived?33:0);
+      for(const row of files) {
+        assert.equal(after[row.destination].sha256,row.expected.sha256);
+        assert.equal(after[row.destination].mode,row.expected.mode);
+        assert.equal(after[row.destination].ino,row.identity.ino);
+      }
+      integration.kiro.push({kind,before,after,result});
+    }
+
+    const lostTarget=await target('lost-reply-reload');
+    await fs.writeFile(join(base,'inject-lost'),'');
+    await approve(lostTarget);
+    const lost=await readGate('lost-terminal');
+    const stored=await evaluate(`JSON.parse(localStorage.getItem(${JSON.stringify('project-skills.apply-operations.v1:'+id)}))`);
+    assert.ok(stored.some(row=>row.operationId===lost.operationId));
+    assert.ok(stored.every(row=>Object.keys(row).sort().join(',')==='hostId,operationId,planDigest'));
+    const count=(await audit()).filter(row=>row.method==='apply').length;
+    await fs.writeFile(join(base,'hold-status-'+lost.operationId),'');
+    await reloadFixture();
+    const lostStatus=await readGate('status-'+lost.operationId);
+    assert.equal(lostStatus.phase,'completed');
+    await waitText('Outcome unknown');
+    await fs.unlink(join(base,'hold-status-'+lost.operationId));
+    // Drop the old renderer's held status request, then recover from a new connection.
+    await reloadFixture();
+    await until(async()=> (await audit()).filter(row=>row.method==='status'&&row.operationId===lost.operationId).length>=2,'fresh Status');
+    await release('status-'+lost.operationId);
+    await release('lost-terminal');
+    await until(async()=>!(await text()).includes('Outcome unknown'),'resolved Desktop outcomes');
+    assert.equal((await audit()).filter(row=>row.method==='apply').length,count);
+    integration.lost={operationId:lost.operationId,lookupOnly:true,stored,status:lostStatus,ui:await text()};
+    await fs.writeFile(join(base,'integration-checkpoints.json'),JSON.stringify(integration,null,2));
+    await fs.unlink(join(base,'inject-lost'));
+
+    const restartTarget=await target('daemon-restart');
+    const restartBefore=await snapshot(restartTarget);
+    await fs.writeFile(join(base,'inject-restart'),'');
+    await approve(restartTarget);
+    const boundary=await readGate('restart-boundary');
+    const submitted=(await audit()).filter(row=>row.method==='apply').at(-1);
+    const atCrash=await snapshot(restartTarget);
+    assert.equal(atCrash['.agents/skills/demo/file-01.txt'].size,0);
+    assert.deepEqual(atCrash['existing.txt'],restartBefore['existing.txt']);
+    process.kill(boundary.parent,'SIGKILL');
+    await client.close();
+    await exec(cli,['--home',home,'daemon','restart'],{timeout:20000});
+    client=await until(async()=>{try{return await connect();}catch{return null;}},'daemon reconnect');
+    await reloadFixture();
+    const recovered=await until(async()=>{
+      try {const result=await client.invokePluginRpc(id,'apply.status.v1',{operationId:submitted.operationId});return result.phase==='recovery_required'&&result;} catch {return null;}
+    },'restart recovery');
+    await until(async()=> (await audit()).some(row=>row.method==='status'&&row.operationId===submitted.operationId&&row.pid!==boundary.parent),'Desktop Status after restart');
+    assert.deepEqual(await snapshot(restartTarget),atCrash);
+    const orphan=await fs.lstat(boundary.extraction.directory,{bigint:true});
+    assert.equal(String(orphan.dev),boundary.extraction.dev);
+    assert.equal(String(orphan.ino),boundary.extraction.ino);
+    assert.equal(Number(orphan.mode&0o7777n),0o700);
+    assert.ok(boundary.extraction.directory.startsWith(await fs.realpath(tmpdir())+'/pps-helper-m43-'));
+    await fs.rm(boundary.extraction.directory,{recursive:true});
+    integration.restart={privateOrphanRemovedByHarness:true,before:restartBefore,atCrash,after:await snapshot(restartTarget),recovered,ui:await text(),boundary};
+    await fs.writeFile(join(base,'integration-checkpoints.json'),JSON.stringify(integration,null,2));
+
+    await fs.unlink(join(base,'inject-restart'));
+    peerHome=join(base,'peer-daemon');
+    const peerPort=await openPort();
+    const peerEndpoint='127.0.0.1:'+peerPort;
+    await fs.mkdir(peerHome,{mode:0o700});
+    await fs.mkdir(join(peerHome,'runtime/project-skills-m44'),{recursive:true,mode:0o700});
+    await fs.writeFile(join(peerHome,'config.json'),JSON.stringify({version:1,pluginsEnabled:true,
+      daemon:{listen:peerEndpoint,relay:{enabled:false}},features:{voiceMode:{enabled:false}},
+      plugins:{[id]:{source:'directory',path:plugin,enabled:true}}}));
+    const peerLog=await fs.open(join(base,'peer.log'),'w',0o600);
+    peerProcess=spawn(cli,['daemon','run','--home',peerHome],{cwd:base,stdio:['ignore',peerLog.fd,peerLog.fd]});
+    await peerLog.close();
+    const peer=await until(async()=>{
+      const next=createHostClient(peerEndpoint,{clientId:'m46-peer',clientType:'cli',reconnect:{enabled:false}});
+      try{await next.connect(); return next;}catch{await next.close();return null;}
+    },'peer daemon');
+    let peerHost;
+    try{peerHost=(await createPaseoApi(peer).hosts.list()).self.serverId;}finally{await peer.close();}
+    const origin=(await createPaseoApi(client).hosts.list()).self.serverId;
+    assert.notEqual(peerHost,origin);
+    const peerLabel='Fixture Peer M46';
+    const originLabel=await evaluate(`(()=>{
+      const key='@paseo:daemon-registry', rows=JSON.parse(localStorage.getItem(key));
+      const origin=rows.find(row=>row.serverId===${JSON.stringify(origin)});
+      if(!origin)throw Error('original host missing');
+      const time=new Date().toISOString(), endpoint=${JSON.stringify(peerEndpoint)}, connectionId='direct:'+endpoint;
+      rows.push({serverId:${JSON.stringify(peerHost)},label:${JSON.stringify(peerLabel)},appearance:{color:'none',badgeDisplay:null},
+        lifecycle:{},connections:[{id:connectionId,type:'directTcp',endpoint}],preferredConnectionId:connectionId,createdAt:time,updatedAt:time});
+      localStorage.setItem(key,JSON.stringify(rows));
+      return origin.label;
+    })()`);
+    async function switchHost(label) {
+      await until(async()=>await evaluate("Boolean(document.querySelector('[data-testid=plugin-host-filter-trigger]'))"),'plugin host picker');
+      await evaluate("document.querySelector('[data-testid=plugin-host-filter-trigger]').click()");
+      await waitText(label);
+      await click(label);
+      await waitText('Paseo host: '+label);
+    }
+    await reloadFixture();
+    if(!(await text()).includes('Paseo host: '+originLabel)) await switchHost(originLabel);
+    await waitText('Saved on this host: '+sha);
+    const switchTarget=await target('switch-host');
+    await fs.writeFile(join(base,'inject-switch'),'');
+    await approve(switchTarget);
+    await readGate('switch-boundary');
+    const switching=(await audit()).filter(row=>row.method==='apply').at(-1);
+    const switchOperation=switching.operationId;
+    const switchAtBoundary=await snapshot(switchTarget);
+    assert.equal(switchAtBoundary['.agents/skills/demo/file-01.txt'].size,0);
+    await fs.writeFile(join(base,'hold-status-'+switchOperation),'');
+    const rowText=op=>evaluate(`[...document.querySelectorAll('div')].find(n=>n.childElementCount===0&&n.textContent.trim()==='Operation '+${JSON.stringify(op)})?.parentElement?.innerText`);
+    assert.equal(await evaluate(`(()=>{
+      const row=[...document.querySelectorAll('div')].find(n=>n.childElementCount===0&&n.textContent.trim()==='Operation '+${JSON.stringify(switchOperation)})?.parentElement;
+      const button=[...row?.querySelectorAll('button,[role=button]')??[]].find(n=>n.textContent.trim()==='Check operation status');
+      if(!button||button.getAttribute('aria-disabled')==='true')return false;button.click();return true;
+    })()`),true);
+    assert.equal((await readGate('status-'+switchOperation)).phase,'writing');
+    await switchHost(peerLabel);
+    await waitText('Operation '+switchOperation);
+    const during=(await audit()).filter(row=>row.operationId===switchOperation&&row.method==='status');
+    assert.equal(during.length,1);
+    assert.equal(during[0].pid,switching.pid);
+    await release('switch-boundary');
+    await until(async()=>{
+      const record=JSON.parse(await fs.readFile(join(coordinator,switchOperation+'.json'),'utf8'));
+      return record.operation.phase==='completed';
+    },'terminal after host switch');
+    await fs.unlink(join(base,'hold-status-'+switchOperation));
+    await switchHost(originLabel);
+    const completedRow=()=>until(async()=>{const row=await rowText(switchOperation);return row?.includes('Completed')&&row;},'operation complete');
+    await completedRow();
+    await release('status-'+switchOperation);
+    await until(async()=>(await audit()).some(row=>row.method==='held_status_returned'&&row.operationId===switchOperation),'stale Status released');
+    const switchUi=await completedRow();
+    const switchAudit=(await audit()).filter(row=>row.operationId===switchOperation);
+    assert.ok(switchAudit.every(row=>row.pid===switching.pid));
+    assert.equal(switchAudit.filter(row=>row.method==='apply').length,1);
+    integration.hostSwitch={origin,peerHost,atBoundary:switchAtBoundary,after:await snapshot(switchTarget),switchUi,switchAudit};
+    await fs.writeFile(join(base,'integration-checkpoints.json'),JSON.stringify(integration,null,2));
+
+    await click('Project Skills');
+    await waitText('Target Project');
+    const productUi=await text();
+    assert.doesNotMatch(productUi,/Create-only Approval|Confirm create-only|Apply Operations/);
+    assert.deepEqual(await client.invokePluginRpc('paseo-project-skills','foundation.status',{}),{status:'ready'});
+    assert.deepEqual(await client.invokePluginRpc('paseo-project-skills','preview.providers.v2',{
+      viewNonce:'shipping-probe',intent:{schemaVersion:1,hostId:'wrong-host',canonicalDirectory:switchTarget,
+        catalogSource:'https://github.com/anmeo2204/project-skills',catalogCommitSha:sha,settingsRevision:'shipping',
+        selectedSkillIds:['demo'],targetProviderIds:[],recommendationRequestId:'shipping-probe'},
+    }),{status:'error',code:'host_mismatch'});
+    for(const name of ['apply.create.v1','apply.status.v1'])
+      await assert.rejects(client.invokePluginRpc('paseo-project-skills',name,{operationId:'a'.repeat(32)}));
+    integration.shipping={route:'directory',productEntryPoints:true,productApplyRpcAbsent:true,productUi};
+    integration.audit=await audit();
+  }
   const versionLog=await fs.readFile(join(base,'desktop.log'),'utf8');
   assert.match(versionLog, /version: '0\.17\.5'/);
-  const report={paseoVersion:'0.17.5',sdkVersions,testing:{
+  const report={integration,paseoVersion:'0.17.5',sdkVersions,testing:{
     staleSelectionABA:true, keyboardEnterAndSpace:true, compactOperationPanel:geometry, originalViewport:geometryBefore,
     paginated33FilePlan:true, doubleClickJournalCount:2, kiroCanonicalOnly:true,
   }, completed:{before:completedBefore,after:completedAfter,text:completedText},partial:{before:partialBefore,after:partialAfter,text:partialText}, recovery:{before:recoveryBefore,after:recoveryAfter,text:recoveryText}, journal};
@@ -323,7 +602,14 @@ try {
   await Promise.race([exited,sleep(4500)]);
   if(desktop.exitCode===null && desktop.signalCode===null) {desktop.kill('SIGTERM');await exited;}
   try {await exec(cli,['--home',home,'daemon','stop'],{timeout:10000});} catch {}
+  let peerStopped;
+  if(peerHome){
+    try{await exec(cli,['--home',peerHome,'daemon','stop'],{timeout:10000});}
+    catch{peerProcess?.kill('SIGTERM');}
+    peerStopped=JSON.parse((await exec(cli,['--home',peerHome,'status','--json'],{timeout:4000})).stdout);
+    assert.equal(peerStopped.localDaemon,'stopped');
+  }
   const status=JSON.parse((await exec(cli,['--home',home,'status','--json'],{timeout:4000})).stdout);
   assert.equal(status.localDaemon,'stopped');assert.equal(status.pid,null);
-  await fs.writeFile(join(base,'cleanup.json'),JSON.stringify({desktopExited:true,status},null,2));
+  await fs.writeFile(join(base,'cleanup.json'),JSON.stringify({desktopExited:true,status,peerStopped},null,2));
 }

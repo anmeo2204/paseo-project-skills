@@ -1,7 +1,8 @@
-import { applyOutputSchema, type ApplyCreateInput, type ApplyOperation } from "../shared/apply";
+import { z } from "zod";
+import { applyOutputSchema, operationIdSchema, type ApplyCreateInput, type ApplyOperation } from "../shared/apply";
 
 export type OperationScope = {
-  hostId: string; slot: string; target: string; pinnedSha: string; installationInstanceId: string;
+  hostId: string; slot: string; target?: string; pinnedSha?: string; installationInstanceId?: string;
 };
 export type TrackedOperation = {
   scope: OperationScope; operationId: string; planDigest: string;
@@ -14,8 +15,41 @@ const terminal = (item: TrackedOperation) => item.state === "busy" || item.state
   (item.state === "operation" && item.operation &&
     ["completed", "failed_before_write", "partial_failure", "recovery_required"].includes(item.operation.phase));
 
-export function createOperationTracker() {
+type Storage = { getItem(key: string): string | null; setItem(key: string, value: string): void };
+const persistedSchema = z.array(z.strictObject({
+  hostId: z.string().min(1).max(256), operationId: operationIdSchema, planDigest: z.string().regex(/^[a-f0-9]{64}$/),
+}));
+export function createOperationTracker(persistence?: { slot: string; storage: () => Storage }) {
+  const key = "project-skills.apply-operations.v1:" + persistence?.slot;
+  let storage: Storage | undefined;
   let snapshot: readonly TrackedOperation[] = [];
+  function restore() {
+    if (!persistence) return;
+    try {
+      const candidate = persistence.storage();
+      const rows = persistedSchema.parse(JSON.parse(candidate.getItem(key) ?? "[]"));
+      const known = new Set(snapshot.map(row => row.operationId));
+      const restored: TrackedOperation[] = [];
+      for (const { hostId, operationId, planDigest } of rows) {
+        if (known.has(operationId)) continue;
+        known.add(operationId);
+        restored.push({ scope: { hostId, slot: persistence.slot }, operationId, planDigest, state: "outcome_unknown" });
+      }
+      storage = candidate;
+      if (restored.length) {
+        snapshot = [...restored, ...snapshot];
+        for (const listener of listeners) listener();
+      }
+    } catch { storage = undefined; }
+  }
+  restore();
+  function remember(item: TrackedOperation) {
+    if (!persistence) return;
+    if (!storage || item.scope.slot !== persistence.slot) throw new Error("tracking_unavailable");
+    const rows = persistedSchema.parse(JSON.parse(storage.getItem(key) ?? "[]"));
+    const { operationId, planDigest, scope: { hostId } } = item;
+    storage.setItem(key, JSON.stringify([{ hostId, operationId, planDigest }, ...rows.filter(row => row.operationId !== operationId)]));
+  }
   const listeners = new Set<() => void>();
   const statusRequests = new Map<string, object>();
   function put(item: TrackedOperation) {
@@ -46,6 +80,11 @@ export function createOperationTracker() {
   }
 
   return {
+    restore,
+    releaseStatus(hostId: string, slot: string) {
+      for (const item of snapshot) if (item.scope.hostId === hostId && item.scope.slot === slot)
+        statusRequests.delete(item.operationId);
+    },
     snapshot: () => snapshot,
     subscribe(listener: () => void) {
       listeners.add(listener);
@@ -54,6 +93,11 @@ export function createOperationTracker() {
     submit(scope: OperationScope, input: ApplyCreateInput, rpc: Rpc<ApplyCreateInput>) {
       if (snapshot.some(row => row.operationId === input.operationId)) return;
       const item = { scope, operationId: input.operationId, planDigest: input.planDigest, state: "sending" as const };
+      try { remember(item); }
+      catch {
+        put({ ...item, state: "rejected", code: "tracking_unavailable" });
+        return;
+      }
       put(item);
       void settle(item, () => rpc(input));
     },

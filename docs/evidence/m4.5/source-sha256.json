@@ -10,7 +10,7 @@
   "indexUnchanged": true,
   "productRegistrationAndNativeWriterUnchanged": true,
   "sourceSha256": {
-    "M4.5-completion-report.mb": "0ef8c7dc2af1a35dfaddc23976f385a3a884d3c180cdcdddf65ab89e6995e4e3",
+    "M4.5-completion-report.md": "0ef8c7dc2af1a35dfaddc23976f385a3a884d3c180cdcdddf65ab89e6995e4e3",
     "client/apply-tracker.ts": "75e0c326e871178241ac78b94567094b80a19ee022116546982c103ffbf83223",
     "client/fixture-approval.tsx": "138769b2c0c9c39c36ebaeb1b8d17e64d63483fb9ab375ec49638db563cbe2f2",
     "client/foundation-screen.tsx": "1cf958f6a2d04cab9862c227d0d28a1d764a2ac210302a03ce85d2aff95fd59e",

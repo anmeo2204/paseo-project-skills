@@ -1,0 +1,35 @@
+{
+  "baseline": "302099cf84ca6b827cbc34ce104525bada21d613",
+  "branch": "main",
+  "host": [
+    "ProductName:\t\tmacOS",
+    "ProductVersion:\t\t27.2.1",
+    "BuildVersion:\t\t26B131"
+  ],
+  "runnerNode": "v22.23.4",
+  "indexUnchanged": true,
+  "productEntryPointsAndNativeWriterUnchanged": true,
+  "sourceSha256": {
+    "M4.5-completion-report.md": "0ef8c7dc2af1a35dfaddc23976f385a3a884d3c180cdcdddf65ab89e6995e4e3",
+    "M4.6-completion-report.md": "5fea2c2c1c71f2b5c82abe10f4b34d490ad3570f25cabaa835f14aab5aa8afe5",
+    "client/apply-tracker.ts": "544de068a358c9c66d1409666533ed25fb95a99867215e1db40337f29f23c96d",
+    "client/fixture-approval.tsx": "48c06e034eabdeb53972a979660011d3f27e55d4763376daa06d70904962fa2f",
+    "docs/evidence/m4.5/source-sha256.json": "47f196b715c249fe56536b095cc5e084fa36b8207c84ea79d3b1196b076d1f77",
+    "scripts/m44-runtime-acceptance.mjs": "445381cb8ac4a8bd129b1739a4d34dc2ef1f1c74bf6851fd651b0dbd7b9f5cd0",
+    "scripts/m45-desktop-acceptance.mjs": "adf7b132357185ca694b40e86fc60e44bde671ab12fa91882034a0acf7df0e33",
+    "scripts/m46-desktop-reopen.mjs": "648d315b90d9c6ec9b05b4da67cb4f6c20e057ca69252e5f4ac0cdab800fa0d2",
+    "server/apply-journal.ts": "42ef96a19a3c2bf3a810953212339f210e2f8ec2d8d34516c4092f5433651d92",
+    "tests/apply-journal.test.mjs": "7f294b191efb53f1d7edb10bc25def0aae1d13ea8010498409575a5714b54430",
+    "tests/preview-ui.test.mjs": "08eea9fa43590bca4a1b3fa84be0ecba203bc2a73196ef0ea11df21995b24fd8"
+  },
+  "evidenceSha256": {
+    "daemon-retention-cleanup.json": "face6e6a1e0a1a6206d130f0a1694595caaf20d68efe2f44636ffc245892ca5a",
+    "daemon-retention.json": "e5f047759057b40dcee41c75866c6874210f6864f1679447a2920efc0f869ad7",
+    "desktop-cold-reopen-cleanup.json": "f50f7a230eaf85eb81c7dd026b7a6073c601f1b3c3507223133449b9338f4b73",
+    "desktop-cold-reopen.json": "496e8857e5373602b61729f8d2ac8ab40fcb7970b095bc673cc57850d86985bc",
+    "desktop-integrated-cleanup.json": "766913525b1dbb1c1e37a037e0dd96d5d362f4133dd30ae041440c5994fe2f42",
+    "desktop-integrated.json": "3aa692dafc194c13223cc6ed7d3468d8066d2b5957b42c2cc23e036ccea1bf57",
+    "packaged-helper.json": "ec6ac06d942a1dde03422b114a0fe37d5ad2fecfb332b3728a5f1eed2558b662",
+    "tests.log": "3981342283173041e496aac2aaf312ab08e42f1a596d23472495f8e943935f01"
+  }
+}

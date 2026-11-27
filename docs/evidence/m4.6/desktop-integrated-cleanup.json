@@ -1,0 +1,27 @@
+{
+  "desktopExited": true,
+  "status": {
+    "home": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m45-GN5FTj/daemon",
+    "pid": null,
+    "startedAt": null,
+    "listen": null,
+    "hostname": null,
+    "configuredListen": "127.0.0.1:51654",
+    "localDaemon": "stopped",
+    "desktopManaged": false,
+    "logPath": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m45-GN5FTj/daemon/daemon.log",
+    "connectedDaemon": "not_probed"
+  },
+  "peerStopped": {
+    "home": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m45-GN5FTj/peer-daemon",
+    "pid": null,
+    "startedAt": null,
+    "listen": null,
+    "hostname": null,
+    "configuredListen": "127.0.0.1:52049",
+    "localDaemon": "stopped",
+    "desktopManaged": false,
+    "logPath": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-m45-GN5FTj/peer-daemon/daemon.log",
+    "connectedDaemon": "not_probed"
+  }
+}

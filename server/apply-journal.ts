@@ -8,17 +8,20 @@ import { applyOperationSchema, operationIdSchema } from "../shared/apply";
 const hash = z.string().regex(/^[a-f0-9]{64}$/);
 const recordSchema = z.strictObject({
   hostId: z.string().min(1).max(512), installation: z.string().min(1).max(128),
-  instance: hash, requestHash: hash, receiptHash: hash, operation: applyOperationSchema,
+  instance: hash, requestHash: hash, receiptHash: hash, settledAt: z.number().int().nonnegative().optional(), operation: applyOperationSchema,
 });
 export type ApplyJournalRecord = z.infer<typeof recordSchema>;
 const maxRecords = 64;
+export const terminalRetentionMs = 24 * 60 * 60 * 1000;
+const expirable = (phase: ApplyJournalRecord["operation"]["phase"]) =>
+  phase === "completed" || phase === "failed_before_write" || phase === "partial_failure";
 const maxBytes = 2 * 1024 * 1024;
 const namePattern = /^[0-9a-f]{32,64}\.json$/;
 
 export class ApplyJournal {
   private readonly identity;
 
-  constructor(readonly directory: string) {
+  constructor(readonly directory: string, private readonly now = Date.now) {
     this.identity = lstatSync(directory, { bigint: true });
     this.checkDirectory();
   }
@@ -41,6 +44,16 @@ export class ApplyJournal {
   }
 
   read(id: string): ApplyJournalRecord | undefined {
+    const entry = this.readEntry(id);
+    return entry && !this.expired(entry, this.now()) ? entry.record : undefined;
+  }
+
+  private expired(entry: { record: ApplyJournalRecord; mtimeMs: number }, now: number) {
+    const { record, mtimeMs } = entry;
+    return expirable(record.operation.phase) && now - (record.settledAt ?? mtimeMs) >= terminalRetentionMs;
+  }
+
+  private readEntry(id: string) {
     const path = join(this.directory, operationIdSchema.parse(id) + ".json");
     this.checkDirectory();
     let fd;
@@ -65,7 +78,7 @@ export class ApplyJournal {
       const record = recordSchema.parse(JSON.parse(bytes.subarray(0, size).toString("utf8")));
       if (record.operation.operationId !== id) throw new Error("journal_unavailable");
       this.syncDirectory();
-      return record;
+      return { record, mtimeMs: stat.mtimeMs };
     } finally { closeSync(fd); }
   }
 
@@ -75,18 +88,32 @@ export class ApplyJournal {
     this.checkDirectory();
     const names = readdirSync(this.directory);
     const records = names.filter(name => namePattern.test(name));
-    if (names.length >= maxRecords + 1) return "journal_full";
-    for (const name of records) {
-      const current = this.read(name.slice(0, -5));
-      if (!current) throw new Error("journal_unavailable");
-      if (current.receiptHash === record.receiptHash) return "receipt_consumed";
+    const now = this.now();
+    let pruned = 0;
+    let claimed = false;
+    try {
+      for (const name of records) {
+        const current = this.readEntry(name.slice(0, -5));
+        if (!current) throw new Error("journal_unavailable");
+        if (this.expired(current, now)) {
+          this.checkDirectory();
+          unlinkSync(join(this.directory, name));
+          pruned++;
+        } else if (current.record.receiptHash === record.receiptHash) {
+          claimed = true;
+        }
+      }
+    } finally {
+      if (pruned) this.syncDirectory();
     }
-    if (records.length >= maxRecords) return "journal_full";
+    if (claimed) return "receipt_consumed";
+    if (names.length - pruned >= maxRecords + 1 || records.length - pruned >= maxRecords) return "journal_full";
   }
 
   publish(record: ApplyJournalRecord, admission = false) {
     this.checkDirectory();
-    const bytes = Buffer.from(JSON.stringify(recordSchema.parse(record)));
+    const stored = expirable(record.operation.phase) ? { ...record, settledAt: this.now() } : record;
+    const bytes = Buffer.from(JSON.stringify(recordSchema.parse(stored)));
     if (bytes.length > maxBytes) throw new Error("journal_full");
     const path = join(this.directory, record.operation.operationId + ".json");
     const temporary = join(this.directory, ".pending-" + randomBytes(16).toString("hex"));

@@ -221,8 +221,10 @@ export function FixtureOperations({ theme, host, online }: Pick<PluginScreenProp
   }, [binding]);
   const operations = useSyncExternalStore(tracker.subscribe, tracker.snapshot);
   useEffect(() => {
+    tracker.restore();
     if (online) tracker.check(host.id, slot, status);
     else tracker.offline(host.id, slot);
+    return () => tracker.releaseStatus(host.id, slot);
   }, [tracker, host.id, slot, online, status]);
   if (!operations.length) return null;
   return <Section theme={theme} title="Apply Operations">
@@ -243,10 +245,10 @@ function OperationRow({ theme, item, canCheck, check }: {
     unknown ? "Outcome unknown" : item.state === "sending" ? "Waiting for admission" : phase ? phaseLabels[phase] : "Outcome unknown";
   return <View style={{ gap: 7 }}>
     <View accessibilityLiveRegion="polite"><Text accessibilityRole="header" style={{ color: theme.colors.foreground }}>{title}</Text></View>
-    <Text selectable style={{ color: theme.colors.foregroundMuted }}>{item.scope.hostId} · {item.scope.target}</Text>
+    <Text selectable style={{ color: theme.colors.foregroundMuted }}>{item.scope.hostId}{item.scope.target ? " · " + item.scope.target : ""}</Text>
     <Text selectable style={{ color: theme.colors.foregroundMuted }}>Operation {item.operationId}</Text>
     {item.state === "busy" && <Detail theme={theme}>No operation was admitted. Run Preview again before submitting.</Detail>}
-    {item.state === "rejected" && <Detail theme={theme} error>{item.code}. Run Preview again before submitting.</Detail>}
+    {item.state === "rejected" && <Detail theme={theme} error>{item.code === "tracking_unavailable" ? "Could not save the operation for recovery. No request was sent." : item.code + "."} Run Preview again before submitting.</Detail>}
     {checkable && <Detail theme={theme}>{canCheck ? "Check status to retrieve the result." : "Switch back to the original connected host to check status."}</Detail>}
     {checkable && <Action theme={theme} label="Check operation status" disabled={!canCheck} onPress={check} />}
     {unknown && <Detail theme={theme} error>Writes may have occurred. {item.operation ? "Compare the target with the last known ledger" : "Inspect the target for changes"}, then run Preview again.</Detail>}

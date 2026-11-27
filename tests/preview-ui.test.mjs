@@ -377,3 +377,39 @@ test('reconnect invalidates a previous status request that has not settled', asy
   assert.doesNotMatch(h.text(), /Outcome unknown/);
   assert.deepEqual(h.operations.map(call => call.method), ['apply.create.v1','apply.status.v1','apply.status.v1']);
 });
+
+test('tracker reload persists only status lookup metadata and rejects a wrong route', async () => {
+  const data = new Map();
+  const storage = { getItem: key => data.get(key) ?? null, setItem: (key, value) => data.set(key, value) };
+  const slot = 'fixture-slot';
+  const open = () => createOperationTracker({slot, storage: () => storage});
+  const tracker = open();
+  const peerAlreadyMounted = open();
+  const operationId = 'd'.repeat(32);
+  const scope = {hostId:'host-a', slot, target:'/private/fixture', pinnedSha:sha, installationInstanceId:'b'.repeat(64)};
+  const input = {operationId, planDigest:'d'.repeat(64), previewId:'c'.repeat(64), viewNonce:'never-store', approval:'create_only_v1'};
+  let sends = 0;
+  tracker.submit(scope, input, async () => {
+    sends++;
+    assert.deepEqual(JSON.parse([...data.values()][0]), [{hostId:'host-a', operationId, planDigest:input.planDigest}]);
+    throw Error('lost reply');
+  });
+  assert.equal(peerAlreadyMounted.snapshot().length,0);
+  peerAlreadyMounted.restore();
+  assert.equal(peerAlreadyMounted.snapshot()[0].operationId,operationId);
+  const reopened = open();
+  assert.equal(reopened.snapshot()[0].state,'outcome_unknown');
+  const calls = [];
+  const status = async args => { calls.push(args); return operationReply(input,'completed'); };
+  reopened.check('host-b',slot,status); reopened.check('host-a','wrong-slot',status);
+  assert.deepEqual(calls,[]);
+  reopened.check('host-a',slot,status);
+  await Promise.resolve();
+  assert.deepEqual(calls,[{operationId}]);
+  assert.equal(reopened.snapshot()[0].operation.phase,'completed');
+  assert.equal(sends,1);
+  const failed = createOperationTracker({slot, storage: () => ({...storage,setItem(){ throw Error('quota'); }})});
+  failed.submit(scope,{...input,operationId:'e'.repeat(32)},async()=>{ sends++; });
+  assert.equal(failed.snapshot()[0].code,'tracking_unavailable');
+  assert.equal(sends,1);
+});
