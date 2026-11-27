@@ -7,12 +7,12 @@ import { writerArtifacts } from "./native/writer-payload";
 import { nativeWriterVersion } from "./native-writer-contract";
 
 export const safeApplyCompatibilityPolicy = Object.freeze({
-  policyVersion: "m4.p1-v1",
+  policyVersion: "m4.p2-v1",
   platform: "darwin" as const,
   arch: "arm64" as const,
   minMacOsVersion: "14.0.0",
   minPaseoVersion: "0.17.5",
-  maxPaseoMajorExclusive: 1,
+  maxPaseoMinorExclusive: "0.18.0",
   minSdkVersion: "0.17.4",
   maxSdkMinorExclusive: "0.18.0",
   filesystem: "apfs" as const,
@@ -52,8 +52,9 @@ export function compareSemver(a: Semver, b: Semver): number {
 export function isPaseoVersionCompatible(version: string): boolean {
   const parsed = parseSemver(version);
   const min = parseSemver(safeApplyCompatibilityPolicy.minPaseoVersion)!;
+  const maxEx = parseSemver(safeApplyCompatibilityPolicy.maxPaseoMinorExclusive)!;
   if (!parsed) return false;
-  return compareSemver(parsed, min) >= 0 && parsed[0] < safeApplyCompatibilityPolicy.maxPaseoMajorExclusive;
+  return compareSemver(parsed, min) >= 0 && compareSemver(parsed, maxEx) < 0;
 }
 
 export function isSdkVersionCompatible(version: string): boolean {
@@ -141,8 +142,27 @@ function readBoundedJsonFile(filePath: string): { status: "missing" } | { status
   }
 }
 
+function checkConfigSectionExposure(section: Record<string, unknown>): "remote_exposure_enabled" | "trust_boundary_unverified" | undefined {
+  const relay = section.relay as Record<string, unknown> | boolean | undefined;
+  if (relay === true || (relay && typeof relay === "object" && !Array.isArray(relay) && relay.enabled === true)) {
+    return "remote_exposure_enabled";
+  }
+  if (relay !== undefined && relay !== false && (!relay || typeof relay !== "object" || Array.isArray(relay) || typeof (relay as Record<string, unknown>).enabled !== "boolean")) {
+    return "trust_boundary_unverified";
+  }
+  const remote = section.remote as Record<string, unknown> | boolean | undefined;
+  if (remote === true || (remote && typeof remote === "object" && !Array.isArray(remote) && remote.enabled === true)) {
+    return "remote_exposure_enabled";
+  }
+  if ("listen" in section && !isLoopbackListen(section.listen)) {
+    return "remote_exposure_enabled";
+  }
+  return undefined;
+}
+
 /**
  * Verifies the Single-user Local Host trust boundary for a Paseo daemon home.
+ * Inspects both top-level and Paseo 0.17.x nested `daemon.*` settings.
  * Fail-closed when Relay / remote exposure is enabled, non-loopback listen is configured,
  * or daemon configuration cannot be safely verified.
  */
@@ -165,19 +185,34 @@ export function checkDaemonTrustBoundary(
       return { ok: false, reason: "trust_boundary_unverified" };
     }
     const cfg = result.data as Record<string, unknown>;
-    const relay = cfg.relay as Record<string, unknown> | boolean | undefined;
-    if (relay === true || (relay && typeof relay === "object" && relay.enabled === true)) {
-      return { ok: false, reason: "remote_exposure_enabled" };
-    }
-    const remote = cfg.remote as Record<string, unknown> | boolean | undefined;
-    if (remote === true || (remote && typeof remote === "object" && remote.enabled === true)) {
-      return { ok: false, reason: "remote_exposure_enabled" };
-    }
-    if ("listen" in cfg && !isLoopbackListen(cfg.listen)) {
-      return { ok: false, reason: "remote_exposure_enabled" };
+    const topIssue = checkConfigSectionExposure(cfg);
+    if (topIssue) return { ok: false, reason: topIssue };
+    if ("daemon" in cfg) {
+      if (!cfg.daemon || typeof cfg.daemon !== "object" || Array.isArray(cfg.daemon)) {
+        return { ok: false, reason: "trust_boundary_unverified" };
+      }
+      const nestedIssue = checkConfigSectionExposure(cfg.daemon as Record<string, unknown>);
+      if (nestedIssue) return { ok: false, reason: nestedIssue };
     }
   }
   return { ok: true };
+}
+
+export function detectDefaultPaseoCli(env: NodeJS.ProcessEnv = process.env): string {
+  if (env.PASEO_CLI && isAbsolute(env.PASEO_CLI)) return env.PASEO_CLI;
+  return "/Applications/Paseo.app/Contents/Resources/bin/paseo";
+}
+
+export function readInstalledSdkVersions(pluginRoot: string): string[] {
+  const versions: string[] = [];
+  for (const pkg of ["client", "plugin", "protocol"]) {
+    const res = readBoundedJsonFile(join(pluginRoot, "node_modules", "@getpaseo", pkg, "package.json"));
+    if (res.status !== "ok" || !res.data || typeof res.data !== "object") return [];
+    const version = (res.data as Record<string, unknown>).version;
+    if (typeof version !== "string") return [];
+    versions.push(version);
+  }
+  return versions;
 }
 
 export function verifyEmbeddedHelperIntegrity(testing = false): { ok: true; sha256: string } | { ok: false } {

@@ -110,13 +110,41 @@ M4.2 adds the separate read-only **`preview.providers.v2`** RPC, accepting `{ in
 
 Receipts expire after 10 minutes using the daemon's monotonic clock. The installation retains at most 8 receipts and 32 MiB of source bytes, with an 8 MiB combined canonical/derived source limit per receipt; oldest receipts are evicted first. No source bytes travel in the response. On the main `paseo-project-skills` installation, all v2 responses explicitly report **write capability unavailable** and **Apply ineligible**, including no-op plans; there is no Apply/status RPC or Apply button on the main daemon. Receipt integrity/lifetime checks do not replace filesystem/settings/catalog revalidation. See [the M4.2 report](M4.2-completion-report.md) for runtime-spike findings.
 
-## Safe Apply — Single-Project Pilot
+## Safe Apply (Create-Only v1 — Main Plugin Release Candidate)
 
-The limited **Single-Project Safe Apply Pilot** (`paseo-project-skills-single-project-pilot`) has passed acceptance on an isolated Paseo Desktop profile and daemon (**PASS 10/10** on `giz` for `debug-regression` + `Codex`, macOS arm64, local APFS case-insensitive, Paseo 0.17.5 / SDK 0.17.4).
+Safe Apply enables **Select Project → Scan → Recommend → Select Skills & Providers → Preview → Approve → Apply → Verify** directly on the main `paseo-project-skills` plugin while remaining **Preview-only by default** for unenrolled, disabled, or unsupported environments.
 
-- **Main daemon remains Preview-only:** The default `paseo-project-skills` plugin (`index.server.ts` / `index.client.tsx`) does not expose `apply.*` RPCs or mutate target files.
-- **Pilot isolation & opt-in:** The pilot candidate (`release/single-project-pilot/`) runs in a separate daemon home with opt-in **OFF** by default, binds exactly one canonical project root via native `--enroll-root` (`scripts/enroll-single-project-pilot.mjs`), and enforces create-only / no-clobber writes with durable admission, `fsync` completion, and read-only `apply.status.v1` recovery even after opt-in is disabled.
-- **Evidence & next phase:** See [the pilot design](docs/safe-apply-pilot/SAFE-APPLY-single-project-pilot-design.md), [isolated copy acceptance](docs/safe-apply-pilot/SAFE-APPLY-single-project-pilot-acceptance-report.md), [giz final acceptance (PASS 10/10)](docs/safe-apply-pilot/SAFE-APPLY-giz-final-acceptance-report.md), and [Production Readiness Analysis](docs/safe-apply-pilot/SAFE-APPLY-production-readiness-report.md).
+### Compatibility & Trust Boundary (Single-User Local Host)
+- **Verified support matrix:** macOS `arm64` (`>= 14.0.0`, verified on `27.2.1`), local APFS case-insensitive volume, Paseo CLI/daemon `0.17.5 <= v < 0.18.0`, `@getpaseo/{client,plugin,protocol}` `0.17.4 <= v < 0.18.0`, verified embedded native writer (`SHA-256` + `codesign --verify --strict`).
+- **Local-only fail-closed:** Safe Apply automatically stays **Preview-only** if Paseo Relay (`daemon.relay.enabled` / `PASEO_RELAY_ENABLED`), remote exposure, or a non-loopback `listen` address is active, or if daemon config cannot be verified.
+- **No caller principal in SDK 0.17.4:** Approval receipts bind the exact plan digest, target root identity, and `policyRevision`, but do **not** cryptographically attest human approver identity. Enrollment is strictly out-of-band via host CLI; no enrollment RPC is exposed.
+
+### Enrollment & Opt-In CLI (Out-of-Band Host Operation)
+By default the CLI targets `~/.paseo` (or `$PASEO_HOME` / `--home <daemonHome>`):
+
+```sh
+# List enrolled project roots and trust-boundary status
+node --import ./tests/register.mjs scripts/enroll-project-skills.mjs list
+
+# Enroll an exact canonical project root (no wildcards, symlinks, or parent grants)
+node --import ./tests/register.mjs scripts/enroll-project-skills.mjs enroll --root /abs/path/to/project
+
+# Temporarily disable or re-enable (with optional policyRevision rotation)
+node --import ./tests/register.mjs scripts/enroll-project-skills.mjs disable --root /abs/path/to/project
+node --import ./tests/register.mjs scripts/enroll-project-skills.mjs enable --root /abs/path/to/project --rotate
+
+# Permanently revoke enrollment for a project root
+node --import ./tests/register.mjs scripts/enroll-project-skills.mjs revoke --root /abs/path/to/project
+```
+
+### Usage & Recovery
+1. Open **Project Skills**, choose an enrolled project, select providers, and pin a catalog tag/SHA.
+2. Run **Scan & Recommend**, select skills, and click **Preview Changes**.
+3. Review planned creates (`.agents/skills/<id>/*` and, for Kiro at a confirmed Git root, `.kiro/skills/<id>/*`). Any `conflict` or `blocked` file blocks the entire plan.
+4. Click **Review create-only approval → Confirm create-only**. Existing files are never overwritten or deleted (`O_CREAT | O_EXCL`).
+5. **Recovery after crash or partial write:** Safe Apply never auto-retries or rolls back. Keep the `operationId` shown under **Apply Operations** (still readable via `apply.status.v1` even after disabling/revoking enrollment or enabling Relay), inspect any `created_incomplete` / `ownership_unknown` files against the ledger on disk, clean up incomplete files manually outside Safe Apply, and run a fresh **Preview Changes**.
+
+See [the M4.P1 report](docs/safe-apply-pilot/M4.P1-completion-report.md) and [the M4.P2 release candidate report](docs/safe-apply-pilot/M4.P2-completion-report.md) for full acceptance evidence, upgrade steps, and rollback-to-Preview-only procedure.
 
 ## Optional AI capability
 
@@ -131,7 +159,7 @@ M2.3 provides a server-side structured agent executor through the public Paseo S
 | **M3 — Preview & provider adapters** | Canonical preview planner, provider adapters (Codex, Cursor ACP, Antigravity `canonical_only`; Kiro `.kiro/skills/` derived), Preview UI | **Completed** |
 | **M4 — Safe Apply (Pilot)** | Immutable preview receipts (`v2`), native anchored create-only writer, durable journal, single-project enrollment pilot on isolated daemon | **Pilot Completed (PASS 10/10)** |
 | **M4.P1 — Multi-Root Policy, Version Compat & Multi-Skill/Kiro Acceptance** | Multi-root allowlist (`enrollments.json`), per-target approval receipts, semver/trust-boundary compatibility policy, AT-1/2/3/5 & 4-provider live discovery on isolated copies | **Completed (PASS)** |
-| **M4.P2 — Main Plugin Integration & Production Release Gate** | Direct Scan → Recommend → Select → Preview → Approve → Apply on main plugin (`~/.paseo`, Preview-only for unenrolled roots, Relay fail-closed) | **Pending Approval** |
+| **M4.P2 — Main Plugin Integration & Production Release Gate** | Direct Scan → Recommend → Select → Preview → Approve → Apply on main plugin (`~/.paseo`, Preview-only for unenrolled roots, Relay fail-closed) | **Release Candidate Ready (Pending Release Approval)** |
 | **M5 — SLP integration pilot** | Validate optional integration while keeping the standalone plugin usable | **Planned** |
 
 [Paseo 0.17.4 plugin guide](https://github.com/getpaseo/paseo/blob/v0.17.4/docs/plugins.md)

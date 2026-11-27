@@ -44,3 +44,26 @@ export const applyStatusRpc = defineRpc({ name: "apply.status.v1", input: applyS
 export const localApplyCapabilityRpc = defineRpc({
   name: "apply.local-capability.v1", input: z.strictObject({}), output: z.strictObject({ enabled: z.boolean() }),
 });
+
+export const applyTargetStatusOutputSchema = z.strictObject({
+  hostCompatible: z.boolean(),
+  trustBoundaryOk: z.boolean(),
+  reasons: z.array(z.string().min(1).max(64)).max(16),
+  enrolledCount: z.number().int().nonnegative(),
+  targetState: z.enum([
+    "none",
+    "enrolled_enabled",
+    "enrolled_disabled",
+    "not_enrolled",
+    "root_identity_mismatch",
+    "host_unavailable",
+  ]),
+  policyRevision: digest.optional(),
+});
+export type ApplyTargetStatusOutput = z.infer<typeof applyTargetStatusOutputSchema>;
+
+export const applyTargetStatusRpc = defineRpc({
+  name: "apply.target-status.v1",
+  input: z.strictObject({ canonicalDirectory: z.string().min(1).max(4096).optional() }),
+  output: applyTargetStatusOutputSchema,
+});

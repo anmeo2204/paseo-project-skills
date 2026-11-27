@@ -200,6 +200,17 @@ function ReviewPlan({ theme, result }: { theme: PluginTheme; result: Ready }) {
   </>;
 }
 
+const rejectedReasonLabels: Record<string, string> = {
+  tracking_unavailable: "Could not save the operation for recovery. No request was sent.",
+  receipt_invalid: "Preview receipt is expired, evicted, or invalidated by a policy or trust-boundary change.",
+  receipt_consumed: "This preview receipt was already used.",
+  journal_full: "Apply operation journal is full (64 active records). Inspect pending recovery records or wait for terminal retention cleanup.",
+  journal_unavailable: "Apply journal is unavailable on this daemon.",
+  plan_not_applicable: "Plan is not applicable (conflict, blocked entry, or no files to create).",
+  unsupported_environment: "Host environment or local-only trust boundary (e.g. Relay enabled) blocked this operation.",
+  operation_mismatch: "Operation ID does not match the original request.",
+  cancelled: "Operation was cancelled before admission.",
+};
 const phaseLabels = {
   accepted: "Accepted", preflight: "Checking the approved plan", writing: "Writing",
   completed: "Completed", failed_before_write: "Failed before writing",
@@ -247,8 +258,9 @@ function OperationRow({ theme, item, canCheck, check }: {
     <View accessibilityLiveRegion="polite"><Text accessibilityRole="header" style={{ color: theme.colors.foreground }}>{title}</Text></View>
     <Text selectable style={{ color: theme.colors.foregroundMuted }}>{item.scope.hostId}{item.scope.target ? " · " + item.scope.target : ""}</Text>
     <Text selectable style={{ color: theme.colors.foregroundMuted }}>Operation {item.operationId}</Text>
-    {item.state === "busy" && <Detail theme={theme}>No operation was admitted. Run Preview again before submitting.</Detail>}
-    {item.state === "rejected" && <Detail theme={theme} error>{item.code === "tracking_unavailable" ? "Could not save the operation for recovery. No request was sent." : item.code + "."} Run Preview again before submitting.</Detail>}
+    {item.state === "busy" && <Detail theme={theme}>Another Apply operation is running on this daemon. No operation was admitted. Wait for it to finish and run Preview again before submitting.</Detail>}
+    {item.state === "rejected" && <Detail theme={theme} error>{(item.code && rejectedReasonLabels[item.code]) ?? `${item.code}.`} Run Preview again before submitting.</Detail>}
+    {phase === "recovery_required" && <Detail theme={theme} error>Recovery required: inspect the operation ledger below against disk before running Preview again. Safe Apply does not auto-retry or rollback.</Detail>}
     {checkable && <Detail theme={theme}>{canCheck ? "Check status to retrieve the result." : "Switch back to the original connected host to check status."}</Detail>}
     {checkable && <Action theme={theme} label="Check operation status" disabled={!canCheck} onPress={check} />}
     {unknown && <Detail theme={theme} error>Writes may have occurred. {item.operation ? "Compare the target with the last known ledger" : "Inspect the target for changes"}, then run Preview again.</Detail>}

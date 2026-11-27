@@ -1,0 +1,61 @@
+{
+  "capturedAt": "2026-11-27T13:50:45.172Z",
+  "isolatedFixture": true,
+  "installedViaMainEntrypoint": true,
+  "skillId": "m4p2-trace-skill",
+  "canonicalPath": ".agents/skills/m4p2-trace-skill/SKILL.md",
+  "providers": {
+    "cursor": {
+      "provider": "cursor",
+      "command": "cursor-agent acp",
+      "binaryVersion": "2026.10.22-27dcf5f",
+      "effectiveMode": "ask",
+      "status": "pass",
+      "discovered": true,
+      "readToolMatched": true,
+      "markerLoaded": true,
+      "toolCallCount": 3,
+      "matchingToolTraces": [
+        {
+          "update": "tool_call",
+          "kind": "read",
+          "title": "Read .agents/skills/m4p2-trace-skill/SKILL.md",
+          "status": "pending",
+          "referencesSkillMd": true,
+          "referencesCanonicalPath": true
+        }
+      ],
+      "agentReplyExcerpt": "I'll read the m4p2-trace-skill instructions and return only the Marker value they specify.M4P2_TRACE_MARKER_9417"
+    },
+    "antigravity": {
+      "provider": "antigravity",
+      "command": "agy acp --disable-telemetry",
+      "binaryVersion": "1.5.18",
+      "effectiveMode": "plan",
+      "status": "pass",
+      "discovered": true,
+      "readToolMatched": true,
+      "markerLoaded": true,
+      "toolCallCount": 2,
+      "matchingToolTraces": [
+        {
+          "update": "tool_call",
+          "kind": "read",
+          "title": "File .agents/skills/m4p2-trace-skill/SKILL.md",
+          "status": "in_progress",
+          "referencesSkillMd": true,
+          "referencesCanonicalPath": true
+        },
+        {
+          "update": "tool_call_update",
+          "kind": "read",
+          "title": "File .agents/skills/m4p2-trace-skill/SKILL.md",
+          "status": "completed",
+          "referencesSkillMd": true,
+          "referencesCanonicalPath": true
+        }
+      ],
+      "agentReplyExcerpt": "M4P2_TRACE_MARKER_9417"
+    }
+  }
+}

@@ -5,6 +5,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useId, useState } from "react";
 import { View } from "react-native";
 import { catalogSettings } from "../shared/catalog-settings";
+import { applyTargetStatusRpc, type ApplyTargetStatusOutput } from "../shared/apply";
 import { foundationStatusRpc, validateDirectoryRpc } from "../shared/rpc";
 import { CatalogSection } from "./catalog-section";
 import { Action, Detail, Section } from "./controls";
@@ -43,7 +44,33 @@ export function FoundationScreen({ theme, layout, host }: PluginScreenProps) {
   );
 }
 
+const targetApplyLabels: Record<ApplyTargetStatusOutput["targetState"], string | null> = {
+  none: null,
+  enrolled_enabled: "Safe Apply: Enrolled and active for this target (create-only).",
+  enrolled_disabled: "Safe Apply: Preview-only — enrollment for this project is currently disabled via host CLI.",
+  not_enrolled: "Safe Apply: Preview-only — this project is not enrolled. Enroll via host CLI (scripts/enroll-project-skills.mjs) to enable Apply.",
+  root_identity_mismatch: "Safe Apply: Preview-only — enrolled root identity could not be verified (directory replaced or moved). Re-enroll via host CLI.",
+  host_unavailable: "Safe Apply: Preview-only — unavailable on this host.",
+};
+
+function TargetApplyStatus({ theme, hostId, directory }: { theme: PluginTheme; hostId: string; directory: string }) {
+  const fetchStatus = useRpc(applyTargetStatusRpc);
+  const query = useQuery({
+    queryKey: ["apply-target-status", hostId, directory],
+    queryFn: () => fetchStatus({ canonicalDirectory: directory }),
+    retry: false,
+    gcTime: 0,
+    refetchOnWindowFocus: false,
+  });
+  if (!query.isSuccess) return null;
+  const label = targetApplyLabels[query.data.targetState];
+  if (!label) return null;
+  const isError = query.data.targetState === "root_identity_mismatch" || query.data.targetState === "host_unavailable";
+  return <Detail theme={theme} error={isError}>{label}</Detail>;
+}
+
 function HostScreen({ theme, hostId, hostLabel }: { theme: PluginTheme; hostId: string; hostLabel: string }) {
+  const approvalScope = useFixtureApproval();
   const [target, setTarget] = useState<{ value: Target; selection: number } | null>(null);
 
   const settings = useSettings(catalogSettings);
@@ -81,6 +108,7 @@ function HostScreen({ theme, hostId, hostLabel }: { theme: PluginTheme; hostId: 
           {!result.isError && result.data?.status === "error" &&
             <Detail theme={theme} error>{directoryErrors[result.data.code]}</Detail>}
           {directory && <Detail theme={theme}>Target directory: {directory}</Detail>}
+          {directory && approvalScope && <TargetApplyStatus theme={theme} hostId={hostId} directory={directory} />}
         </View>}
       </Section>
       <Section theme={theme} title="Target Providers">

@@ -455,7 +455,7 @@ static BOOL platformGate(BOOL compatPolicy) {
     }
     long pMaj=0, pMin=0, pPat=0, sMaj=0, sMin=0, sPat=0;
     if (!parseSemver(env[@"paseoVersion"], &pMaj, &pMin, &pPat) || !parseSemver(env[@"sdkVersion"], &sMaj, &sMin, &sPat)) return fail(@"unsupported_environment");
-    BOOL paseoOk = (pMaj == 0 && ((pMin == 17 && pPat >= 5) || pMin > 17));
+    BOOL paseoOk = (pMaj == 0 && pMin == 17 && pPat >= 5);
     BOOL sdkOk = (sMaj == 0 && sMin == 17 && sPat >= 4);
     if (!paseoOk || !sdkOk) return fail(@"unsupported_environment");
     if (os.majorVersion < 14) return fail(@"unsupported_environment");

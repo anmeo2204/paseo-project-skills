@@ -6,6 +6,7 @@ import { test } from "node:test";
 import contribute from "../index.server.ts";
 import { validateDirectory } from "../server/validate-directory.ts";
 import { catalogSettings, catalogSource } from "../shared/catalog-settings.ts";
+import { applyTargetStatusRpc } from "../shared/apply.ts";
 import { canonicalPreviewRpc, providerPreviewRpc, providerPreviewV2Rpc, catalogLoadRpc, foundationStatusRpc, recommendationEvaluateSubscription, targetScanSubscription, validateDirectoryRpc } from "../shared/rpc.ts";
 
 async function fixture(t) {
@@ -81,8 +82,12 @@ test("server contribution registers the expected typed contracts and host settin
       return { read: async () => ({ status: "ready", revision: "host-settings", values: { catalogRef: "" } }) };
     },
   });
-  assert.deepEqual([...handlers.keys()], [foundationStatusRpc, validateDirectoryRpc, catalogLoadRpc, targetScanSubscription, recommendationEvaluateSubscription, canonicalPreviewRpc, providerPreviewRpc, providerPreviewV2Rpc]);
-  assert.ok([...handlers.keys()].every((contract) => !contract.name.startsWith("apply.")));
+  const registered = [...handlers.keys()];
+  for (const required of [foundationStatusRpc, validateDirectoryRpc, catalogLoadRpc, targetScanSubscription, recommendationEvaluateSubscription, canonicalPreviewRpc, providerPreviewRpc, providerPreviewV2Rpc, applyTargetStatusRpc]) {
+    assert.ok(registered.includes(required), `Missing required contract: ${required.name}`);
+  }
+  // Enrollment must remain strictly out-of-band (never exposed as an RPC).
+  assert.ok(registered.every((contract) => !contract.name.includes("enroll")));
   assert.deepEqual(settings, [catalogSettings]);
   assert.deepEqual(foundationStatusRpc.output.parse(handlers.get(foundationStatusRpc)({})), { status: "ready" });
   assert.equal(foundationStatusRpc.input.safeParse({ extra: true }).success, false);

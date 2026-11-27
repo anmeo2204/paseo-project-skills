@@ -145,7 +145,7 @@ async function initGitRepo(dir) {
 test('compatibility policy evaluates semver ranges, safe default daemon home, trust boundary, and helper integrity', async () => {
   assert.equal(isPaseoVersionCompatible('0.17.5'), true);
   assert.equal(isPaseoVersionCompatible('0.17.9'), true);
-  assert.equal(isPaseoVersionCompatible('0.18.0'), true);
+  assert.equal(isPaseoVersionCompatible('0.18.0'), false);
   assert.equal(isPaseoVersionCompatible('0.17.4'), false);
   assert.equal(isPaseoVersionCompatible('1.0.0'), false);
   assert.equal(isPaseoVersionCompatible('invalid'), false);
