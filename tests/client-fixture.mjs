@@ -1,6 +1,6 @@
 import { createContext, createElement, useContext } from "react";
 
-export { usePaseo, useRpc } from "@getpaseo/plugin/client";
+export { usePaseo, useRpc, useSubscription } from "@getpaseo/plugin/client";
 
 export const HostFixture = createContext(null);
 export const useHosts = () => useContext(HostFixture).hosts;

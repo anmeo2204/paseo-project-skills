@@ -139,6 +139,7 @@ test("strict ingestion isolates malformed, missing and future sidecars", () => {
   ]);
   assert.deepEqual(event.result.items.map(({ applicability }) => applicability), ["unknown", "unknown", "unknown", "optional"]);
   assert.equal(evaluate([missing]).status, "ready");
+  assert.equal(evaluate([missing]).result.items[0].inventory.state, "not_observed");
   valid.supportingFiles[0].bytes[0] = 0;
   assert.equal(evaluate([valid]).code, "catalog_unavailable");
 });
@@ -196,6 +197,14 @@ test("response and input budgets return typed errors without shortening the resu
     appliesWhen: [[{ kind: "language", key: "go", basis: "direct" }]] });
   assert.equal(evaluate(Array.from({ length: 80 }, (_, i) => skill("go-" + i, rule)), data).code, "limit_exceeded");
   assert.equal(evaluate(Array.from({ length: 513 }, (_, i) => skill("go-" + i, rule))).code, "limit_exceeded");
+  const withTooManyBoundaries = evidence();
+  for (let i = 0; i < 64; i++) {
+    withTooManyBoundaries.boundaries.push({ rootRelativePath: "app-" + i, roles: ["application"], memberships: [], evidenceIds: [] });
+  }
+  assert.equal(evaluate([skill("go", rule)], withTooManyBoundaries).code, "limit_exceeded");
+  const scannerProjection = evidence();
+  scannerProjection.coverage = { status: "partial", limits: ["response_budget"], unknown: [] };
+  assert.equal(evaluate([skill("go", rule)], scannerProjection).code, "limit_exceeded");
   data.evidence[0].id = "x".repeat(256 * 1024);
   assert.equal(evaluate([skill("go", rule)], data).code, "limit_exceeded");
 });
@@ -305,4 +314,51 @@ test("RPC attempts a terminal event once even when push rejects", async () => {
     },
   }), /disconnected/);
   assert.equal(attempts, 1);
+});
+
+test("selector and file limits are inclusive and dependency filters remain exact", () => {
+  const selector = { kind: "dependency", basis: "direct", key: "@example/tool",
+    ecosystem: "npm", scope: "dev", sourceFile: "package.json" };
+  const rule = (groups) => JSON.stringify({ schemaVersion: 1, scope: "boundary", appliesWhen: groups });
+  for (const groups of [
+    Array.from({ length: 5 }, () => [selector]),
+    [Array.from({ length: 5 }, () => selector)],
+    [[{ ...selector, sourceFile: "../package.json" }]],
+    [[{ ...selector, key: "x\n" }]],
+    [[{ ...selector, kind: "framework" }]],
+  ]) assert.deepEqual(readApplicability(Buffer.from(rule(groups))), { code: "invalid_applicability" });
+  const maximalGroups = Array.from({ length: 4 }, () => Array.from({ length: 4 }, () => selector));
+  assert.ok(readApplicability(Buffer.from(rule(maximalGroups).padEnd(8192))).rule);
+  const data = evidence();
+  data.evidence.push({ id: "tool", kind: "declaration", relativePath: "package.json" });
+  data.facts.push({ boundaryPath: ".", kind: "dependency", basis: "direct", key: selector.key,
+    ecosystem: "npm", scope: "dev", evidenceIds: ["tool"] });
+  const cases = [
+    ["exact", selector], ["literal-star", { ...selector, key: "*" }],
+    ["case", { ...selector, key: "@Example/tool" }], ["scope", { ...selector, scope: "production" }],
+    ["ecosystem", { ...selector, ecosystem: "go" }],
+  ];
+  const { result } = evaluate(cases.map(([id, candidate]) => skill(id, rule([[candidate]]))), data);
+  assert.deepEqual(result.items.filter((item) => item.applicability === "optional").map(({ skillId }) => skillId), ["exact"]);
+});
+
+test("inventory preserves multiple layouts and unreadable candidates without changing applicability", () => {
+  const data = evidence();
+  const addOccurrence = (directoryId, layout, metadataState) => {
+    const relativePath = `${layout}/${directoryId}/SKILL.md`;
+    data.evidence.push({ id: relativePath, kind: "presence", relativePath });
+    data.inventory.push({ relativePath, boundaryPath: ".", kind: "skill", layout, directoryId, metadataState,
+      ...(metadataState === "valid" ? { declaredId: directoryId } : {}), evidenceIds: [relativePath] });
+  };
+  addOccurrence("reusable", ".agents/skills", "valid");
+  addOccurrence("reusable", ".cursor/skills", "valid");
+  addOccurrence("unreadable", ".kiro/skills", "unreadable");
+  const { result } = evaluate([skill("reusable", project("recommended")), skill("unreadable")], data);
+  const [reusable, unreadable] = result.items;
+  assert.equal(reusable.applicability, "recommended");
+  assert.equal(reusable.inventory.state, "multiple_occurrences");
+  assert.deepEqual(reusable.inventory.occurrences.map(({ layout, match }) => [layout, match]),
+    [[".agents/skills", "confirmed"], [".cursor/skills", "confirmed"]]);
+  assert.equal(unreadable.inventory.state, "unknown");
+  assert.deepEqual(unreadable.inventory.occurrences[0].flags, ["unreadable"]);
 });

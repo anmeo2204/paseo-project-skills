@@ -110,7 +110,8 @@ export function evaluateRecommendation(
   if (!parsed.success) return error("invalid_evidence");
   const evidence = parsed.data;
   if (evidence.target.canonicalDirectory !== input.canonicalDirectory) return error("target_changed");
-  if (evidence.boundaries.length > scanLimits.boundaries ||
+  if (evidence.coverage.limits.includes("response_budget") ||
+      evidence.boundaries.length > scanLimits.boundaries ||
       Buffer.byteLength(JSON.stringify(evidence)) > scanLimits.responseBytes) return error("limit_exceeded");
   const indexed = indexEvidence(evidence);
   if (!indexed) return error("invalid_evidence");

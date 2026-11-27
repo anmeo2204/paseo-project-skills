@@ -1,6 +1,6 @@
 # Project Skills for Paseo
 
-Project Skills is a standalone Paseo plugin for selecting and installing project skills with user approval. The current Foundation release lets you choose a directory on a Paseo host, discover providers for that directory, and save the catalog revision for future use.
+Project Skills is a standalone Paseo plugin for selecting and installing project skills with user approval. Choose a directory on a Paseo host, scan for project fit, and select skills and target providers for a later installation review.
 
 ## Foundation
 
@@ -11,7 +11,7 @@ Project Skills is a standalone Paseo plugin for selecting and installing project
 
 ## Development and local installation
 
-Use Paseo Desktop and daemon **0.17.4** for the verified baseline. Use Node.js **22.15 or later** for the test runner and its module hooks. On macOS, use the CLI packaged with Desktop and adjust the app location if needed.
+The SDK remains pinned to **0.17.4**. Use Paseo Desktop and daemon **0.17.5** for the Scan UI smoke test. Use Node.js **22.15 or later** for the test runner and its module hooks. On macOS, use the CLI packaged with Desktop and adjust the app location if needed.
 
 From the repository root:
 
@@ -44,7 +44,7 @@ Directory installation registers your checkout as trusted plugin code. Paseo com
 
 ## Catalog and scope
 
-Project-Skills is the single source of skill templates. The host setting starts empty. Enter a tag name or a full 40-character commit SHA. A bare name is treated as a tag candidate. Catalog resolution must use the tag namespace or an explicit SHA, with no fallback to branches, `main` or a floating latest revision. Saving settings validates syntax. On demand, the daemon-side `catalog.load` RPC reads the active host’s saved revision and returns the resolved commit SHA, skill metadata and file descriptors. It discovers `skills/<name>/SKILL.md` in the pinned Git tree and rejects a malformed catalog as a whole. The existing screen saves the revision. Loading is exercised through the RPC. [Project-Skills repository](https://github.com/anmeo2204/project-skills)
+Project-Skills is the single source of skill templates. The host setting starts empty. Enter a tag name or a full 40-character commit SHA. A bare name is treated as a tag candidate. Catalog resolution must use the tag namespace or an explicit SHA, with no fallback to branches, `main` or a floating latest revision. Saving settings validates syntax. On demand, the daemon-side `catalog.load` RPC reads the active host’s saved revision and returns the resolved commit SHA, skill metadata and file descriptors. It discovers `skills/<name>/SKILL.md` in the pinned Git tree and rejects a malformed catalog as a whole. The existing screen saves the revision. The screen loads catalog descriptors when you request a scan. [Project-Skills repository](https://github.com/anmeo2204/project-skills)
 
 The loader requires Git on the daemon host and non-interactive SSH read access to `git@github.com:anmeo2204/project-skills.git` with its host key already trusted. It uses the host SSH identity or agent, an isolated temporary bare repo, and an in-memory cache of two resolved snapshots. For a runtime check, use the Paseo SDK settings RPC to save a known SHA, call `catalog.load` with `{}` twice, compare commit, IDs and descriptors, try an unavailable revision and restore the saved ref.
 
@@ -54,7 +54,7 @@ The plugin validates existing directories without creating workspaces or writing
 
 The daemon-side `target.scan` subscription accepts a request ID and the canonical directory returned by `target.validate-directory` for the active host. Revalidation happens on the daemon. Each connected request emits one result. Release the subscription on receipt, target change, or unmount. Treat the request ID as part of the selection identity even when returning to the same path.
 
-The scanner reads bounded metadata and collects relative evidence references, application and workspace boundaries, technology declarations and inferences, and existing project skill/rule paths. Partial results carry warnings and coverage limits. It does not need a catalog ref or provider. M2.2 exposes the subscription for SDK use. The scan UI is planned for M2.5.
+The scanner reads bounded metadata and collects relative evidence references, application and workspace boundaries, technology declarations and inferences, and existing project skill/rule paths. Partial results carry warnings and coverage limits. It does not need a catalog ref or provider. M2.2 exposes this subscription for SDK use.
 
 The scanner is intended for local projects managed by the user. It excludes dependency trees, secret files, symlinks and special files, and never runs project commands. Node pathname checks can detect the tested replacement races, but do not provide an adversarial filesystem sandbox. See [the completion report](M2.2-completion-report.md) for the evidence policy and runtime checks.
 
@@ -65,6 +65,12 @@ Subscribe to `recommendation.evaluate` with a `requestId` and the validated `can
 The engine reads `applicability.json` beside each skill's `SKILL.md` at the resolved commit. It evaluates project scope and scanner-assigned boundaries, returns evidence references for matches, and lists observed skill installations independently. Partial scans can still produce positive matches. Older catalog revisions load normally and report `unknown` for skills without a sidecar. Invalid or unsupported sidecars produce skill-level diagnostics. Task applicability is always `not_assessed`.
 
 Run `npm run typecheck` and `npm test` for the contract, scanner, engine, and subscription fixtures. Remote acceptance of the migrated catalog requires a published revision containing the sidecars. See the [applicability contract](M2.4-applicability-contract.md).
+
+## Scan & Recommend in Desktop
+
+Open **Project Skills**, choose a project or enter a host path, then save a catalog tag or SHA. Target Providers are optional installation destinations. Choose **Scan & Recommend** to review the pinned result. Open a skill’s details for boundary evidence and existing installations. Open **Unknown** to review skills with insufficient evidence or missing rules.
+
+Select skills manually or use **Select Recommended**. **Clear Selection** preserves provider choices. Rescanning or changing the target or saved catalog discards the previous skill selection. Selection records intent for a later milestone. The screen does not preview or write files.
 
 ## Optional AI capability
 

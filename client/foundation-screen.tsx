@@ -1,13 +1,15 @@
 import type { PluginTheme } from "@getpaseo/plugin";
-import { useHosts, useRpc, type PluginScreenProps } from "@getpaseo/plugin/client";
+import { useHosts, useRpc, useSettings, type PluginScreenProps } from "@getpaseo/plugin/client";
 import { ScrollView } from "@getpaseo/plugin/client/ui";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useId, useState } from "react";
 import { View } from "react-native";
+import { catalogSettings } from "../shared/catalog-settings";
 import { foundationStatusRpc, validateDirectoryRpc } from "../shared/rpc";
 import { CatalogSection } from "./catalog-section";
 import { Action, Detail, Section } from "./controls";
-import { ProviderSelection } from "./provider-selection";
+import { ProviderSelection, type ProviderId } from "./provider-selection";
+import { RecommendationRun } from "./recommendation-run";
 import { TargetPicker, type Target } from "./target-picker";
 
 const directoryErrors = {
@@ -30,7 +32,7 @@ export function FoundationScreen({ theme, layout, host }: PluginScreenProps) {
           <Section theme={theme} title="Target Project">
             <Detail theme={theme} error>{host.label} is {status}. Connect to this host to choose a directory.</Detail>
           </Section>
-          <Section theme={theme} title="AI Providers"><Detail theme={theme}>Connect to the host to discover providers.</Detail></Section>
+          <Section theme={theme} title="Target Providers"><Detail theme={theme}>Connect to the host to discover providers.</Detail></Section>
           <Section theme={theme} title="Skill Catalog"><Detail theme={theme}>Host settings are unavailable.</Detail></Section>
         </> : <HostScreen key={host.id} theme={theme} hostId={host.id} hostLabel={host.label} />}
       </View>
@@ -41,6 +43,8 @@ export function FoundationScreen({ theme, layout, host }: PluginScreenProps) {
 function HostScreen({ theme, hostId, hostLabel }: { theme: PluginTheme; hostId: string; hostLabel: string }) {
   const [target, setTarget] = useState<{ value: Target; selection: number } | null>(null);
 
+  const settings = useSettings(catalogSettings);
+  const [providers, setProviders] = useState<ProviderId[]>([]);
   const validate = useRpc(validateDirectoryRpc);
   const screenId = useId();
   const path = target?.value.path;
@@ -58,8 +62,10 @@ function HostScreen({ theme, hostId, hostLabel }: { theme: PluginTheme; hostId: 
     <>
       <Section theme={theme} title="Target Project">
         <Detail theme={theme}>Paseo host: {hostLabel}</Detail>
-        <TargetPicker theme={theme} hostId={hostId} onSelect={(value) =>
-          setTarget((current) => ({ value, selection: (current?.selection ?? 0) + 1 }))} />
+        <TargetPicker theme={theme} hostId={hostId} onSelect={(value) => {
+          setProviders([]);
+          setTarget((current) => ({ value, selection: (current?.selection ?? 0) + 1 }));
+        }} />
         {!target && <Detail theme={theme}>No target directory selected.</Detail>}
         {target && <View style={{ gap: 4 }} accessibilityLiveRegion="polite">
           <Detail theme={theme}>{target.value.label} · {target.value.kind}</Detail>
@@ -73,12 +79,16 @@ function HostScreen({ theme, hostId, hostLabel }: { theme: PluginTheme; hostId: 
           {directory && <Detail theme={theme}>Target directory: {directory}</Detail>}
         </View>}
       </Section>
-      <Section theme={theme} title="AI Providers">
+      <Section theme={theme} title="Target Providers">
         {directory
-          ? <ProviderSelection key={target?.selection} theme={theme} hostId={hostId} cwd={directory} />
+          ? <ProviderSelection key={target?.selection} theme={theme} hostId={hostId} cwd={directory}
+              selected={providers} onToggle={(id) => setProviders((current) => current.includes(id)
+                ? current.filter((selected) => selected !== id) : [...current, id])} />
           : <Detail theme={theme}>Choose a valid target directory to discover providers.</Detail>}
       </Section>
-      <Section theme={theme} title="Skill Catalog"><CatalogSection theme={theme} /></Section>
+      <Section theme={theme} title="Skill Catalog"><CatalogSection theme={theme} settings={settings} /></Section>
+      <RecommendationRun theme={theme} hostId={hostId} directory={directory}
+        generation={target?.selection ?? 0} settings={settings} providers={providers} />
       <ConnectionCheck theme={theme} />
     </>
   );

@@ -28,7 +28,7 @@ export function Action({ theme, label, onPress, disabled = false, primary = fals
   primary?: boolean;
 }) {
   return (
-    <Pressable accessibilityRole="button" disabled={disabled} onPress={onPress}
+    <Pressable accessibilityRole="button" accessibilityState={{ disabled }} disabled={disabled} onPress={onPress}
       style={{ alignSelf: "flex-start", paddingHorizontal: 12, paddingVertical: 8, borderRadius: 6,
         borderWidth: 1, borderColor: primary ? theme.colors.accent : theme.colors.border,
         backgroundColor: primary ? theme.colors.accent : theme.colors.surface2, opacity: disabled ? 0.55 : 1 }}>

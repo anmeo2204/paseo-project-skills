@@ -139,11 +139,11 @@ async function validate(h, input, directory = input) {
   return h.requests.providers.at(-1);
 }
 
-test("real screen renders provider states and allows several ready selections", async (t) => {
+test("real screen renders provider states and allows several target selections independently of runtime status", async (t) => {
   const h = harness(t);
   await h.show();
   const discovery = await validate(h, pathA, "/canonical-a");
-  assert.ok(h.providers().every(({ props }) => props.disabled && props.accessibilityLabel.endsWith("loading")));
+  assert.ok(h.providers().every(({ props }) => !props.disabled && props.accessibilityLabel.endsWith("loading")));
   await resolve(discovery, { entries: [
     providerReady("codex"), providerReady("cursor"),
     { provider: "kiro", enabled: true, status: "unavailable" },
@@ -154,10 +154,10 @@ test("real screen renders provider states and allows several ready selections", 
   assert.equal(cursor.props.accessibilityState.checked, false);
   assert.equal(kiro.props.accessibilityLabel, "Kiro, unavailable");
   assert.equal(antigravity.props.accessibilityLabel, "Antigravity, error");
-  assert.equal(kiro.props.disabled, true);
-  assert.equal(antigravity.props.disabled, true);
+  assert.ok(!kiro.props.disabled);
+  assert.ok(!antigravity.props.disabled);
   await act(async () => codex.props.onPress());
-  await act(async () => cursor.props.onPress());
+  await act(async () => kiro.props.onPress());
   assert.equal(h.providers().filter(({ props }) => props.accessibilityState.checked).length, 2);
   await resolve(await validate(h, pathB), ready);
   assert.ok(h.providers().every(({ props }) => !props.accessibilityState.checked));
@@ -239,7 +239,7 @@ test("provider transport failure surfaces an error and retry can recover", async
   const request = await validate(h, pathA);
   await act(async () => request.reject(new Error("offline")));
   assert.match(h.rendered(), /Could not discover providers/);
-  assert.ok(h.providers().every(({ props }) => props.disabled && props.accessibilityLabel.endsWith("error")));
+  assert.ok(h.providers().every(({ props }) => !props.disabled && props.accessibilityLabel.endsWith("error")));
   await h.press("Retry discovery");
   await resolve(h.requests.providers.at(-1), ready);
   assert.ok(h.providers().every(({ props }) => !props.disabled));
@@ -277,5 +277,5 @@ test("discovery polls only while an enabled supported provider is loading", asyn
     { provider: "other", enabled: true, status: "loading" },
   ] });
   assert.equal(h.discoveryPollInterval(), false);
-  assert.ok(h.providers().every(({ props }) => props.disabled));
+  assert.ok(h.providers().every(({ props }) => !props.disabled));
 });
