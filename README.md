@@ -58,6 +58,14 @@ The scanner reads bounded metadata and collects relative evidence references, ap
 
 The scanner is intended for local projects managed by the user. It excludes dependency trees, secret files, symlinks and special files, and never runs project commands. Node pathname checks can detect the tested replacement races, but do not provide an adversarial filesystem sandbox. See [the completion report](M2.2-completion-report.md) for the evidence policy and runtime checks.
 
+## Deterministic recommendations
+
+Subscribe to `recommendation.evaluate` with a `requestId` and the validated `canonicalDirectory`. Pass `expectedCatalogSha` and `expectedSettingsRevision` when continuing from a previously loaded catalog. The daemon resolves the host's saved catalog ref once, scans the target again, and emits a single `ready`, `partial`, or typed `error` event. Release the subscription on receipt or when the host or target selection changes.
+
+The engine reads `applicability.json` beside each skill's `SKILL.md` at the resolved commit. It evaluates project scope and scanner-assigned boundaries, returns evidence references for matches, and lists observed skill installations independently. Partial scans can still produce positive matches. Older catalog revisions load normally and report `unknown` for skills without a sidecar. Invalid or unsupported sidecars produce skill-level diagnostics. Task applicability is always `not_assessed`.
+
+Run `npm run typecheck` and `npm test` for the contract, scanner, engine, and subscription fixtures. Remote acceptance of the migrated catalog requires a published revision containing the sidecars. See the [applicability contract](M2.4-applicability-contract.md).
+
 ## Optional AI capability
 
 M2.3 provides a server-side structured agent executor through the public Paseo SDK. It ships with no verified execution profiles, so provider availability alone cannot start a run. The executor is internal to the plugin and will be connected to the optional AI-assisted recommendation flow separately. Catalog and project evidence remain available independently. See [the M2.3 completion report](M2.3-completion-report.md) for the local preflight and provider limitations.

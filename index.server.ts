@@ -1,9 +1,10 @@
 import type { PluginServerContext } from "@getpaseo/plugin/server";
 import { catalogSettings } from "./shared/catalog-settings";
-import { catalogLoadRpc, foundationStatusRpc, targetScanSubscription, validateDirectoryRpc } from "./shared/rpc";
+import { catalogLoadRpc, foundationStatusRpc, recommendationEvaluateSubscription, targetScanSubscription, validateDirectoryRpc } from "./shared/rpc";
 import { CatalogLoader } from "./server/catalog-loader";
 import { loadCatalogForHost } from "./server/catalog-rpc";
 import { ProjectScanner } from "./server/project-scanner";
+import { createRecommendationHandler } from "./server/recommendation-rpc";
 import { validateDirectory } from "./server/validate-directory";
 
 export default function contribute(server: PluginServerContext) {
@@ -19,6 +20,8 @@ export default function contribute(server: PluginServerContext) {
     const result = await scanner.scan(input, signal);
     if (result && !signal.aborted) await push(targetScanSubscription.event.parse(result));
   });
+
+  server.handle(recommendationEvaluateSubscription, createRecommendationHandler(settings, loader, scanner));
 
   return async () => { await Promise.all([loader.dispose(), scanner.dispose()]); };
 }

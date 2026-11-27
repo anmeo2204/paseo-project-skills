@@ -15,7 +15,7 @@ type CatalogSkill = Omit<SkillDescriptor, "entrypoint" | "supportingFiles"> & {
   entrypoint: CatalogFile;
   supportingFiles: CatalogFile[];
 };
-type Snapshot = Omit<CatalogSnapshotDescriptor, "skills"> & { skills: CatalogSkill[] };
+export type CatalogSnapshot = Omit<CatalogSnapshotDescriptor, "skills"> & { skills: CatalogSkill[] };
 
 const decoder = new TextDecoder("utf-8", { fatal: true, ignoreBOM: true });
 const treeHeader = /^([0-7]{6}) (tree|blob|commit) ([0-9a-f]{40}) +(-|[0-9]+)$/;
@@ -119,7 +119,7 @@ function parseMetadata(bytes: Buffer) {
 
 const compare = (a: string, b: string) => a < b ? -1 : a > b ? 1 : 0;
 
-async function discover(commitSha: string, git: GitStaging): Promise<Snapshot> {
+async function discover(commitSha: string, git: GitStaging): Promise<CatalogSnapshot> {
   const directories = listSkills(await git.listSkills(commitSha));
   const skills: CatalogSkill[] = [];
   const diagnostics: CatalogDiagnostic[] = [];
@@ -156,7 +156,7 @@ async function discover(commitSha: string, git: GitStaging): Promise<Snapshot> {
   return { schemaVersion: 1, source: catalogSource, commitSha, skills };
 }
 
-export function describeCatalog(snapshot: Snapshot): CatalogSnapshotDescriptor {
+export function describeCatalog(snapshot: CatalogSnapshot): CatalogSnapshotDescriptor {
   const descriptor = catalogSnapshotSchema.parse(snapshot);
   if (Buffer.byteLength(JSON.stringify(descriptor)) > catalogLimits.rpcBytes) {
     throw new CatalogError("limit_exceeded");
@@ -166,8 +166,8 @@ export function describeCatalog(snapshot: Snapshot): CatalogSnapshotDescriptor {
 
 export class CatalogLoader {
   // The source is fixed for the lifetime of this cache, so the key is the resolved SHA.
-  private readonly snapshots = new Map<string, Snapshot>();
-  private readonly pendingShas = new Map<string, Promise<Snapshot>>();
+  private readonly snapshots = new Map<string, CatalogSnapshot>();
+  private readonly pendingShas = new Map<string, Promise<CatalogSnapshot>>();
   private disposed = false;
 
   constructor(private readonly git = new CatalogGit()) {}

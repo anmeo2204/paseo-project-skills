@@ -2,6 +2,7 @@ import { defineRpc, defineSubscription } from "@getpaseo/plugin";
 import { z } from "zod";
 import { catalogResultSchema } from "./catalog";
 import { projectScanEvent } from "./project-evidence";
+import { recommendationEvent, recommendationInput } from "./recommendation";
 
 export const foundationStatusRpc = defineRpc({
   name: "foundation.status",
@@ -34,4 +35,10 @@ export const targetScanSubscription = defineSubscription({
     canonicalDirectory: z.string().min(1).max(4096),
   }),
   event: projectScanEvent,
+});
+
+export const recommendationEvaluateSubscription = defineSubscription({
+  name: "recommendation.evaluate",
+  input: recommendationInput,
+  event: recommendationEvent,
 });
