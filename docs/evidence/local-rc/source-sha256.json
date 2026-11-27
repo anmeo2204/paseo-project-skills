@@ -1,0 +1,36 @@
+{
+  "baseline": "6acc758445c7a1d344bd84704163fc5958d2db6a",
+  "branch": "main",
+  "productEntrypointsAndHelperUnchanged": true,
+  "installedEntrypointsMatchReleaseSource": true,
+  "stagedAdapters": {
+    "standardSha256": "5da6d324ed6453f446dfa3374144ad5b3367653a99228fecdee78da66c830098",
+    "fixtureSha256": "d625c48cecaa54435cddd7d3dac2d34579c6cf9a9f28a57b0a9fb703c22627e0"
+  },
+  "sourceSha256": {
+    "SAFE-APPLY-local-RC-report.md": "91bd385edddc41fda4534a67ca4e2c71db9712023e516b4fc07f3f4629e25459",
+    "client/local-rc.tsx": "03015ef624758bb70d602e1c9f5b583aae127d6ade520c83da0bc53acc137d82",
+    "release/local/index.client.tsx": "e61ffc296f42144cdcb584ac7f406fcf10f6ae6b50d6505e27fa85523a47f85e",
+    "release/local/index.server.ts": "f59d2d675d418caf070c945f926c53d41e1c20b86efec2bd659597bb3d63e7ea",
+    "release/local/paseo-plugin.json": "bfb3017abe28445d20d8a75d44d00f5457892e1f972c1718cf5e12e15518ac4a",
+    "scripts/m45-desktop-acceptance.mjs": "bca4a2e3dce7593afc78c8909b74e85d22131c4b3594ff2c57a617804825d852",
+    "scripts/m46-desktop-reopen.mjs": "5bdf625e5c04fa9fabf45f6c1e0071766640b33f25450aba8950213bc3fb7a01",
+    "scripts/smoke-local-rc.mjs": "74804b5dc5d0879a6a08fa0e2c8332ca571fa2642e7f994db2c7ade5713651d9",
+    "scripts/stage-local-rc.mjs": "3e62c29114ea86958a6fa2a4d84de053c6a149f8c95becda77e4ab309ef471b7",
+    "server/catalog-rpc.ts": "9c94eb7c2c91b962fb9fe96ec9008616d9a9e09e3d7bccd93db76d6c86bcc1ef",
+    "server/fixture-apply.ts": "664f256354d0689efd50e63d8b4d395993ee7dd9abe87158d38f6b0413c5238a",
+    "server/local-rc-profile.ts": "31537d03597b39627ebfdb0d1e78d0d5e5c894b17f0e7cf22a0435728c4eb263",
+    "server/local-rc.ts": "a105a45528193c7cd5466b069cd70f155ac5537b89d8c7a5d4d7426d2169d8af",
+    "shared/apply.ts": "b94a450a92f6b894528945bcdab4bf8320e6613f4ef6a201aef011cbe5d2180a"
+  },
+  "evidenceSha256": {
+    "desktop-acceptance.json": "caffc5669710501ad1fff487dd1f600bfa6ddcb9a16949cbae65d23ad1ef2300",
+    "desktop-cleanup.json": "ef5abef741e4173bc8d4ee5361119156fdad1fa84aaae06e257f0601e53e6927",
+    "desktop-cold-reopen-cleanup.json": "ef5abef741e4173bc8d4ee5361119156fdad1fa84aaae06e257f0601e53e6927",
+    "desktop-cold-reopen.json": "967ab6b5e95de380a3d0ee12cc1c911eecafe415be937c9ee85df982fd231d58",
+    "packaged-helper.json": "ec6ac06d942a1dde03422b114a0fe37d5ad2fecfb332b3728a5f1eed2558b662",
+    "standard-cleanup.json": "77e330ce1a7afdd17a0ec46bf4c5ce805706b45493f8730a1e813bdb9d04e1d5",
+    "standard-smoke.json": "28142a432be5349526b5c5a2431de07aaad3402948c3075eccfdc1c74a13d053",
+    "tests.log": "e2be942ba4d6a6d58829f1de3ef4150964ef45a04574b352e02a9b6195e70f24"
+  }
+}

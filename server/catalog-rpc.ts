@@ -10,7 +10,7 @@ type SettingsHandle = PluginSettings<typeof catalogSettings.schema>;
 
 export async function loadCatalogForHost(
   settings: SettingsHandle,
-  loader: CatalogLoader,
+  loader: Pick<CatalogLoader, "load">,
 ): Promise<RpcOutput<typeof catalogLoadRpc>> {
   let settingsRevision: string | undefined;
   let requestedRef: string | undefined;

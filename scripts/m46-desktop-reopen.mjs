@@ -17,6 +17,8 @@ const priorCleanup = JSON.parse(await fs.readFile(join(base,'cleanup.json'),'utf
 assert.equal(priorCleanup.desktopExited,true);
 assert.equal(priorCleanup.status.localDaemon,'stopped');
 const operationId = prior.integration.lost.operationId;
+const pluginId = prior.pluginId ?? "m45-approval-fixture";
+assert.match(pluginId, /^[a-z0-9-]+$/);
 assert.match(operationId,/^[a-f0-9]{32,64}$/);
 const app = process.env.M45_PASEO_APP ?? '/Applications/Paseo.app';
 const cli = join(app,'Contents/Resources/bin/paseo');
@@ -62,7 +64,7 @@ try {
   });
   const evaluate=async expression=>(await call('Runtime.evaluate',{expression,returnByValue:true})).result?.value;
   await until(async()=>await evaluate(`(()=>{
-    const button=document.querySelector('[data-testid=plugin-sidebar-m45-approval-fixture-foundation]');
+    const button=document.querySelector('[data-testid=plugin-sidebar-${pluginId}-foundation]');
     if(!button)return false;
     button.click();return true;
   })()`),'open Approval Fixture');

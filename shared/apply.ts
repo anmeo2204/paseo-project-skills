@@ -40,3 +40,7 @@ export type ApplyOperation = z.infer<typeof applyOperationSchema>;
 export type ApplyOutput = z.infer<typeof applyOutputSchema>;
 export const applyCreateRpc = defineRpc({ name: "apply.create.v1", input: applyCreateInputSchema, output: applyOutputSchema });
 export const applyStatusRpc = defineRpc({ name: "apply.status.v1", input: applyStatusInputSchema, output: applyOutputSchema });
+
+export const localApplyCapabilityRpc = defineRpc({
+  name: "apply.local-capability.v1", input: z.strictObject({}), output: z.strictObject({ enabled: z.boolean() }),
+});

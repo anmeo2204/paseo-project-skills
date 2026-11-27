@@ -31,6 +31,7 @@ const recovery = (operation: ApplyOperation): ApplyOperation => ({
 type FixtureConfiguration = {
   fixtureBase: string;
   installation: string;
+  targetAllowed?: (target: string) => boolean;
   receipts: PreviewReceiptStore;
   settings: Parameters<typeof createCanonicalPreviewHandler>[0];
   catalog: Parameters<typeof createCanonicalPreviewHandler>[1];
@@ -54,7 +55,7 @@ export function createFixtureApply(config: FixtureConfiguration) {
   const journal = new ApplyJournal(coordinator);
   const active = new Map<string, { requestHash: string; done: Promise<ApplyOutput> }>();
   const stop = new AbortController();
-  const allowsTarget = (target: string) => isFixtureApplyTarget(base, target, home);
+  const allowsTarget = (target: string) => isFixtureApplyTarget(base, target, home) && (config.targetAllowed?.(target) ?? true);
   const revalidation = createCanonicalPreviewHandler(config.settings, config.catalog, {
     receiptStore: new PreviewReceiptStore(config.receipts.policy.writeCapability === "fixture_m4_5" ? { fixtureApply: allowsTarget } : {}),
   });

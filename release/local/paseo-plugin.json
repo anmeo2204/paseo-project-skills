@@ -1,0 +1,5 @@
+{
+  "id": "paseo-project-skills-local-rc",
+  "name": "Project Skills Local RC",
+  "requirements": { "paseo": "0.17.5" }
+}

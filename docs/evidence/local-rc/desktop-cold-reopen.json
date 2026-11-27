@@ -1,0 +1,52 @@
+{
+  "operationId": "4459b0a154d79f1417cfb760a2bc9b5c",
+  "row": "Completed\nsrv_8QVtrhclyMSw\nOperation 4459b0a154d79f1417cfb760a2bc9b5c\nTarget mutation recorded.\nOperation ledger",
+  "applyResent": false,
+  "statusAudit": [
+    {
+      "method": "status",
+      "operationId": "661896dd63333e6e4ddf4ab4b1f516eb",
+      "pid": 20608
+    },
+    {
+      "method": "status",
+      "operationId": "4459b0a154d79f1417cfb760a2bc9b5c",
+      "pid": 20608
+    },
+    {
+      "method": "status",
+      "operationId": "d0ec564b507289a88797362092c863cb",
+      "pid": 20608
+    },
+    {
+      "method": "status",
+      "operationId": "60c0054d79fb2503a18bfe91abcc4b2b",
+      "pid": 20608
+    },
+    {
+      "method": "status",
+      "operationId": "34e48cd9b11448b7d08b10098b9cdbc9",
+      "pid": 20608
+    },
+    {
+      "method": "status",
+      "operationId": "510262d99e1e5cb66675f7ba0ac24454",
+      "pid": 20608
+    },
+    {
+      "method": "status",
+      "operationId": "c3c2c8413ef9cdf7ca5c28e030db3ba2",
+      "pid": 20608
+    },
+    {
+      "method": "status",
+      "operationId": "e738aa41770745c8b7c82f657da964c6",
+      "pid": 20608
+    },
+    {
+      "method": "status",
+      "operationId": "fc7f9f74d730dadaea11732499be714b",
+      "pid": 20608
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { execFile, spawn } from 'node:child_process';
 import { once } from 'node:events';
-import { createHash } from 'node:crypto';
+import { createHash, randomBytes } from 'node:crypto';
 import { createServer } from 'node:net';
 import * as fs from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -22,10 +22,15 @@ for (const name of ['client','plugin','protocol']) {
 }
 const base = await fs.realpath(await fs.mkdtemp(join(tmpdir(),'pps-m43-m45-')));
 console.log('M4.5 Desktop fixture evidence: ' + base);
-const home = join(base,'daemon'), desktopProfile = join(base,'desktop'), plugin = join(base,'plugin');
+const home = join(base,'daemon'), desktopProfile = join(base,'desktop');
+const localRc = process.argv.includes('--local-rc');
+const stage = join(base,'plugin');
+const plugin = stage;
 const coordinator = join(home,'runtime/project-skills-m44');
-const id = 'm45-approval-fixture';
-const integrated = process.argv.includes('--integrated');
+const targetRoot = localRc ? join(base,'targets') : base;
+const id = localRc ? 'paseo-project-skills-local-rc' : 'm45-approval-fixture';
+const fixtureTitle = localRc ? 'Project Skills Local RC' : 'Approval Fixture';
+const integrated = localRc || process.argv.includes('--integrated');
 const product = join(base,'product');
 if (integrated) {
   await fs.mkdir(product,{mode:0o700});
@@ -34,9 +39,12 @@ if (integrated) {
   await fs.symlink(join(repo,'node_modules'),join(product,'node_modules'));
 }
 const sha = 'a'.repeat(40);
-for (const path of [home,join(home,'runtime'),coordinator,desktopProfile,plugin]) await fs.mkdir(path,{mode:0o700});
-for (const directory of ['client','server','shared']) await fs.cp(join(repo,directory),join(plugin,directory),{recursive:true});
-await fs.symlink(join(repo,'node_modules'),join(plugin,'node_modules'));
+for (const path of [home,join(home,'runtime'),coordinator,desktopProfile,stage]) await fs.mkdir(path,{mode:0o700});
+if(localRc) await fs.mkdir(targetRoot,{mode:0o700});
+for (const directory of ['client','server','shared'])
+  await fs.cp(join(repo,directory),join(stage,directory),{recursive:true});
+await fs.symlink(join(repo,'node_modules'),join(stage,'node_modules'));
+if (!localRc) {
 await fs.writeFile(join(plugin,'paseo-plugin.json'),JSON.stringify({ id, name:'Approval Fixture', requirements:{paseo:'>=0.17.4'} }));
 await fs.writeFile(join(plugin,'index.client.tsx'),`
 import { SidebarRow } from '@getpaseo/plugin/client/ui';
@@ -51,8 +59,8 @@ export default function contribute(client) {
     <SidebarRow icon="BookOpen" active={currentScreen?.screenId==='foundation'} onPress={()=>openScreen({screenId:'foundation'})}/>});
   return ()=>{ removeSidebar(); removeScreen(); };
 }`);
-await fs.writeFile(join(plugin,'index.server.ts'),`
-import { createHash } from 'node:crypto';
+}
+const setup = `import { createHash } from 'node:crypto';
 import { existsSync,appendFileSync,writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { catalogSettings,catalogSource } from './shared/catalog-settings';
@@ -84,15 +92,9 @@ const catalog={load:async()=>({schemaVersion:1,source:catalogSource,commitSha:${
   entrypoint:descriptor('SKILL.md','---\\nname: demo\\ndescription: Fixture skill\\n---\\nFixture.\\n'),
   supportingFiles:Array.from({length:32},(_,i)=>descriptor('file-'+String(i).padStart(2,'0')+'.txt','fixture '+i+'\\n',i===31?'100755':undefined))
 }]})};
-export default function contribute(server) {
-  const settings=server.registerSettings(catalogSettings);
-  const receipts=new PreviewReceiptStore({fixtureApply: target=>isFixtureApplyTarget(base,target)});
-  const preview=createCanonicalPreviewHandler(settings,catalog,{receiptStore:receipts});
-  const scanner=new ProjectScanner();
-  let extraction;
-  const apply=createFixtureApply({fixtureBase:base,installation:${JSON.stringify(id)},receipts,settings,catalog,
-    environment:{paseoVersion:'0.17.5',sdkVersion:'0.17.4'},
-    test:{
+`;
+const hooks = `let extraction;
+const fixtureHooks={
       controls:()=>{
         const destination='.agents/skills/demo/file-01.txt';
         if(existsSync(join(base,'inject-partial'))) return {barriers:[],faults:[{point:'write',destination,error:'ENOSPC',afterBytes:1}]};
@@ -112,7 +114,16 @@ export default function contribute(server) {
       afterTerminal:async operation=>{
         if(existsSync(join(base,'inject-lost'))) await gate('lost-terminal',{operationId:operation.operationId});
       },
-    }});
+};
+`;
+const legacy = `export default function contribute(server) {
+  const settings=server.registerSettings(catalogSettings);
+  const receipts=new PreviewReceiptStore({fixtureApply: target=>isFixtureApplyTarget(base,target)});
+  const preview=createCanonicalPreviewHandler(settings,catalog,{receiptStore:receipts});
+  const scanner=new ProjectScanner();
+  const apply=createFixtureApply({fixtureBase:base,installation:${JSON.stringify(id)},receipts,settings,catalog,
+    environment:{paseoVersion:'0.17.5',sdkVersion:'0.17.4'},
+    test:fixtureHooks});
   server.handle(foundationStatusRpc,()=>({status:'ready'}));
   server.handle(validateDirectoryRpc,validateDirectory);
   server.handle(catalogLoadRpc,()=>loadCatalogForHost(settings,catalog));
@@ -129,7 +140,30 @@ export default function contribute(server) {
     return result;
   });
   return async()=>{await apply.dispose(); await preview.dispose(); await scanner.dispose();};
-}`);
+}`;
+if (localRc) {
+  for (const file of ['index.server.ts','index.client.tsx','paseo-plugin.json'])
+    await fs.copyFile(join(repo,'release/local',file),join(plugin,file));
+  const adapterPath = join(plugin,'server/local-rc-profile.ts');
+  const profileTypes = (await fs.readFile(adapterPath,'utf8')).split('// Filled only')[0];
+  const sharedSetup = setup.replace("'./shared/catalog-settings'", "'../shared/catalog-settings'");
+  const adapter = `
+export const profile = {
+  base, targetRoot:${JSON.stringify(targetRoot)}, cli:${JSON.stringify(cli)}, sdkVersions:${JSON.stringify(Object.values(sdkVersions))}, catalog,
+  test:fixtureHooks, trace:(method,operationId)=>audit(method,{operationId}),
+  async afterStatus(operationId,phase) {
+    if(existsSync(join(base,'hold-status-'+operationId))){
+      await gate('status-'+operationId,{phase});
+      audit('held_status_returned',{operationId});
+    }
+  },
+} satisfies LocalProfile;
+`;
+  await fs.writeFile(adapterPath,profileTypes+sharedSetup.replace(/^import .*$/gm, line =>
+    line.includes("node:") ? line : line.includes("catalog-settings") ? line.replace("catalogSettings,","") : "")+hooks+adapter);
+} else {
+  await fs.writeFile(join(plugin,'index.server.ts'),setup+hooks+legacy);
+}
 
 const openPort = async () => {
   const server = createServer();
@@ -142,7 +176,7 @@ const port = await openPort();
 const debug = await openPort();
 await fs.writeFile(join(home,'config.json'),JSON.stringify({version:1,pluginsEnabled:true,
   daemon:{listen:'127.0.0.1:'+port,relay:{enabled:false}},features:{voiceMode:{enabled:false}},
-  plugins:{[id]:{source:'directory',path:plugin,enabled:true},
+  plugins:{...(!localRc && {[id]:{source:'directory',path:plugin,enabled:true}}),
     ...(integrated && {'paseo-project-skills':{source:'directory',path:product,enabled:true}})}}));
 const { createHostClient } = await import(pathToFileURL(join(repo,'node_modules/@getpaseo/client/dist/node/index.js')));
 const { createPaseoApi } = await import(pathToFileURL(join(repo,'node_modules/@getpaseo/client/dist/index.js')));
@@ -169,7 +203,7 @@ const snapshot = async root => {
   return rows;
 };
 async function target(name) {
-  const path=join(base,name);
+  const path=join(targetRoot,name);
   await fs.mkdir(path,{mode:0o700});
   await fs.writeFile(join(path,'existing.txt'),'existing sentinel',{mode:0o640});
   return path;
@@ -226,6 +260,14 @@ try {
     await cdp('Input.dispatchKeyEvent',{type:'keyDown',key,code:key==='Enter'?'Enter':'Space',windowsVirtualKeyCode:code,nativeVirtualKeyCode:code,text:key==='Enter'?'\r':' ',unmodifiedText:key==='Enter'?'\r':' '});
     await cdp('Input.dispatchKeyEvent',{type:'keyUp',key,code:key==='Enter'?'Enter':'Space',windowsVirtualKeyCode:code});
   };
+  let installation;
+  if (localRc) {
+    await until(async()=>{try {
+      const status=JSON.parse((await exec(cli,['--home',home,'status','--json'],{timeout:2500})).stdout);
+      return status.localDaemon==='running';
+    }catch{return false;}},'temporary daemon before directory install');
+    installation=JSON.parse((await exec(cli,['--home',home,'plugin','install',plugin,'--json'],{timeout:15000})).stdout);
+  }
   await until(async()=>{
     try {
       const rows=JSON.parse((await exec(cli,['--home',home,'plugin','ls','--json'],{timeout:2000})).stdout);
@@ -244,11 +286,12 @@ try {
     return next;
   };
   const settings=settingsRpc('catalog');
+  if(localRc) assert.deepEqual(await client.invokePluginRpc(id,'apply.local-capability.v1',{}),{enabled:true});
   const initial=await client.invokePluginRpc(id,settings.read.name,{});
   await client.invokePluginRpc(id,settings.write.name,{revision:initial.revision,values:{catalogRef:sha}});
-  await until(async()=>await evaluate(`Boolean(${find('Approval Fixture')})`),'fixture sidebar entry');
+  await until(async()=>await evaluate(`Boolean(${find(fixtureTitle)})`),'fixture sidebar entry');
   if(await evaluate(`Boolean(${find('Skip setup')})`)) await click('Skip setup');
-  await click('Approval Fixture');
+  await click(fixtureTitle);
   await waitText('Target Project');
 
   const select=async path=>{
@@ -378,8 +421,8 @@ try {
     },name);
     const release=name=>fs.writeFile(join(base,name+'.release'),'');
     const openFixture=async()=>{
-      await until(async()=>{try{return await evaluate(`Boolean(${find('Approval Fixture')})`);}catch{return false;}},'fixture sidebar after reload');
-      await click('Approval Fixture');
+      await until(async()=>{try{return await evaluate(`Boolean(${find(fixtureTitle)})`);}catch{return false;}},'fixture sidebar after reload');
+      await click(fixtureTitle);
       await waitText('Target Project');
     };
 
@@ -408,7 +451,7 @@ try {
 
     const repoTarget=await target('kiro-root');
     await exec('git',['-C',repoTarget,'init','-b','main']);
-    const worktree=join(base,'kiro-worktree');
+    const worktree=join(targetRoot,'kiro-worktree');
     await exec('git',['-C',repoTarget,'worktree','add','--orphan','-b','fixture-linked',worktree]);
     const nested=join(repoTarget,'nested');
     await fs.mkdir(nested,{mode:0o755});
@@ -485,6 +528,7 @@ try {
     integration.restart={privateOrphanRemovedByHarness:true,before:restartBefore,atCrash,after:await snapshot(restartTarget),recovered,ui:await text(),boundary};
     await fs.writeFile(join(base,'integration-checkpoints.json'),JSON.stringify(integration,null,2));
 
+    if (!localRc) {
     await fs.unlink(join(base,'inject-restart'));
     peerHome=join(base,'peer-daemon');
     const peerPort=await openPort();
@@ -565,13 +609,47 @@ try {
     integration.hostSwitch={origin,peerHost,atBoundary:switchAtBoundary,after:await snapshot(switchTarget),switchUi,switchAudit};
     await fs.writeFile(join(base,'integration-checkpoints.json'),JSON.stringify(integration,null,2));
 
+    }
+    if (localRc) {
+      await fs.unlink(join(base,'inject-restart'));
+      const mount=join(targetRoot,'unsupported-apfs');
+      const image=join(base,'unsupported-apfs.sparseimage');
+      await fs.mkdir(mount,{mode:0o700});
+      await exec('/usr/bin/hdiutil',['create','-size','72m','-fs','Case-sensitive APFS','-volname','PPSRCGate','-type','SPARSE',image],{timeout:12000});
+      await exec('/usr/bin/hdiutil',['attach','-nobrowse','-mountpoint',mount,image],{timeout:12000});
+      try {
+        const root=join(mount,'fixture');
+        await fs.mkdir(root,{mode:0o700});
+        await fs.writeFile(join(root,'CaseWitness'),'upper',{mode:0o600});
+        await assert.rejects(fs.lstat(join(root,'casewitness')),{code:'ENOENT'});
+        const hostId=(await createPaseoApi(client).hosts.list()).self.serverId;
+        const saved=await client.invokePluginRpc(id,settings.read.name,{});
+        const before=await snapshot(root);
+        const result=await client.invokePluginRpc(id,'preview.providers.v2',{
+          viewNonce:'unsupported-apfs',intent:{schemaVersion:1,hostId,canonicalDirectory:root,
+            catalogSource:'https://github.com/anmeo2204/project-skills',catalogCommitSha:sha,settingsRevision:saved.revision,
+            selectedSkillIds:['demo'],targetProviderIds:[],recommendationRequestId:'unsupported-apfs'},
+        });
+        assert.equal(result.status,'ready');
+        assert.deepEqual(result.applyEligibility,{status:'ineligible',reasons:['write_capability_unavailable']});
+        const attempt=await client.invokePluginRpc(id,'apply.create.v1',{
+          previewId:result.receipt.previewId,planDigest:result.receipt.planDigest,viewNonce:result.receipt.viewNonce,
+          operationId:randomBytes(16).toString('hex'),approval:'create_only_v1',
+        });
+        assert.deepEqual(attempt,{status:'error',code:'unsupported_environment'});
+        const after=await snapshot(root);
+        assert.deepEqual(after,before);
+        integration.unsupported={filesystem:'APFS case-sensitive disk image',eligibility:result.applyEligibility,attempt,before,after};
+      } finally { await exec('/usr/bin/hdiutil',['detach',mount],{timeout:12000}); }
+    }
+
     await click('Project Skills');
     await waitText('Target Project');
     const productUi=await text();
     assert.doesNotMatch(productUi,/Create-only Approval|Confirm create-only|Apply Operations/);
     assert.deepEqual(await client.invokePluginRpc('paseo-project-skills','foundation.status',{}),{status:'ready'});
     assert.deepEqual(await client.invokePluginRpc('paseo-project-skills','preview.providers.v2',{
-      viewNonce:'shipping-probe',intent:{schemaVersion:1,hostId:'wrong-host',canonicalDirectory:switchTarget,
+      viewNonce:'shipping-probe',intent:{schemaVersion:1,hostId:'wrong-host',canonicalDirectory:completedTarget,
         catalogSource:'https://github.com/anmeo2204/project-skills',catalogCommitSha:sha,settingsRevision:'shipping',
         selectedSkillIds:['demo'],targetProviderIds:[],recommendationRequestId:'shipping-probe'},
     }),{status:'error',code:'host_mismatch'});
@@ -582,7 +660,7 @@ try {
   }
   const versionLog=await fs.readFile(join(base,'desktop.log'),'utf8');
   assert.match(versionLog, /version: '0\.17\.5'/);
-  const report={integration,paseoVersion:'0.17.5',sdkVersions,testing:{
+  const report={integration,localRc,installation,pluginId:id,paseoVersion:'0.17.5',sdkVersions,testing:{
     staleSelectionABA:true, keyboardEnterAndSpace:true, compactOperationPanel:geometry, originalViewport:geometryBefore,
     paginated33FilePlan:true, doubleClickJournalCount:2, kiroCanonicalOnly:true,
   }, completed:{before:completedBefore,after:completedAfter,text:completedText},partial:{before:partialBefore,after:partialAfter,text:partialText}, recovery:{before:recoveryBefore,after:recoveryAfter,text:recoveryText}, journal};

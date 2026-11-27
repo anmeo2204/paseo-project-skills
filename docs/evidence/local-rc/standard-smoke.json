@@ -1,0 +1,94 @@
+{
+  "install": {
+    "id": "paseo-project-skills-local-rc",
+    "path": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-local-rc-X3sZJR/candidate",
+    "enabled": true,
+    "status": "running",
+    "name": "Project Skills Local RC",
+    "installation": {
+      "identity": {
+        "kind": "directory",
+        "path": "/private/var/folders/tv/40j0n6b921xgcz_wgw7h0mn00000gn/T/pps-m43-local-rc-X3sZJR/candidate"
+      }
+    }
+  },
+  "sha": "4044fbf0545f4be1da51dbc10f1327f0a3da0017",
+  "result": {
+    "status": "operation",
+    "operationId": "540153f0a4cbfbdaec8583adbf321c27",
+    "planDigest": "dee03eed54aff80b99ba3ddf5f1c31d241adfd2d0ecec0274b75f2a2bf79870a",
+    "phase": "completed",
+    "code": "none",
+    "targetMutated": true,
+    "requiresPreview": false,
+    "durability": "fsync_completed",
+    "ledger": [
+      {
+        "destination": ".agents",
+        "kind": "directory",
+        "state": "created_verified",
+        "identity": {
+          "dev": "16777230",
+          "ino": "122810324"
+        }
+      },
+      {
+        "destination": ".agents/skills",
+        "kind": "directory",
+        "state": "created_verified",
+        "identity": {
+          "dev": "16777230",
+          "ino": "122810327"
+        }
+      },
+      {
+        "destination": ".agents/skills/debug-regression",
+        "kind": "directory",
+        "state": "created_verified",
+        "identity": {
+          "dev": "16777230",
+          "ino": "122810330"
+        }
+      },
+      {
+        "destination": ".agents/skills/debug-regression/applicability.json",
+        "kind": "file",
+        "state": "created_verified",
+        "bytesWritten": 67,
+        "canonicalDestination": ".agents/skills/debug-regression/applicability.json",
+        "expected": {
+          "sha256": "a0cc6e49e3f53754580914558afd68220af1e4883c8d27d9e6245b3475490b29",
+          "mode": 420,
+          "sizeBytes": 67
+        },
+        "identity": {
+          "dev": "16777230",
+          "ino": "122810333"
+        }
+      },
+      {
+        "destination": ".agents/skills/debug-regression/SKILL.md",
+        "kind": "file",
+        "state": "created_verified",
+        "bytesWritten": 3639,
+        "canonicalDestination": ".agents/skills/debug-regression/SKILL.md",
+        "expected": {
+          "sha256": "a09e1842c31849c449d678cb87d9c83bb10559f70ad1df7ba943868d8c98fc30",
+          "mode": 420,
+          "sizeBytes": 3639
+        },
+        "identity": {
+          "dev": "16777230",
+          "ino": "122810336"
+        }
+      }
+    ]
+  },
+  "sentinelUnchanged": true,
+  "negativeProfile": {
+    "sdkMismatch": true,
+    "capability": false,
+    "applyAndStatusAbsent": true,
+    "foundationReady": true
+  }
+}
