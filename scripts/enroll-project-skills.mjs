@@ -1,5 +1,6 @@
 // Operator CLI for managing multi-root Safe Apply enrollments (out-of-band host/CLI).
 // Reuses server/multi-root-policy.ts and server/compatibility-policy.ts without relaxing any safety guard.
+import { execFileSync } from 'node:child_process';
 import {
   enrollMultiRoot,
   inspectLegacyPilotMigrationStatus,
@@ -10,14 +11,26 @@ import {
 } from '../server/multi-root-policy.ts';
 import {
   checkDaemonTrustBoundary,
+  detectDefaultPaseoCli,
+  isPaseoVersionCompatible,
   resolveSafeDaemonHome,
-  safeApplyCompatibilityPolicy,
+  verifyEmbeddedSdkManifest,
 } from '../server/compatibility-policy.ts';
 
-const environment = {
-  paseoVersion: safeApplyCompatibilityPolicy.minPaseoVersion,
-  sdkVersion: safeApplyCompatibilityPolicy.minSdkVersion,
-};
+function resolveEnrollmentEnvironment() {
+  const manifest = verifyEmbeddedSdkManifest();
+  if (!manifest.ok) return { ok: false, code: `sdk_manifest_${manifest.reason}` };
+  let paseoVersion = '';
+  try {
+    paseoVersion = execFileSync(detectDefaultPaseoCli(), ['--version'], { timeout: 3000, maxBuffer: 1024, encoding: 'utf8' }).trim();
+  } catch {
+    return { ok: false, code: 'paseo_cli_unavailable' };
+  }
+  if (!isPaseoVersionCompatible(paseoVersion)) {
+    return { ok: false, code: 'unsupported_paseo_version' };
+  }
+  return { ok: true, environment: { paseoVersion, sdkVersion: manifest.version } };
+}
 
 function argValue(args, flag) {
   const index = args.indexOf(flag);
@@ -78,8 +91,13 @@ if (command === 'list') {
 } else if (command === 'enroll') {
   const root = argValue(rest, '--root');
   if (!root) usage();
+  const envCheck = resolveEnrollmentEnvironment();
+  if (!envCheck.ok) {
+    console.log(JSON.stringify({ command: 'enroll', status: 'error', code: envCheck.code }, null, 2));
+    process.exit(1);
+  }
   const enabled = !rest.includes('--disabled');
-  const result = await enrollMultiRoot({ daemonHome, root, environment, enabled });
+  const result = await enrollMultiRoot({ daemonHome, root, environment: envCheck.environment, enabled });
   if (result.status !== 'enrolled') {
     console.log(JSON.stringify({ command: 'enroll', status: 'error', code: result.code }, null, 2));
     process.exit(1);

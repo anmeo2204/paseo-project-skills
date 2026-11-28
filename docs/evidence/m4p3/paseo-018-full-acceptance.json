@@ -1,0 +1,164 @@
+{
+  "capturedAt": "2026-11-28T02:21:48.343Z",
+  "paseoVersion": "0.18.0",
+  "sdkVersion": "0.17.4",
+  "sdkManifestSha256": "58ae4e1ca46283720ef9f5cd7e8c9f357252ea97fd31a8f2fda503bcca047974",
+  "isolatedProfile": true,
+  "checks": {
+    "directoryInstallAndReload": {
+      "status": "pass",
+      "pluginStatus": "running",
+      "logsClean": true
+    },
+    "desktopUiFlowAndSecondPreview": {
+      "status": "pass",
+      "selectedSkills": [
+        "debug-regression",
+        "implement-change"
+      ],
+      "canonicalAndKiroCreated": true,
+      "existingSkillPreserved": true,
+      "secondPreviewEligibility": "no_changes"
+    },
+    "multiRootAndIsolation": {
+      "status": "pass",
+      "repoBApplied": true,
+      "repoCUntouched": true
+    },
+    "relayOnOffFailClosed": {
+      "status": "pass",
+      "applyBlockedOnRelay": true,
+      "statusReadableOnRelay": true,
+      "restoredOnRelayOff": true
+    },
+    "sdkManifestFailClosed": {
+      "missing": {
+        "status": "pass",
+        "hostCompatible": false,
+        "reasons": [
+          "unsupported_sdk_version"
+        ],
+        "applyBlocked": true
+      },
+      "mismatch": {
+        "status": "pass",
+        "hostCompatible": false,
+        "reasons": [
+          "unsupported_sdk_version"
+        ],
+        "applyBlocked": true
+      },
+      "stale": {
+        "status": "pass",
+        "hostCompatible": false,
+        "reasons": [
+          "unsupported_sdk_version"
+        ],
+        "applyBlocked": true
+      }
+    },
+    "unsupportedVersionsFailClosed": {
+      "status": "pass",
+      "versions": {
+        "0.17.4": {
+          "policyCompatible": false,
+          "nativeEvent": "enroll_error",
+          "nativeCode": "unsupported_environment"
+        },
+        "0.18.1": {
+          "policyCompatible": false,
+          "nativeEvent": "enroll_error",
+          "nativeCode": "unsupported_environment"
+        },
+        "0.19.0": {
+          "policyCompatible": false,
+          "nativeEvent": "enroll_error",
+          "nativeCode": "unsupported_environment"
+        }
+      }
+    },
+    "partialFailureAndCrashRecovery": {
+      "status": "pass",
+      "partialPhase": "partial_failure",
+      "crashPhase": "recovery_required",
+      "statusReadable": true
+    },
+    "providerDiscoveryAndReadTraces": {
+      "codex": {
+        "provider": "codex",
+        "binaryVersion": "codex-cli 0.167.0",
+        "discovered": true,
+        "readToolMatched": true,
+        "markerLoaded": true,
+        "status": "pass"
+      },
+      "kiro": {
+        "provider": "kiro",
+        "binaryVersion": "kiro-cli 2.34.2",
+        "effectiveMode": "kiro_default",
+        "discovered": true,
+        "readToolMatched": true,
+        "markerLoaded": true,
+        "status": "pass",
+        "matchingToolTraces": [
+          {
+            "update": "tool_call",
+            "kind": "read",
+            "title": "Reading SKILL.md:1",
+            "matchedPath": true
+          },
+          {
+            "update": "tool_call_update",
+            "kind": "read",
+            "title": "Reading SKILL.md:1",
+            "status": "completed",
+            "matchedPath": true
+          }
+        ]
+      },
+      "cursor": {
+        "provider": "cursor",
+        "binaryVersion": "2026.10.22-27dcf5f",
+        "effectiveMode": "ask",
+        "discovered": true,
+        "readToolMatched": true,
+        "markerLoaded": true,
+        "status": "pass",
+        "matchingToolTraces": [
+          {
+            "update": "tool_call",
+            "kind": "read",
+            "title": "Read .agents/skills/m4p3-trace-skill/SKILL.md",
+            "status": "pending",
+            "matchedPath": true
+          }
+        ]
+      },
+      "antigravity": {
+        "provider": "antigravity",
+        "binaryVersion": "1.5.18",
+        "effectiveMode": "plan",
+        "discovered": true,
+        "readToolMatched": true,
+        "markerLoaded": true,
+        "status": "pass",
+        "matchingToolTraces": [
+          {
+            "update": "tool_call",
+            "kind": "read",
+            "title": "File .agents/skills/m4p3-trace-skill/SKILL.md",
+            "status": "in_progress",
+            "matchedPath": true
+          },
+          {
+            "update": "tool_call_update",
+            "kind": "read",
+            "title": "File .agents/skills/m4p3-trace-skill/SKILL.md",
+            "status": "completed",
+            "matchedPath": true
+          }
+        ]
+      }
+    }
+  }
+}

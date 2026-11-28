@@ -4,15 +4,17 @@ import { constants, closeSync, fstatSync, lstatSync, openSync, readSync, realpat
 import { homedir } from "node:os";
 import { isAbsolute, join } from "node:path";
 import { writerArtifacts } from "./native/writer-payload";
+import { sdkManifestArtifact } from "./native/sdk-manifest-payload";
 import { nativeWriterVersion } from "./native-writer-contract";
 
 export const safeApplyCompatibilityPolicy = Object.freeze({
-  policyVersion: "m4.p2-v1",
+  policyVersion: "m4.p3-v1",
   platform: "darwin" as const,
   arch: "arm64" as const,
   minMacOsVersion: "14.0.0",
   minPaseoVersion: "0.17.5",
   maxPaseoMinorExclusive: "0.18.0",
+  verifiedPaseoVersions: Object.freeze(["0.18.0"] as const),
   minSdkVersion: "0.17.4",
   maxSdkMinorExclusive: "0.18.0",
   filesystem: "apfs" as const,
@@ -50,10 +52,14 @@ export function compareSemver(a: Semver, b: Semver): number {
 }
 
 export function isPaseoVersionCompatible(version: string): boolean {
-  const parsed = parseSemver(version);
+  const trimmed = version.trim();
+  const parsed = parseSemver(trimmed);
+  if (!parsed) return false;
+  if ((safeApplyCompatibilityPolicy.verifiedPaseoVersions as readonly string[]).includes(trimmed)) {
+    return true;
+  }
   const min = parseSemver(safeApplyCompatibilityPolicy.minPaseoVersion)!;
   const maxEx = parseSemver(safeApplyCompatibilityPolicy.maxPaseoMinorExclusive)!;
-  if (!parsed) return false;
   return compareSemver(parsed, min) >= 0 && compareSemver(parsed, maxEx) < 0;
 }
 
@@ -215,6 +221,26 @@ export function readInstalledSdkVersions(pluginRoot: string): string[] {
   return versions;
 }
 
+const sha256HexPattern = /^[0-9a-f]{64}$/;
+const sriIntegrityPattern = /^(?:sha256|sha384|sha512)-[A-Za-z0-9+/]+=*$/;
+const requiredSdkPackageNames = ["@getpaseo/client", "@getpaseo/plugin", "@getpaseo/protocol"] as const;
+const requiredBuildInputKeys = [
+  "packageJsonSha256",
+  "packageLockSha256",
+  "pluginManifestSha256",
+  "nativeSourceSha256",
+  "nativeWriterStandardSha256",
+  "nativeWriterTestingSha256",
+] as const;
+
+function sha256Hex(bytes: Buffer | string): string {
+  return createHash("sha256").update(bytes).digest("hex");
+}
+
+function isPlainRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
 export function verifyEmbeddedHelperIntegrity(testing = false): { ok: true; sha256: string } | { ok: false } {
   const artifact = writerArtifacts[testing ? "testing" : "standard"];
   if (!artifact || !artifact.base64 || artifact.version !== nativeWriterVersion || artifact.protocol !== 1 || artifact.arch !== "arm64") {
@@ -222,9 +248,115 @@ export function verifyEmbeddedHelperIntegrity(testing = false): { ok: true; sha2
   }
   const bytes = Buffer.from(artifact.base64, "base64");
   if (bytes.toString("base64") !== artifact.base64) return { ok: false };
-  const sha256 = createHash("sha256").update(bytes).digest("hex");
+  const sha256 = sha256Hex(bytes);
   if (sha256 !== artifact.sha256) return { ok: false };
   return { ok: true, sha256 };
+}
+
+export type SdkManifestFailureReason =
+  | "missing"
+  | "malformed"
+  | "integrity_mismatch"
+  | "stale_artifact_binding"
+  | "unsupported_version";
+
+export type SdkManifestVerificationResult =
+  | { ok: true; version: string; versions: readonly [string, string, string]; manifestSha256: string }
+  | { ok: false; reason: SdkManifestFailureReason };
+
+/**
+ * Verifies the build-time SDK manifest without depending on runtime module paths.
+ * Reuses the embedded artifact integrity model from verifyEmbeddedHelperIntegrity:
+ * checks schema, exact 3-package set, SRI integrity, semver compatibility, binding to
+ * the embedded native writer artifacts, and canonical manifest SHA-256.
+ */
+export function verifyEmbeddedSdkManifest(
+  manifest: unknown = sdkManifestArtifact,
+  options?: { testing?: boolean; helperSha256?: string },
+): SdkManifestVerificationResult {
+  if (manifest === null || manifest === undefined) return { ok: false, reason: "missing" };
+  if (!isPlainRecord(manifest)) return { ok: false, reason: "malformed" };
+  if (manifest.schemaVersion !== 1) return { ok: false, reason: "malformed" };
+  if (typeof manifest.manifestSha256 !== "string" || !sha256HexPattern.test(manifest.manifestSha256)) {
+    return { ok: false, reason: "malformed" };
+  }
+  if (!isPlainRecord(manifest.packages) || !isPlainRecord(manifest.buildInputs)) {
+    return { ok: false, reason: "malformed" };
+  }
+
+  const pkgKeys = Object.keys(manifest.packages);
+  if (pkgKeys.length !== requiredSdkPackageNames.length || !requiredSdkPackageNames.every(k => pkgKeys.includes(k))) {
+    return { ok: false, reason: "malformed" };
+  }
+
+  const versions: string[] = [];
+  const normalizedPackages: Record<string, { version: string; integrity: string; packageJsonSha256: string }> = {};
+  for (const name of requiredSdkPackageNames) {
+    const entry = manifest.packages[name];
+    if (!isPlainRecord(entry)) return { ok: false, reason: "malformed" };
+    const { version, integrity, packageJsonSha256 } = entry;
+    if (
+      typeof version !== "string" ||
+      typeof integrity !== "string" ||
+      !sriIntegrityPattern.test(integrity) ||
+      typeof packageJsonSha256 !== "string" ||
+      !sha256HexPattern.test(packageJsonSha256)
+    ) {
+      return { ok: false, reason: "malformed" };
+    }
+    versions.push(version);
+    normalizedPackages[name] = { version, integrity, packageJsonSha256 };
+  }
+
+  const inputKeys = Object.keys(manifest.buildInputs);
+  if (inputKeys.length !== requiredBuildInputKeys.length || !requiredBuildInputKeys.every(k => inputKeys.includes(k))) {
+    return { ok: false, reason: "malformed" };
+  }
+  const normalizedBuildInputs: Record<string, string> = {};
+  for (const key of requiredBuildInputKeys) {
+    const value = manifest.buildInputs[key];
+    if (typeof value !== "string" || !sha256HexPattern.test(value)) {
+      return { ok: false, reason: "malformed" };
+    }
+    normalizedBuildInputs[key] = value;
+  }
+
+  const canonicalPayload = JSON.stringify({
+    schemaVersion: 1,
+    packages: normalizedPackages,
+    buildInputs: normalizedBuildInputs,
+  });
+  const computedSha256 = sha256Hex(Buffer.from(canonicalPayload, "utf8"));
+  if (computedSha256 !== manifest.manifestSha256) {
+    return { ok: false, reason: "integrity_mismatch" };
+  }
+
+  // Bind manifest to the embedded native writer release artifacts to catch stale manifests.
+  if (
+    normalizedBuildInputs.nativeWriterStandardSha256 !== writerArtifacts.standard.sha256 ||
+    normalizedBuildInputs.nativeWriterTestingSha256 !== writerArtifacts.testing.sha256
+  ) {
+    return { ok: false, reason: "stale_artifact_binding" };
+  }
+  if (options?.helperSha256) {
+    const expectedHelper = options.testing
+      ? normalizedBuildInputs.nativeWriterTestingSha256
+      : normalizedBuildInputs.nativeWriterStandardSha256;
+    if (options.helperSha256 !== expectedHelper) {
+      return { ok: false, reason: "stale_artifact_binding" };
+    }
+  }
+
+  if (versions.some(v => !isSdkVersionCompatible(v)) || new Set(versions).size !== 1) {
+    return { ok: false, reason: "unsupported_version" };
+  }
+
+  return {
+    ok: true,
+    version: versions[0],
+    versions: [versions[0], versions[1], versions[2]],
+    manifestSha256: computedSha256,
+  };
 }
 
 export type HostCompatibilityResult =
@@ -248,7 +380,8 @@ export function evaluateHostCompatibility(input: {
   daemonHome?: string;
   paseoVersion?: string;
   cliPath?: string;
-  sdkVersions: readonly string[];
+  sdkVersions?: readonly string[];
+  sdkManifest?: unknown;
   macOsVersion?: string;
   platform?: NodeJS.Platform;
   arch?: string;
@@ -282,9 +415,42 @@ export function evaluateHostCompatibility(input: {
   }
   if (!paseoVersion || !isPaseoVersionCompatible(paseoVersion)) reasons.push("unsupported_paseo_version");
 
-  if (input.sdkVersions.length === 0 || input.sdkVersions.some(v => !isSdkVersionCompatible(v)) ||
-      new Set(input.sdkVersions).size !== 1) {
-    reasons.push("unsupported_sdk_version");
+  const helper = verifyEmbeddedHelperIntegrity(Boolean(input.testing));
+  if (!helper.ok) reasons.push("helper_integrity_failed");
+
+  let resolvedSdkVersion: string | undefined;
+  if (input.sdkVersions !== undefined) {
+    if (
+      input.sdkVersions.length === 0 ||
+      input.sdkVersions.some(v => !isSdkVersionCompatible(v)) ||
+      new Set(input.sdkVersions).size !== 1
+    ) {
+      reasons.push("unsupported_sdk_version");
+    } else {
+      resolvedSdkVersion = input.sdkVersions[0];
+    }
+    if (input.sdkManifest !== undefined) {
+      const manifestCheck = verifyEmbeddedSdkManifest(input.sdkManifest, {
+        testing: Boolean(input.testing),
+        helperSha256: helper.ok ? helper.sha256 : undefined,
+      });
+      if (!manifestCheck.ok || (resolvedSdkVersion && manifestCheck.version !== resolvedSdkVersion)) {
+        if (!reasons.includes("unsupported_sdk_version")) reasons.push("unsupported_sdk_version");
+      }
+    }
+  } else {
+    const manifestCheck = verifyEmbeddedSdkManifest(
+      "sdkManifest" in input ? input.sdkManifest : sdkManifestArtifact,
+      {
+        testing: Boolean(input.testing),
+        helperSha256: helper.ok ? helper.sha256 : undefined,
+      },
+    );
+    if (!manifestCheck.ok) {
+      reasons.push("unsupported_sdk_version");
+    } else {
+      resolvedSdkVersion = manifestCheck.version;
+    }
   }
 
   const home = resolveSafeDaemonHome(input.daemonHome, { env: input.env, homeDir: input.homeDir });
@@ -295,10 +461,7 @@ export function evaluateHostCompatibility(input: {
     if (!trust.ok) reasons.push(trust.reason);
   }
 
-  const helper = verifyEmbeddedHelperIntegrity(Boolean(input.testing));
-  if (!helper.ok) reasons.push("helper_integrity_failed");
-
-  if (reasons.length > 0 || !home.ok || !helper.ok) {
+  if (reasons.length > 0 || !home.ok || !helper.ok || !resolvedSdkVersion) {
     return { compatible: false, policyVersion: safeApplyCompatibilityPolicy.policyVersion, reasons };
   }
   return {
@@ -308,7 +471,7 @@ export function evaluateHostCompatibility(input: {
     daemonHomeSource: home.source,
     macOsVersion: macOsVersion!,
     paseoVersion: paseoVersion!,
-    sdkVersion: input.sdkVersions[0],
+    sdkVersion: resolvedSdkVersion,
     helperSha256: helper.sha256,
   };
 }

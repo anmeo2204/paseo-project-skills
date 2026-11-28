@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "build:native-writer": "node scripts/build-native-writer.mjs",
+    "build:sdk-manifest": "node scripts/build-sdk-manifest.mjs",
+    "verify:sdk-manifest": "node scripts/build-sdk-manifest.mjs --verify",
+    "build:artifacts": "npm run build:native-writer && npm run build:sdk-manifest",
     "typecheck": "tsc --noEmit",
     "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --import ./tests/register.mjs --test tests/*.test.mjs"
   },

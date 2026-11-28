@@ -12,10 +12,15 @@ import { QueryClient, QueryClientProvider, notifyManager } from '@tanstack/react
 import { PaseoApiProvider, PluginRpcProvider } from '@getpaseo/plugin/client/host';
 import { HostFixture } from './client-fixture.mjs';
 import { createMainPluginServer, resolveDefaultPluginRoot } from '../index.server.ts';
+import { verifyEmbeddedSdkManifest } from '../server/compatibility-policy.ts';
+import { sdkManifestArtifact } from '../server/native/sdk-manifest-payload.ts';
+import { buildExpectedSdkManifest, renderSdkManifestModule } from '../scripts/build-sdk-manifest.mjs';
 import contributeMainClient, { formatHostApplyNotice } from '../index.client.tsx';
 import { FixtureApprovalScope, FixtureOperations } from '../client/fixture-approval.tsx';
 import { createOperationTracker } from '../client/apply-tracker.ts';
 import { enrollMultiRoot, setMultiRootOptIn } from '../server/multi-root-policy.ts';
+import { runSingleProjectEnroll } from '../server/native-writer.ts';
+import { nativeWriterVersion } from '../server/native-writer-contract.ts';
 import { applyCreateRpc, applyStatusRpc, applyTargetStatusRpc } from '../shared/apply.ts';
 import { providerPreviewV2Rpc } from '../shared/rpc.ts';
 import { catalogSource } from '../shared/catalog-settings.ts';
@@ -197,19 +202,50 @@ test('AT-4 & Main Entrypoint: default ~/.paseo without PASEO_HOME, Preview-only 
         await sRelayBoot.cleanup();
       }
 
-      // 5. Unverified Paseo version (0.18.0) fails closed at startup (Preview-only).
+      // 5. Verified Paseo 0.18.0 succeeds; unverified Paseo versions (0.18.1, 0.19.0) fail closed at startup (Preview-only).
       await fs.writeFile(join(defaultPaseoHome, 'config.json'), JSON.stringify({
         version: 1,
         daemon: { listen: '127.0.0.1:6767', relay: { enabled: false } },
       }), { mode: 0o600 });
-      const sFuture = mountMainServer({ homeDir: fakeUserHome, env: {}, skills, paseoVersion: '0.18.0' });
+      const s018 = mountMainServer({ homeDir: fakeUserHome, env: {}, skills, paseoVersion: '0.18.0' });
       try {
-        assert.equal(sFuture.handlers.has(applyCreateRpc), false);
-        const stFuture = await sFuture.handlers.get(applyTargetStatusRpc)({ canonicalDirectory: repoB }, sFuture.context);
-        assert.equal(stFuture.hostCompatible, false);
-        assert.ok(stFuture.reasons.includes('unsupported_paseo_version'));
+        assert.equal(s018.handlers.has(applyCreateRpc), true);
+        const st018 = await s018.handlers.get(applyTargetStatusRpc)({ canonicalDirectory: repoB }, s018.context);
+        assert.equal(st018.hostCompatible, true);
+        assert.equal(st018.trustBoundaryOk, true);
+        assert.equal(st018.targetState, 'enrolled_enabled');
       } finally {
-        await sFuture.cleanup();
+        await s018.cleanup();
+      }
+      for (const unverified of ['0.18.1', '0.19.0']) {
+        const sFuture = mountMainServer({ homeDir: fakeUserHome, env: {}, skills, paseoVersion: unverified });
+        try {
+          assert.equal(sFuture.handlers.has(applyCreateRpc), false);
+          const stFuture = await sFuture.handlers.get(applyTargetStatusRpc)({ canonicalDirectory: repoB }, sFuture.context);
+          assert.equal(stFuture.hostCompatible, false);
+          assert.ok(stFuture.reasons.includes('unsupported_paseo_version'));
+        } finally {
+          await sFuture.cleanup();
+        }
+      }
+
+      // 6. Native writer platformGate directly accepts Paseo 0.18.0 and rejects unverified 0.18.1 / 0.19.0 / SDK 0.18.0.
+      const nativeOk018 = await runSingleProjectEnroll({
+        protocol: 1, helperVersion: nativeWriterVersion, root: repoA, expectedParentPid: process.pid,
+        environment: { paseoVersion: '0.18.0', sdkVersion: '0.17.4' },
+      });
+      assert.equal(nativeOk018.event, 'enrolled');
+      for (const badEnv of [
+        { paseoVersion: '0.18.1', sdkVersion: '0.17.4' },
+        { paseoVersion: '0.19.0', sdkVersion: '0.17.4' },
+        { paseoVersion: '0.18.0', sdkVersion: '0.18.0' },
+      ]) {
+        const nativeBad = await runSingleProjectEnroll({
+          protocol: 1, helperVersion: nativeWriterVersion, root: repoA, expectedParentPid: process.pid,
+          environment: badEnv,
+        });
+        assert.equal(nativeBad.event, 'enroll_error');
+        if (nativeBad.event === 'enroll_error') assert.equal(nativeBad.code, 'unsupported_environment');
       }
 
       // Disable repoB -> targetState reports enrolled_disabled.
@@ -330,38 +366,95 @@ test('Main Client UI displays Preview-only notices (Relay / unenrolled) and rend
   }
 });
 
-test('CJS/ESM bundler regression: resolveDefaultPluginRoot never throws or falls back to cwd, and unverified pluginRoot fails closed to Preview-only', async () => {
+test('Build-time SDK manifest & CJS/ESM bundler regression: bundled runtime works via verified manifest and fails closed on missing/stale/mismatch', async () => {
   assert.equal(resolveDefaultPluginRoot(undefined, undefined), undefined);
   assert.equal(resolveDefaultPluginRoot('', ''), undefined);
   assert.equal(resolveDefaultPluginRoot('not-a-file-url', undefined), undefined);
   assert.equal(resolveDefaultPluginRoot('file:///tmp/plugin/index.server.ts', undefined), '/tmp/plugin');
   assert.equal(resolveDefaultPluginRoot(undefined, '/tmp/bundled-dir'), '/tmp/bundled-dir');
 
-  // Even when pluginRoot points to a bundled dir without node_modules/@getpaseo/*, server loads cleanly in Preview-only mode.
+  // 1. Live repo build-time SDK manifest matches package.json, package-lock.json, node_modules, and writer-payload.ts.
+  const expectedManifest = buildExpectedSdkManifest();
+  const actualModule = await fs.readFile(new URL('../server/native/sdk-manifest-payload.ts', import.meta.url), 'utf8');
+  assert.equal(actualModule, renderSdkManifestModule(expectedManifest), 'sdk-manifest-payload.ts must match current build inputs & lockfile');
+  const verified = verifyEmbeddedSdkManifest(sdkManifestArtifact);
+  assert.equal(verified.ok, true);
+  if (verified.ok) assert.equal(verified.version, expectedManifest.packages['@getpaseo/plugin'].version);
+
+  // 2. Missing, malformed, tampered (mismatch), stale artifact binding, and unsupported version all fail closed.
+  assert.deepEqual(verifyEmbeddedSdkManifest(null), { ok: false, reason: 'missing' });
+  assert.deepEqual(verifyEmbeddedSdkManifest(undefined), { ok: true, version: expectedManifest.packages['@getpaseo/plugin'].version, versions: [expectedManifest.packages['@getpaseo/client'].version, expectedManifest.packages['@getpaseo/plugin'].version, expectedManifest.packages['@getpaseo/protocol'].version], manifestSha256: expectedManifest.manifestSha256 });
+  assert.deepEqual(verifyEmbeddedSdkManifest({ schemaVersion: 2 }), { ok: false, reason: 'malformed' });
+
+  const tampered = structuredClone(sdkManifestArtifact);
+  tampered.packages['@getpaseo/client'].version = '0.17.5';
+  assert.deepEqual(verifyEmbeddedSdkManifest(tampered), { ok: false, reason: 'integrity_mismatch' });
+
+  const stalePayload = structuredClone(sdkManifestArtifact);
+  stalePayload.buildInputs.nativeWriterStandardSha256 = '0'.repeat(64);
+  stalePayload.manifestSha256 = createHash('sha256').update(JSON.stringify({
+    schemaVersion: 1, packages: stalePayload.packages, buildInputs: stalePayload.buildInputs,
+  })).digest('hex');
+  assert.deepEqual(verifyEmbeddedSdkManifest(stalePayload), { ok: false, reason: 'stale_artifact_binding' });
+
+  const unsupportedPayload = structuredClone(sdkManifestArtifact);
+  for (const k of ['@getpaseo/client', '@getpaseo/plugin', '@getpaseo/protocol']) {
+    unsupportedPayload.packages[k].version = '0.18.0';
+  }
+  unsupportedPayload.manifestSha256 = createHash('sha256').update(JSON.stringify({
+    schemaVersion: 1, packages: unsupportedPayload.packages, buildInputs: unsupportedPayload.buildInputs,
+  })).digest('hex');
+  assert.deepEqual(verifyEmbeddedSdkManifest(unsupportedPayload), { ok: false, reason: 'unsupported_version' });
+
+  // 3. In a bundled dir without node_modules/@getpaseo/*, server succeeds on Paseo 0.18.0 with valid build-time manifest,
+  //    and fails closed to Preview-only when manifest is missing, stale, or mismatched.
   const base = await fs.realpath(await fs.mkdtemp(join(tmpdir(), 'pps-cjs-reg-')));
   const fakeHome = join(base, 'home');
   const paseoHome = join(fakeHome, '.paseo');
   const bundledDir = join(base, 'bundled-cache');
   for (const d of [fakeHome, paseoHome, bundledDir]) await fs.mkdir(d, { mode: 0o700 });
   try {
-    const handlers = new Map();
-    const cleanup = createMainPluginServer({
-      handle: (contract, fn) => handlers.set(contract, fn),
+    const okHandlers = new Map();
+    const okCleanup = createMainPluginServer({
+      handle: (contract, fn) => okHandlers.set(contract, fn),
       registerSettings: () => ({ read: async () => ({ status: 'ready', revision: 'rev-cjs', values: { catalogRef: '' } }) }),
     }, {
       homeDir: fakeHome,
       env: {},
       pluginRoot: bundledDir,
-      paseoVersion: '0.17.5',
+      paseoVersion: '0.18.0',
       macOsVersion: '27.2.1',
     });
     try {
-      assert.equal(handlers.has(applyCreateRpc), false, 'apply.create.v1 must not be registered when SDK versions cannot be verified');
-      const status = await handlers.get(applyTargetStatusRpc)({}, { paseo: { hosts: { list: async () => ({ self: { serverId: 'h1' } }) } } });
-      assert.equal(status.hostCompatible, false);
-      assert.ok(status.reasons.includes('unsupported_sdk_version'));
+      assert.equal(okHandlers.has(applyCreateRpc), true, 'apply.create.v1 should register in bundled runtime with valid SDK manifest');
+      const status = await okHandlers.get(applyTargetStatusRpc)({}, { paseo: { hosts: { list: async () => ({ self: { serverId: 'h1' } }) } } });
+      assert.equal(status.hostCompatible, true);
+      assert.equal(status.trustBoundaryOk, true);
     } finally {
-      await cleanup();
+      await okCleanup();
+    }
+
+    for (const [label, badManifest] of [['missing', null], ['stale', stalePayload], ['mismatch', tampered]]) {
+      const handlers = new Map();
+      const cleanup = createMainPluginServer({
+        handle: (contract, fn) => handlers.set(contract, fn),
+        registerSettings: () => ({ read: async () => ({ status: 'ready', revision: 'rev-cjs', values: { catalogRef: '' } }) }),
+      }, {
+        homeDir: fakeHome,
+        env: {},
+        pluginRoot: bundledDir,
+        paseoVersion: '0.18.0',
+        sdkManifest: badManifest,
+        macOsVersion: '27.2.1',
+      });
+      try {
+        assert.equal(handlers.has(applyCreateRpc), false, `apply.create.v1 must not register when SDK manifest is ${label}`);
+        const status = await handlers.get(applyTargetStatusRpc)({}, { paseo: { hosts: { list: async () => ({ self: { serverId: 'h1' } }) } } });
+        assert.equal(status.hostCompatible, false);
+        assert.ok(status.reasons.includes('unsupported_sdk_version'), `Expected unsupported_sdk_version for ${label}`);
+      } finally {
+        await cleanup();
+      }
     }
   } finally {
     await fs.rm(base, { recursive: true, force: true });

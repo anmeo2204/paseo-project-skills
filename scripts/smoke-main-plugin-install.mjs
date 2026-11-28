@@ -60,6 +60,8 @@ async function snapshotDir(root) {
 }
 
 const paseoVersion = (await exec(cli, ['--version'], { timeout: 5000 })).stdout.trim();
+// Verify build-time SDK manifest before testing directory install.
+await exec(process.execPath, [join(repo, 'scripts/build-sdk-manifest.mjs'), '--verify'], { timeout: 10000 });
 const base = await fs.realpath(await fs.mkdtemp(join(tmpdir(), 'pps-main-install-smoke-')));
 const home = join(base, 'daemon');
 const project = join(base, 'project-copy');
@@ -120,8 +122,9 @@ try {
   assert.equal(targetStatus.trustBoundaryOk, false);
   assert.equal(targetStatus.targetState, 'host_unavailable');
   assert.ok(targetStatus.reasons.includes('remote_exposure_enabled'), `Expected remote_exposure_enabled in ${JSON.stringify(targetStatus.reasons)}`);
-  if (paseoVersion.startsWith('0.18.')) {
-    assert.ok(targetStatus.reasons.includes('unsupported_paseo_version'), `Expected unsupported_paseo_version in ${JSON.stringify(targetStatus.reasons)}`);
+  if (paseoVersion === '0.18.0') {
+    assert.ok(!targetStatus.reasons.includes('unsupported_paseo_version'), `Paseo 0.18.0 should be compatible, got: ${JSON.stringify(targetStatus.reasons)}`);
+    assert.ok(!targetStatus.reasons.includes('unsupported_sdk_version'), `Build-time SDK manifest should pass in bundled 0.18.0, got: ${JSON.stringify(targetStatus.reasons)}`);
   }
 
   // Verify apply.create.v1 is NOT callable when fail-closed.

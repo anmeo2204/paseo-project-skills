@@ -26,6 +26,7 @@ import {
   evaluateHostCompatibility,
   readInstalledSdkVersions,
   resolveSafeDaemonHome,
+  verifyEmbeddedSdkManifest,
 } from "./server/compatibility-policy";
 import { probeSingleProjectRoot } from "./server/single-project-pilot";
 
@@ -64,6 +65,7 @@ export type MainPluginServerOptions = {
   cliPath?: string;
   paseoVersion?: string;
   sdkVersions?: readonly string[];
+  sdkManifest?: unknown;
   macOsVersion?: string;
   platform?: NodeJS.Platform;
   arch?: string;
@@ -89,7 +91,20 @@ export function createMainPluginServer(server: PluginServerContext, options: Mai
 
   const env = options.env ?? process.env;
   const pluginRoot = options.pluginRoot ?? defaultPluginRoot;
-  const sdkVersions = options.sdkVersions ?? (pluginRoot ? readInstalledSdkVersions(pluginRoot) : []);
+  // Build-time SDK manifest verification is independent of runtime module paths (bundled CJS/ESM).
+  // When an unbundled pluginRoot with node_modules/@getpaseo/* is also present, cross-check for drift.
+  let sdkVersions: readonly string[] | undefined = options.sdkVersions;
+  if (sdkVersions === undefined && pluginRoot) {
+    const installed = readInstalledSdkVersions(pluginRoot);
+    if (installed.length > 0) {
+      const manifestCheck = verifyEmbeddedSdkManifest(
+        "sdkManifest" in options ? options.sdkManifest : undefined,
+      );
+      if (!manifestCheck.ok || installed.some(v => v !== manifestCheck.version)) {
+        sdkVersions = [];
+      }
+    }
+  }
   const cliPath = options.cliPath ?? detectDefaultPaseoCli(env);
   const homeResolution = resolveSafeDaemonHome(options.daemonHome, { env, homeDir: options.homeDir });
   const compat = evaluateHostCompatibility({
@@ -98,7 +113,8 @@ export function createMainPluginServer(server: PluginServerContext, options: Mai
     env,
     cliPath,
     paseoVersion: options.paseoVersion,
-    sdkVersions,
+    ...(sdkVersions !== undefined ? { sdkVersions } : {}),
+    ...("sdkManifest" in options ? { sdkManifest: options.sdkManifest } : {}),
     macOsVersion: options.macOsVersion,
     platform: options.platform,
     arch: options.arch,
