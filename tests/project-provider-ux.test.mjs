@@ -367,3 +367,79 @@ test("D3, P3 & P4 Select Detected Providers waits for loading, Clear providers p
   assert.match(h.text(), /Saved provider preference for this project is empty/);
   assert.equal(h.button("Codex, ready").props.accessibilityState.checked, false);
 });
+
+test("D4 M5.2 follow-up: mid-refetch and delayed target-A provider snapshots cannot be consumed by Select Detected Providers", async (t) => {
+  const pendingA = Promise.withResolvers();
+  const pendingB = Promise.withResolvers();
+  let callCountA = 0;
+  let retryDeferred = null;
+
+  const h = createUxHarness(t, {
+    projects: [
+      { projectId: "pa", projectDisplayName: "Target A", projectKind: "git", projectRootPath: "/target-a" },
+      { projectId: "pb", projectDisplayName: "Target B", projectKind: "git", projectRootPath: "/target-b" },
+    ],
+    providerSnapshots: {
+      "/target-a": () => {
+        callCountA++;
+        if (callCountA === 1) return pendingA.promise;
+        return retryDeferred ? retryDeferred.promise : Promise.resolve({ entries: [] });
+      },
+      "/target-b": () => pendingB.promise,
+    },
+  });
+
+  await h.show();
+  // Select Target A (snapshot stays pending)
+  await h.press("Choose project or workspace");
+  await h.press("Target A · Git root");
+  assert.ok(h.button("Detecting providers…").props.disabled);
+
+  // Switch to Target B before Target A's snapshot resolves
+  await h.press("Choose project or workspace");
+  await h.press("Target B · Git root");
+  assert.ok(h.button("Detecting providers…").props.disabled);
+
+  // Delayed Target A snapshot resolves with Codex ready — MUST NOT leak into Target B!
+  await act(async () => pendingA.resolve({
+    entries: [{ provider: "codex", enabled: true, status: "ready" }],
+  }));
+  assert.ok(h.button("Detecting providers…").props.disabled);
+  assert.equal(h.button("Codex, ready"), undefined);
+
+  // Target B resolves with Kiro ready -> Select Detected Providers selects ONLY Kiro (never Codex from A)
+  await act(async () => pendingB.resolve({
+    entries: [{ provider: "kiro", enabled: true, status: "ready" }],
+  }));
+  assert.ok(!h.button("Select Detected Providers").props.disabled);
+  await h.press("Select Detected Providers");
+  assert.equal(h.button("Kiro, ready, selected").props.accessibilityState.checked, true);
+  assert.equal(h.button("Codex, unavailable").props.accessibilityState.checked, false);
+
+  // Mid-refetch check: when a provider snapshot fails and user clicks Retry discovery, Select Detected Providers stays disabled during refetch
+  let targetCFail = true;
+  let targetCRetry = Promise.withResolvers();
+  const h2 = createUxHarness(t, {
+    projects: [{ projectId: "pc", projectDisplayName: "Target C", projectKind: "git", projectRootPath: "/target-c" }],
+    providerSnapshots: {
+      "/target-c": () => {
+        if (targetCFail) {
+          targetCFail = false;
+          return Promise.reject(new Error("transient"));
+        }
+        return targetCRetry.promise;
+      },
+    },
+  });
+  await h2.show();
+  await h2.press("Choose project or workspace");
+  await h2.press("Target C · Git root");
+  assert.ok(h2.button("Select Detected Providers").props.disabled);
+  await h2.press("Retry discovery");
+  // While refetch is in flight, button is disabled and shows Detecting providers…
+  assert.ok(h2.button("Detecting providers…").props.disabled);
+  await act(async () => targetCRetry.resolve({
+    entries: [{ provider: "cursor", enabled: true, status: "ready" }],
+  }));
+  assert.ok(!h2.button("Select Detected Providers").props.disabled);
+});

@@ -71,6 +71,7 @@ export function RecommendationRun({
   providers,
   providerGeneration = 0,
   catalogBusy = false,
+  compact = false,
 }: {
   theme: PluginTheme;
   hostId: string;
@@ -80,6 +81,7 @@ export function RecommendationRun({
   providers: readonly ProviderId[];
   providerGeneration?: number;
   catalogBusy?: boolean;
+  compact?: boolean;
 }) {
   const loadCatalog = useRpc(catalogLoadRpc);
   const resolveCatalog = useRpc(catalogResolveRpc);
@@ -224,6 +226,9 @@ export function RecommendationRun({
   }
 
   const completed = visible?.phase === "complete" ? visible : null;
+  const selectedRef = useRef<string[]>(completed?.selected ?? []);
+  selectedRef.current = completed?.selected ?? [];
+
   const intent = completed && selectionIntentV1Schema.parse({
     schemaVersion: 1,
     hostId,
@@ -236,10 +241,18 @@ export function RecommendationRun({
     recommendationRequestId: completed.attempt.requestId,
   });
 
+  // P3: No-op selection actions must not advance selectionGeneration; real mutations (including batched A -> B -> A) always do.
   function select(update: (previous: string[]) => string[]) {
+    if (!completed) return;
+    const previous = selectedRef.current;
+    const next = [...new Set(update(previous))].sort();
+    if (next.length === previous.length && next.every((id, index) => id === previous[index])) {
+      return;
+    }
+    selectedRef.current = next;
     setSelectionGeneration((value) => value + 1);
-    setRun((current) => current?.phase === "complete" && current.attempt === completed?.attempt
-      ? { ...current, selected: update(current.selected).sort() } : current);
+    setRun((current) => current?.phase === "complete" && current.attempt === completed.attempt
+      ? { ...current, selected: next } : current);
   }
 
   const canScan = Boolean(directory && revision && (isPinnedSha || isUnconfigured) && !settings.saving && !catalogBusy);
@@ -289,7 +302,7 @@ export function RecommendationRun({
         onFailure={() => finish(visible.attempt, "error", "The recommendation connection closed before a result arrived. Try again.")} />}
       {completed && intent && <RecommendationResults key={intent.recommendationRequestId} theme={theme}
         result={completed.event.result} partial={completed.event.status === "partial"} catalog={completed.catalog}
-        selected={intent.selectedSkillIds}
+        selected={intent.selectedSkillIds} providers={providers} compact={compact}
         onToggle={(id) => select((previous) => previous.includes(id) ? previous.filter((item) => item !== id) : [...previous, id])}
         onSelectRecommended={() => select((previous) => [...new Set([
           ...previous, ...completed.event.result.items.filter(({ applicability }) => applicability === "recommended").map(({ skillId }) => skillId),

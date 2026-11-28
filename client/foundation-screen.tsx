@@ -263,7 +263,7 @@ function HostScreen({ theme, hostId, hostLabel, compact }: { theme: PluginTheme;
       </Section>
       <RecommendationRun theme={theme} hostId={hostId} directory={directory}
         generation={target?.selection ?? 0} settings={settings} providers={providers}
-        providerGeneration={providerGeneration} catalogBusy={catalogBusy} />
+        providerGeneration={providerGeneration} catalogBusy={catalogBusy} compact={compact} />
       <ConnectionCheck theme={theme} />
     </>
   );
