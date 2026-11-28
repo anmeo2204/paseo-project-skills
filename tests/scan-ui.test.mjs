@@ -20,7 +20,7 @@ const descriptors = {
     entrypoint: { path: "SKILL.md", blobSha: sha, sizeBytes: 1, mode: "100644" }, supportingFiles: [],
   })),
 };
-const settingsFor = (revision = "r1", catalogRef = "release") => ({
+const settingsFor = (revision = "r1", catalogRef = sha) => ({
   status: "ready", revision, values: { catalogRef }, reload: async () => {}, save: async () => true,
 });
 const catalogFor = (settings = settingsFor(), snapshot = descriptors) => ({
@@ -81,6 +81,13 @@ function harness(t) {
     providers: { snapshot: async () => ({ entries: [{ provider: "cursor", enabled: false }] }) },
   };
   const invoke = (method, input) => {
+    if (method === "catalog.releases") {
+      return Promise.resolve({
+        status: "ready", source: catalogSource, settingsRevision: "r1",
+        active: { catalogRef: sha, isPinnedSha: true },
+        releases: [], latestStable: null, updateStatus: "no_stable_releases", updateAvailable: false, checkedAt: 1, cached: false,
+      });
+    }
     calls.push(method);
     if (method === "target.validate-directory") return Promise.resolve({ status: "ready", directory: input.path + "-canonical" });
     assert.equal(method, "catalog.load");
@@ -144,6 +151,9 @@ test("click-only scan uses pinned catalog and one subscription, with no provider
   await h.press("Choose project or workspace");
   await h.press("Demo · Git root");
   assert.match(h.text(), /\/root-canonical/);
+  // P4: Unconfigured host allows first-use Scan & Recommend; legacy unpinned tags stay disabled (D4).
+  assert.ok(!h.button("Scan & Recommend").props.disabled);
+  await h.show({ settings: settingsFor("r1", "legacy-tag") });
   assert.ok(h.button("Scan & Recommend").props.disabled);
   await h.show();
   await h.press("Choose project or workspace");
@@ -274,7 +284,7 @@ test("saved settings changes invalidate in-flight and completed results without 
   await h.emit(first);
   await h.press("Select Recommended");
   assert.match(h.text(), /Selected skills: 1/);
-  const nextSettings = settingsFor("r2", "next");
+  const nextSettings = settingsFor("r2", "b".repeat(40));
   await h.show({ settings: nextSettings });
   assert.match(h.text(), /out of date/);
   assert.doesNotMatch(h.text(), /Selected skills/);

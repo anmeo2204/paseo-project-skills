@@ -2,9 +2,14 @@ import type { PluginTheme } from "@getpaseo/plugin";
 import { useRpc, useSubscription } from "@getpaseo/plugin/client";
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { Text, View } from "react-native";
-import type { CatalogErrorCode, CatalogSnapshotDescriptor } from "../shared/catalog";
+import {
+  catalogResolveResultSchema,
+  commitShaSchema,
+  type CatalogErrorCode,
+  type CatalogSnapshotDescriptor,
+} from "../shared/catalog";
 import type { RecommendationErrorCode, RecommendationEvent, RecommendationInput } from "../shared/recommendation";
-import { catalogLoadRpc, recommendationEvaluateSubscription } from "../shared/rpc";
+import { catalogLoadRpc, catalogResolveRpc, recommendationEvaluateSubscription } from "../shared/rpc";
 import { selectionIntentV1Schema } from "../shared/selection-intent";
 import type { CatalogSettingsState } from "./catalog-section";
 import { Action, Detail, Section } from "./controls";
@@ -14,7 +19,15 @@ import { PreviewRun } from "./preview-run";
 export type { SelectionIntentV1 } from "../shared/selection-intent";
 
 type TerminalResult = Extract<RecommendationEvent, { status: "ready" | "partial" }>;
-type Attempt = { scope: string; requestId: string; directory: string; revision: string; ref: string };
+type Attempt = {
+  scope: string;
+  requestId: string;
+  directory: string;
+  revision: string;
+  ref: string;
+  firstUsePinnedSha?: string;
+  firstUseInitialRevision?: string;
+};
 type Run =
   | { phase: "loading" | "cancelled"; attempt: Attempt }
   | { phase: "error" | "stale"; attempt: Attempt; message: string }
@@ -22,10 +35,12 @@ type Run =
   | { phase: "complete"; attempt: Attempt; catalog: CatalogSnapshotDescriptor; event: TerminalResult; selected: string[] };
 
 const catalogErrors: Record<CatalogErrorCode, string> = {
-  not_configured: "Save a catalog revision first.",
+  not_configured: "Pin a catalog revision first.",
   invalid_settings: "Reload and correct the host catalog settings.",
   invalid_revision: "Save a valid tag or full commit SHA.",
   revision_unavailable: "That catalog revision is unavailable. Check the saved tag or SHA.",
+  no_stable_releases: "No stable release tags are published in this catalog yet. Use Advanced Custom Revision to pin a commit SHA.",
+  stale_selection: "The latest stable release changed on the remote. Try again.",
   git_unavailable: "Git is unavailable on this host.",
   auth_failed: "The host could not authenticate to the catalog. Check its SSH access.",
   network_error: "The host could not reach the catalog. Check its connection and try again.",
@@ -47,7 +62,16 @@ const recommendationErrors: Record<RecommendationErrorCode, string> = {
 };
 const invalidResult = "The recommendation result could not be verified. Try again.";
 
-export function RecommendationRun({ theme, hostId, directory, generation, settings, providers, providerGeneration = 0 }: {
+export function RecommendationRun({
+  theme,
+  hostId,
+  directory,
+  generation,
+  settings,
+  providers,
+  providerGeneration = 0,
+  catalogBusy = false,
+}: {
   theme: PluginTheme;
   hostId: string;
   directory: string | null;
@@ -55,8 +79,10 @@ export function RecommendationRun({ theme, hostId, directory, generation, settin
   settings: CatalogSettingsState;
   providers: readonly ProviderId[];
   providerGeneration?: number;
+  catalogBusy?: boolean;
 }) {
   const loadCatalog = useRpc(catalogLoadRpc);
+  const resolveCatalog = useRpc(catalogResolveRpc);
   const id = useId().replace(/[^a-zA-Z0-9_-]/g, "");
   const sequence = useRef(0);
   const active = useRef<Attempt | null>(null);
@@ -64,31 +90,109 @@ export function RecommendationRun({ theme, hostId, directory, generation, settin
   const [selectionGeneration, setSelectionGeneration] = useState(0);
   const revision = settings.status === "ready" ? settings.revision : null;
   const ref = settings.status === "ready" ? settings.values.catalogRef : "";
+  const selectedTag = settings.status === "ready" ? settings.values.selectedTag : undefined;
+  const isPinnedSha = commitShaSchema.safeParse(ref.toLowerCase()).success;
+  const isUnconfigured = settings.status === "ready" && ref === "";
+  const isLegacyTag = settings.status === "ready" && ref !== "" && !isPinnedSha;
   const scope = JSON.stringify([hostId, generation, directory, revision, ref]);
   const visible = run?.attempt.scope === scope ? run : null;
   const pending = visible?.phase === "loading" || visible?.phase === "scanning";
+
   useLayoutEffect(() => {
+    const currentActive = active.current;
+    // Allow the authorized P4 first-use transition ("" -> resolved pinned SHA) without cancelling the active Scan.
+    if (
+      currentActive &&
+      currentActive.firstUsePinnedSha &&
+      currentActive.directory === directory &&
+      ref.toLowerCase() === currentActive.firstUsePinnedSha &&
+      revision !== null &&
+      revision !== currentActive.firstUseInitialRevision
+    ) {
+      currentActive.revision = revision;
+      currentActive.ref = ref;
+      currentActive.scope = scope;
+      setRun((previous) => previous && previous.attempt === currentActive
+        ? { ...previous, attempt: currentActive } : previous);
+      return;
+    }
+
     setRun((previous) => {
       if (!previous || previous.attempt.scope === scope) return previous;
       if (!directory || !ref || previous.attempt.directory !== directory) return null;
       return { phase: "stale", attempt: { ...previous.attempt, scope },
         message: "The previous result is out of date. Run Scan & Recommend again." };
     });
-    return () => { active.current = null; };
-  }, [scope, directory, ref]);
+    return () => {
+      // Do not clear active if this cleanup is caused only by an authorized P4 first-use settings transition.
+      if (!active.current?.firstUsePinnedSha) active.current = null;
+    };
+  }, [scope, directory, ref, revision]);
+
+  // Always release active attempt on unmount.
+  useEffect(() => () => { active.current = null; }, []);
 
   async function start() {
-    if (!directory || !revision || !ref || settings.saving || active.current) return;
-    const attempt = { scope, requestId: `scan-${id}-${++sequence.current}`, directory, revision, ref };
+    if (!directory || !revision || settings.saving || catalogBusy || active.current) return;
+    if (!isPinnedSha && !isUnconfigured) return;
+
+    const attempt: Attempt = { scope, requestId: `scan-${id}-${++sequence.current}`, directory, revision, ref };
     active.current = attempt;
     setRun({ phase: "loading", attempt });
+
     try {
+      let expectedRevision = attempt.revision;
+      let expectedRef = attempt.ref;
+
+      // P4: For an unconfigured host, resolve, validate, and pin Latest Stable as part of initial Scan.
+      if (isUnconfigured && settings.status === "ready") {
+        attempt.firstUseInitialRevision = attempt.revision;
+        const rawResolved = await resolveCatalog({ mode: "latest_stable" });
+        if (active.current !== attempt) return;
+        const parsedResolved = catalogResolveResultSchema.safeParse(rawResolved);
+        if (!parsedResolved.success) {
+          return finish(attempt, "error", "Could not resolve the latest stable catalog on this host. Try again.");
+        }
+        if (parsedResolved.data.status === "error") {
+          return finish(attempt, "error", catalogErrors[parsedResolved.data.code]);
+        }
+        attempt.firstUsePinnedSha = parsedResolved.data.commitSha;
+        const saved = await settings.save(
+          {
+            catalogRef: parsedResolved.data.commitSha,
+            selectionMode: "latest_stable",
+            ...(parsedResolved.data.resolvedTag ? { selectedTag: parsedResolved.data.resolvedTag } : {}),
+          },
+          attempt.revision,
+        );
+        if (active.current !== attempt) return;
+        if (!saved) {
+          attempt.firstUsePinnedSha = undefined;
+          return finish(attempt, "stale", recommendationErrors.catalog_settings_changed);
+        }
+        expectedRef = parsedResolved.data.commitSha;
+      }
+
       const reply = await loadCatalog({});
       if (active.current !== attempt) return;
       if (reply.status === "error") return finish(attempt, "error", catalogErrors[reply.code]);
-      if (reply.settingsRevision !== attempt.revision || reply.requestedRef !== attempt.ref) {
+
+      if (attempt.firstUsePinnedSha) {
+        if (
+          reply.requestedRef.toLowerCase() !== attempt.firstUsePinnedSha ||
+          reply.snapshot.commitSha !== attempt.firstUsePinnedSha ||
+          reply.settingsRevision === attempt.firstUseInitialRevision
+        ) {
+          return finish(attempt, "stale", recommendationErrors.catalog_settings_changed);
+        }
+        attempt.revision = reply.settingsRevision;
+        attempt.ref = reply.requestedRef;
+        attempt.scope = JSON.stringify([hostId, generation, directory, reply.settingsRevision, reply.requestedRef]);
+        attempt.firstUsePinnedSha = undefined;
+      } else if (reply.settingsRevision !== expectedRevision || reply.requestedRef !== expectedRef) {
         return finish(attempt, "stale", recommendationErrors.catalog_settings_changed);
       }
+
       setRun({ phase: "scanning", attempt, catalog: reply.snapshot });
     } catch {
       finish(attempt, "error", "Could not load the catalog from this host. Try again.");
@@ -97,6 +201,7 @@ export function RecommendationRun({ theme, hostId, directory, generation, settin
 
   function finish(attempt: Attempt, phase: "error" | "stale", message: string) {
     if (active.current !== attempt) return;
+    attempt.firstUsePinnedSha = undefined;
     active.current = null;
     setRun({ phase, attempt, message });
   }
@@ -137,26 +242,44 @@ export function RecommendationRun({ theme, hostId, directory, generation, settin
       ? { ...current, selected: update(current.selected).sort() } : current);
   }
 
+  const canScan = Boolean(directory && revision && (isPinnedSha || isUnconfigured) && !settings.saving && !catalogBusy);
+  const previewDisabled = Boolean(settings.saving || catalogBusy);
+
   return (
     <>
       <Section theme={theme} title="Scan & Recommend">
         <View accessibilityLiveRegion="polite" style={{ gap: 6 }}>
           {!directory && <Detail theme={theme}>Choose a valid project directory to scan.</Detail>}
-          {directory && settings.status === "ready" && !ref && <Detail theme={theme}>Save a catalog revision to scan.</Detail>}
+          {directory && isUnconfigured && (
+            <Detail theme={theme}>No catalog revision pinned yet. Scan & Recommend will resolve and pin Latest Stable automatically.</Detail>
+          )}
+          {directory && isLegacyTag && (
+            <Detail theme={theme} error>Resolve and pin the saved legacy tag to an immutable commit SHA before scanning.</Detail>
+          )}
           {directory && settings.status !== "ready" && <Detail theme={theme}>Waiting for valid host catalog settings.</Detail>}
-          {visible?.phase === "loading" && <Detail theme={theme}>Loading skill catalog…</Detail>}
+          {visible?.phase === "loading" && (
+            <Detail theme={theme}>
+              {isUnconfigured ? "Resolving and pinning latest stable catalog…" : "Loading skill catalog…"}
+            </Detail>
+          )}
           {visible?.phase === "scanning" && <Detail theme={theme}>Scanning project and evaluating skills…</Detail>}
           {visible?.phase === "cancelled" && <Detail theme={theme}>Scan cancelled.</Detail>}
           {(visible?.phase === "error" || visible?.phase === "stale") && <Detail theme={theme} error>{visible.message}</Detail>}
-          {(visible?.phase === "scanning" || completed) &&
-            <Text selectable style={{ color: theme.colors.foregroundMuted }}>Pinned catalog: {(visible?.phase === "scanning" ? visible : completed)?.catalog.commitSha}</Text>}
+          {(visible?.phase === "scanning" || completed) && (
+            <Text selectable style={{ color: theme.colors.foregroundMuted }}>
+              {selectedTag
+                ? `Pinned catalog: ${selectedTag} (${(visible?.phase === "scanning" ? visible : completed)?.catalog.commitSha})`
+                : `Pinned catalog: ${(visible?.phase === "scanning" ? visible : completed)?.catalog.commitSha}`}
+            </Text>
+          )}
         </View>
         {pending ? <Action theme={theme} label="Cancel" onPress={() => {
           if (!active.current) return;
           const attempt = active.current;
+          attempt.firstUsePinnedSha = undefined;
           active.current = null;
           setRun({ phase: "cancelled", attempt });
-        }} /> : <Action theme={theme} primary label="Scan & Recommend" disabled={!directory || !revision || !ref || settings.saving}
+        }} /> : <Action theme={theme} primary label="Scan & Recommend" disabled={!canScan}
           onPress={() => void start()} />}
       </Section>
       {visible?.phase === "scanning" && <RecommendationSubscription key={visible.attempt.requestId}
@@ -173,8 +296,8 @@ export function RecommendationRun({ theme, hostId, directory, generation, settin
         ])])}
         onClear={() => select(() => [])} />}
       {completed && intent && <PreviewRun key={"preview-" + intent.recommendationRequestId} theme={theme} intent={intent}
-        generation={JSON.stringify([scope, selectionGeneration, providerGeneration, Boolean(settings.saving)])}
-        disabled={Boolean(settings.saving)} />}
+        generation={JSON.stringify([scope, selectionGeneration, providerGeneration, previewDisabled])}
+        disabled={previewDisabled} />}
     </>
   );
 }

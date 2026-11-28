@@ -7,7 +7,7 @@ import contribute from "../index.server.ts";
 import { validateDirectory } from "../server/validate-directory.ts";
 import { catalogSettings, catalogSource } from "../shared/catalog-settings.ts";
 import { applyTargetStatusRpc } from "../shared/apply.ts";
-import { canonicalPreviewRpc, providerPreviewRpc, providerPreviewV2Rpc, catalogLoadRpc, foundationStatusRpc, recommendationEvaluateSubscription, targetScanSubscription, validateDirectoryRpc } from "../shared/rpc.ts";
+import { canonicalPreviewRpc, providerPreviewRpc, providerPreviewV2Rpc, catalogLoadRpc, catalogReleasesRpc, catalogResolveRpc, foundationStatusRpc, recommendationEvaluateSubscription, targetScanSubscription, validateDirectoryRpc } from "../shared/rpc.ts";
 
 async function fixture(t) {
   const directory = await mkdtemp(join(tmpdir(), "project-skills-test-"));
@@ -83,7 +83,7 @@ test("server contribution registers the expected typed contracts and host settin
     },
   });
   const registered = [...handlers.keys()];
-  for (const required of [foundationStatusRpc, validateDirectoryRpc, catalogLoadRpc, targetScanSubscription, recommendationEvaluateSubscription, canonicalPreviewRpc, providerPreviewRpc, providerPreviewV2Rpc, applyTargetStatusRpc]) {
+  for (const required of [foundationStatusRpc, validateDirectoryRpc, catalogLoadRpc, catalogReleasesRpc, catalogResolveRpc, targetScanSubscription, recommendationEvaluateSubscription, canonicalPreviewRpc, providerPreviewRpc, providerPreviewV2Rpc, applyTargetStatusRpc]) {
     assert.ok(registered.includes(required), `Missing required contract: ${required.name}`);
   }
   // Enrollment must remain strictly out-of-band (never exposed as an RPC).

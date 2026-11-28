@@ -4,9 +4,11 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { catalogSettings } from "./shared/catalog-settings";
 import { applyCreateRpc, applyStatusRpc, applyTargetStatusRpc, type ApplyTargetStatusOutput } from "./shared/apply";
-import { canonicalPreviewRpc, providerPreviewRpc, providerPreviewV2Rpc, catalogLoadRpc, foundationStatusRpc, recommendationEvaluateSubscription, targetScanSubscription, validateDirectoryRpc } from "./shared/rpc";
+import { canonicalPreviewRpc, providerPreviewRpc, providerPreviewV2Rpc, catalogLoadRpc, catalogReleasesRpc, catalogResolveRpc, foundationStatusRpc, recommendationEvaluateSubscription, targetScanSubscription, validateDirectoryRpc } from "./shared/rpc";
+import { CatalogGit } from "./server/catalog-git";
 import { CatalogLoader } from "./server/catalog-loader";
-import { loadCatalogForHost } from "./server/catalog-rpc";
+import { CatalogReleaseCache } from "./server/catalog-releases";
+import { listCatalogReleasesForHost, loadCatalogForHost, resolveCatalogForHost } from "./server/catalog-rpc";
 import { ProjectScanner } from "./server/project-scanner";
 import { createRecommendationHandler } from "./server/recommendation-rpc";
 import { validateDirectory } from "./server/validate-directory";
@@ -72,6 +74,7 @@ export type MainPluginServerOptions = {
   arch?: string;
   pluginRoot?: string;
   catalog?: Pick<CatalogLoader, "load" | "dispose">;
+  releases?: Pick<CatalogReleaseCache, "get" | "dispose">;
 };
 
 export function createMainPluginServer(server: PluginServerContext, options: MainPluginServerOptions = {}) {
@@ -79,9 +82,14 @@ export function createMainPluginServer(server: PluginServerContext, options: Mai
   server.handle(validateDirectoryRpc, validateDirectory);
 
   const settings = server.registerSettings(catalogSettings);
-  const ownedLoader = new CatalogLoader();
+  const ownedGit = new CatalogGit();
+  const ownedLoader = new CatalogLoader(ownedGit);
+  const ownedReleases = new CatalogReleaseCache(ownedGit);
   const catalog = options.catalog ?? ownedLoader;
+  const releases = options.releases ?? ownedReleases;
   server.handle(catalogLoadRpc, () => loadCatalogForHost(settings, catalog));
+  server.handle(catalogReleasesRpc, (input) => listCatalogReleasesForHost(settings, releases, input));
+  server.handle(catalogResolveRpc, (input) => resolveCatalogForHost(catalog, releases, input));
 
   const scanner = new ProjectScanner();
   server.handle(targetScanSubscription, async (input, { signal, push }) => {
@@ -264,6 +272,7 @@ export function createMainPluginServer(server: PluginServerContext, options: Mai
   }
 
   return async () => {
+    ownedReleases.dispose();
     await apply?.dispose();
     await Promise.all([preview.dispose(), ownedLoader.dispose(), scanner.dispose()]);
   };

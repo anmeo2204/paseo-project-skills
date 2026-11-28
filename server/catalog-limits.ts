@@ -12,4 +12,9 @@ export const catalogLimits = {
   concurrentStaging: 2,
   cachedSnapshots: 2,
   diagnostics: 32,
+  lsRemoteBytes: 256 * 1024,
+  lsRemoteTimeoutMs: 10_000,
+  maxReleases: 100,
+  releaseCacheTtlMs: 60_000,
+  releaseRefreshCooldownMs: 5_000,
 } as const;

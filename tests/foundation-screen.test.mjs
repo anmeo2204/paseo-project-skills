@@ -71,6 +71,32 @@ function harness(t) {
       providers: { snapshot: ({ cwd }) => request(requests.providers, { id, cwd }) },
     };
     const invoke = (name, input) => {
+      if (name === "catalog.releases") {
+        return Promise.resolve({
+          status: "ready",
+          source: "https://github.com/anmeo2204/project-skills",
+          settingsRevision: "same-revision",
+          active: { catalogRef: ref, isPinnedSha: /^[a-f0-9]{40}$/i.test(ref) },
+          releases: [],
+          latestStable: null,
+          updateStatus: "no_stable_releases",
+          updateAvailable: false,
+          checkedAt: 1,
+          cached: false,
+        });
+      }
+      if (name === "catalog.resolve") {
+        const sha = "b".repeat(40);
+        return Promise.resolve({
+          status: "ready",
+          source: "https://github.com/anmeo2204/project-skills",
+          mode: input.mode,
+          requestedRef: input.ref ?? "v0.1.0",
+          resolvedTag: input.ref ?? "v0.1.0",
+          commitSha: sha,
+          skillCount: 1,
+        });
+      }
       assert.equal(name, "target.validate-directory");
       return request(requests.validation, { id, path: input.path });
     };
@@ -199,8 +225,12 @@ test("host switch isolates in-flight requests, visible ref, draft and save desti
   await resolve(a, { entries: [] });
   assert.ok(h.providers().every(({ props }) => !props.disabled));
   await act(async () => h.input("Catalog revision").props.onChangeText("v2-b"));
-  await h.press("Save revision");
-  assert.deepEqual(h.saves, [{ id: "host-b", values: { catalogRef: "v2-b" }, revision: "same-revision" }]);
+  await h.press("Resolve & Pin Revision");
+  assert.deepEqual(h.saves, [{
+    id: "host-b",
+    values: { catalogRef: "b".repeat(40), selectionMode: "custom", selectedTag: "v2-b" },
+    revision: "same-revision",
+  }]);
   await h.show("host-a", "online", "v1-a");
   assert.equal(h.input("Catalog revision").props.value, "v1-a");
 });

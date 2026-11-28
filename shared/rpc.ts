@@ -1,6 +1,12 @@
 import { defineRpc, defineSubscription } from "@getpaseo/plugin";
 import { z } from "zod";
-import { catalogResultSchema } from "./catalog";
+import {
+  catalogReleasesInputSchema,
+  catalogReleasesResultSchema,
+  catalogResolveInputSchema,
+  catalogResolveResultSchema,
+  catalogResultSchema,
+} from "./catalog";
 import { projectScanEvent } from "./project-evidence";
 import { recommendationEvent, recommendationInput } from "./recommendation";
 import { selectionIntentV1Schema } from "./selection-intent";
@@ -29,6 +35,18 @@ export const catalogLoadRpc = defineRpc({
   name: "catalog.load",
   input: z.strictObject({}),
   output: catalogResultSchema,
+});
+
+export const catalogReleasesRpc = defineRpc({
+  name: "catalog.releases",
+  input: catalogReleasesInputSchema,
+  output: catalogReleasesResultSchema,
+});
+
+export const catalogResolveRpc = defineRpc({
+  name: "catalog.resolve",
+  input: catalogResolveInputSchema,
+  output: catalogResolveResultSchema,
 });
 
 export const targetScanSubscription = defineSubscription({

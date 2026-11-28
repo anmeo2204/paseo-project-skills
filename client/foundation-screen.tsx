@@ -37,7 +37,7 @@ export function FoundationScreen({ theme, layout, host }: PluginScreenProps) {
           </Section>
           <Section theme={theme} title="Target Providers"><Detail theme={theme}>Connect to the host to discover providers.</Detail></Section>
           <Section theme={theme} title="Skill Catalog"><Detail theme={theme}>Host settings are unavailable.</Detail></Section>
-        </> : <HostScreen key={host.id} theme={theme} hostId={host.id} hostLabel={host.label} />}
+        </> : <HostScreen key={host.id} theme={theme} hostId={host.id} hostLabel={host.label} compact={layout.compact} />}
         {fixture && <FixtureOperations theme={theme} host={host} online={!disconnected} />}
       </View>
     </ScrollView>
@@ -69,11 +69,12 @@ function TargetApplyStatus({ theme, hostId, directory }: { theme: PluginTheme; h
   return <Detail theme={theme} error={isError}>{label}</Detail>;
 }
 
-function HostScreen({ theme, hostId, hostLabel }: { theme: PluginTheme; hostId: string; hostLabel: string }) {
+function HostScreen({ theme, hostId, hostLabel, compact }: { theme: PluginTheme; hostId: string; hostLabel: string; compact: boolean }) {
   const approvalScope = useFixtureApproval();
   const [target, setTarget] = useState<{ value: Target; selection: number } | null>(null);
 
   const settings = useSettings(catalogSettings);
+  const [catalogBusy, setCatalogBusy] = useState(false);
   const [providers, setProviders] = useState<ProviderId[]>([]);
   const [providerGeneration, setProviderGeneration] = useState(0);
   const validate = useRpc(validateDirectoryRpc);
@@ -121,9 +122,12 @@ function HostScreen({ theme, hostId, hostLabel }: { theme: PluginTheme; hostId: 
               }} />
           : <Detail theme={theme}>Choose a valid target directory to discover providers.</Detail>}
       </Section>
-      <Section theme={theme} title="Skill Catalog"><CatalogSection theme={theme} settings={settings} /></Section>
+      <Section theme={theme} title="Skill Catalog">
+        <CatalogSection theme={theme} hostId={hostId} settings={settings} compact={compact} onBusyChange={setCatalogBusy} />
+      </Section>
       <RecommendationRun theme={theme} hostId={hostId} directory={directory}
-        generation={target?.selection ?? 0} settings={settings} providers={providers} providerGeneration={providerGeneration} />
+        generation={target?.selection ?? 0} settings={settings} providers={providers}
+        providerGeneration={providerGeneration} catalogBusy={catalogBusy} />
       <ConnectionCheck theme={theme} />
     </>
   );

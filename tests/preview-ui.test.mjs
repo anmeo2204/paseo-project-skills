@@ -14,7 +14,7 @@ import { HostFixture } from './client-fixture.mjs';
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 notifyManager.setScheduler(queueMicrotask);
 const sha = 'a'.repeat(40);
-const settingsFor = (revision = 'r1', saving = false) => ({ status: 'ready', revision, saving, values: { catalogRef: 'release' }, reload: async () => {}, save: async () => true });
+const settingsFor = (revision = 'r1', saving = false) => ({ status: 'ready', revision, saving, values: { catalogRef: sha, selectionMode: 'custom' }, reload: async () => {}, save: async () => true });
 const catalog = { schemaVersion: 1, source: catalogSource, commitSha: sha, skills: ['demo', 'other'].map((id) => ({
   id, directory: 'skills/' + id, metadata: { name: id, description: 'Fixture skill ' + id },
   entrypoint: { path: 'SKILL.md', blobSha: sha, sizeBytes: 40, mode: '100644' }, supportingFiles: [],
@@ -58,9 +58,16 @@ function harness(t, { fixture = false } = {}) {
   const provider = { projects: { list: async () => ({ projects: [] }) }, workspaces: { list: async () => ({ entries: [], pageInfo: {} }) },
     providers: { snapshot: async () => ({ entries: [] }) } };
   const invoke = (method, input) => {
+    if (method === 'catalog.releases') {
+      return Promise.resolve({
+        status: 'ready', source: catalogSource, settingsRevision: currentSettings.revision,
+        active: { catalogRef: currentSettings.values.catalogRef, selectionMode: currentSettings.values.selectionMode, isPinnedSha: true },
+        releases: [], latestStable: null, updateStatus: 'no_stable_releases', updateAvailable: false, checkedAt: 1, cached: false,
+      });
+    }
     calls.push(method);
     if (method === 'target.validate-directory') return Promise.resolve({ status: 'ready', directory: input.path });
-    if (method === 'catalog.load') return Promise.resolve({ status: 'ready', settingsRevision: currentSettings.revision, requestedRef: 'release', snapshot: catalog });
+    if (method === 'catalog.load') return Promise.resolve({ status: 'ready', settingsRevision: currentSettings.revision, requestedRef: currentSettings.values.catalogRef, snapshot: catalog });
     if (fixture && (method === 'apply.create.v1' || method === 'apply.status.v1')) {
       const pending = { ...Promise.withResolvers(), method, host: currentHost, input: structuredClone(input),
         trackedBeforeTransport: tracker.snapshot().some(row => row.operationId === input.operationId) };
