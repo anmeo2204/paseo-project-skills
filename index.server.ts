@@ -30,7 +30,32 @@ import {
 import { probeSingleProjectRoot } from "./server/single-project-pilot";
 
 export const mainPluginInstallationId = "paseo-project-skills";
-const defaultPluginRoot = dirname(fileURLToPath(import.meta.url));
+
+/**
+ * Resolves the plugin root safely across ESM and bundled CJS runtimes.
+ * Never throws at module initialization and never falls back to process.cwd().
+ * Returns undefined when the runtime does not expose a verifiable module path
+ * (e.g. Paseo's bundled plugin runner), causing host compatibility to fail-closed
+ * to Preview-only unless verified SDK versions are supplied explicitly.
+ */
+export function resolveDefaultPluginRoot(metaUrl?: unknown, dirnameValue?: unknown): string | undefined {
+  if (typeof metaUrl === "string" && metaUrl.length > 0) {
+    try {
+      return dirname(fileURLToPath(metaUrl));
+    } catch {
+      return undefined;
+    }
+  }
+  if (typeof dirnameValue === "string" && dirnameValue.length > 0) {
+    return dirnameValue;
+  }
+  return undefined;
+}
+
+const defaultPluginRoot = resolveDefaultPluginRoot(
+  typeof import.meta !== "undefined" ? (import.meta as { url?: unknown }).url : undefined,
+  typeof __dirname === "string" ? __dirname : undefined,
+);
 
 export type MainPluginServerOptions = {
   daemonHome?: string;
@@ -64,7 +89,7 @@ export function createMainPluginServer(server: PluginServerContext, options: Mai
 
   const env = options.env ?? process.env;
   const pluginRoot = options.pluginRoot ?? defaultPluginRoot;
-  const sdkVersions = options.sdkVersions ?? readInstalledSdkVersions(pluginRoot);
+  const sdkVersions = options.sdkVersions ?? (pluginRoot ? readInstalledSdkVersions(pluginRoot) : []);
   const cliPath = options.cliPath ?? detectDefaultPaseoCli(env);
   const homeResolution = resolveSafeDaemonHome(options.daemonHome, { env, homeDir: options.homeDir });
   const compat = evaluateHostCompatibility({

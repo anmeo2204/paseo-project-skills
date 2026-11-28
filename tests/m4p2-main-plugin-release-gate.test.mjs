@@ -11,7 +11,7 @@ import { act, create } from 'react-test-renderer';
 import { QueryClient, QueryClientProvider, notifyManager } from '@tanstack/react-query';
 import { PaseoApiProvider, PluginRpcProvider } from '@getpaseo/plugin/client/host';
 import { HostFixture } from './client-fixture.mjs';
-import { createMainPluginServer } from '../index.server.ts';
+import { createMainPluginServer, resolveDefaultPluginRoot } from '../index.server.ts';
 import contributeMainClient, { formatHostApplyNotice } from '../index.client.tsx';
 import { FixtureApprovalScope, FixtureOperations } from '../client/fixture-approval.tsx';
 import { createOperationTracker } from '../client/apply-tracker.ts';
@@ -327,5 +327,43 @@ test('Main Client UI displays Preview-only notices (Relay / unenrolled) and rend
   } finally {
     if (prevStorage === undefined) delete globalThis.localStorage;
     else globalThis.localStorage = prevStorage;
+  }
+});
+
+test('CJS/ESM bundler regression: resolveDefaultPluginRoot never throws or falls back to cwd, and unverified pluginRoot fails closed to Preview-only', async () => {
+  assert.equal(resolveDefaultPluginRoot(undefined, undefined), undefined);
+  assert.equal(resolveDefaultPluginRoot('', ''), undefined);
+  assert.equal(resolveDefaultPluginRoot('not-a-file-url', undefined), undefined);
+  assert.equal(resolveDefaultPluginRoot('file:///tmp/plugin/index.server.ts', undefined), '/tmp/plugin');
+  assert.equal(resolveDefaultPluginRoot(undefined, '/tmp/bundled-dir'), '/tmp/bundled-dir');
+
+  // Even when pluginRoot points to a bundled dir without node_modules/@getpaseo/*, server loads cleanly in Preview-only mode.
+  const base = await fs.realpath(await fs.mkdtemp(join(tmpdir(), 'pps-cjs-reg-')));
+  const fakeHome = join(base, 'home');
+  const paseoHome = join(fakeHome, '.paseo');
+  const bundledDir = join(base, 'bundled-cache');
+  for (const d of [fakeHome, paseoHome, bundledDir]) await fs.mkdir(d, { mode: 0o700 });
+  try {
+    const handlers = new Map();
+    const cleanup = createMainPluginServer({
+      handle: (contract, fn) => handlers.set(contract, fn),
+      registerSettings: () => ({ read: async () => ({ status: 'ready', revision: 'rev-cjs', values: { catalogRef: '' } }) }),
+    }, {
+      homeDir: fakeHome,
+      env: {},
+      pluginRoot: bundledDir,
+      paseoVersion: '0.17.5',
+      macOsVersion: '27.2.1',
+    });
+    try {
+      assert.equal(handlers.has(applyCreateRpc), false, 'apply.create.v1 must not be registered when SDK versions cannot be verified');
+      const status = await handlers.get(applyTargetStatusRpc)({}, { paseo: { hosts: { list: async () => ({ self: { serverId: 'h1' } }) } } });
+      assert.equal(status.hostCompatible, false);
+      assert.ok(status.reasons.includes('unsupported_sdk_version'));
+    } finally {
+      await cleanup();
+    }
+  } finally {
+    await fs.rm(base, { recursive: true, force: true });
   }
 });

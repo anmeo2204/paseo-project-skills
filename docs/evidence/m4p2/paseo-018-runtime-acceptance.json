@@ -1,0 +1,51 @@
+{
+  "status": "pass",
+  "paseoVersion": "0.18.0",
+  "daemonVersion": "0.18.0",
+  "pluginStatusAfterInstall": "running",
+  "pluginStatusAfterReload": "running",
+  "targetStatus": {
+    "hostCompatible": false,
+    "trustBoundaryOk": false,
+    "reasons": [
+      "unsupported_paseo_version",
+      "unsupported_sdk_version",
+      "remote_exposure_enabled"
+    ],
+    "enrolledCount": 0,
+    "targetState": "host_unavailable"
+  },
+  "applyCreateBlocked": true,
+  "previewCheck": {
+    "skipped": false,
+    "skillId": "debug-regression",
+    "canonicalEntries": 2,
+    "kiroDerivedEntries": 2,
+    "providers": [
+      {
+        "id": "antigravity",
+        "status": "canonical_only"
+      },
+      {
+        "id": "codex",
+        "status": "canonical_only"
+      },
+      {
+        "id": "cursor",
+        "status": "canonical_only"
+      },
+      {
+        "id": "kiro",
+        "status": "ready"
+      }
+    ],
+    "applyEligibility": {
+      "status": "ineligible",
+      "reasons": [
+        "write_capability_unavailable"
+      ]
+    }
+  },
+  "targetUntouched": true,
+  "pluginLogsClean": true
+}
