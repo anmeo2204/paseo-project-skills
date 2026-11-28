@@ -13,6 +13,33 @@ const slot = "paseo-project-skills";
 const title = "Project Skills";
 type ProfileStorage = { getItem(key: string): string | null; setItem(key: string, value: string): void };
 
+function createMemoryStorage(): ProfileStorage {
+  const entries = new Map<string, string>();
+  return {
+    getItem: (key) => entries.get(key) ?? null,
+    setItem: (key, value) => { entries.set(key, value); },
+  };
+}
+
+/**
+ * Resolves profile storage for operation tracking.
+ * Uses `globalThis.localStorage` on Desktop/Web (retaining fail-closed persistence errors),
+ * and falls back to session memory storage on React Native mobile where `localStorage` is absent.
+ */
+export function resolveClientProfileStorage(
+  globalObj: { localStorage?: ProfileStorage } = globalThis as unknown as { localStorage?: ProfileStorage },
+  fallback: ProfileStorage = createMemoryStorage(),
+): ProfileStorage {
+  if (
+    globalObj.localStorage &&
+    typeof globalObj.localStorage.getItem === "function" &&
+    typeof globalObj.localStorage.setItem === "function"
+  ) {
+    return globalObj.localStorage;
+  }
+  return fallback;
+}
+
 export function formatHostApplyNotice(status: ApplyTargetStatusOutput): string | null {
   if (!status.trustBoundaryOk || status.reasons.includes("remote_exposure_enabled")) {
     return "Safe Apply is inactive (Preview-only): Relay or remote exposure is enabled on this daemon, or the local-only trust boundary could not be verified.";
@@ -37,9 +64,13 @@ function ProjectSkillsSidebarItem({ currentScreen, openScreen }: PluginSidebarIt
 }
 
 export default function contribute(client: PluginClientContext) {
+  const memoryFallback = createMemoryStorage();
   const tracker = createOperationTracker({
     slot,
-    storage: () => (globalThis as unknown as { localStorage: ProfileStorage }).localStorage,
+    storage: () => resolveClientProfileStorage(
+      globalThis as unknown as { localStorage?: ProfileStorage },
+      memoryFallback,
+    ),
   });
 
   function Screen(props: PluginScreenProps) {

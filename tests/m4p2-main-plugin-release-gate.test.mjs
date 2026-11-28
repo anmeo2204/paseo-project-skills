@@ -15,7 +15,7 @@ import { createMainPluginServer, resolveDefaultPluginRoot } from '../index.serve
 import { verifyEmbeddedSdkManifest } from '../server/compatibility-policy.ts';
 import { sdkManifestArtifact } from '../server/native/sdk-manifest-payload.ts';
 import { buildExpectedSdkManifest, renderSdkManifestModule } from '../scripts/build-sdk-manifest.mjs';
-import contributeMainClient, { formatHostApplyNotice } from '../index.client.tsx';
+import contributeMainClient, { formatHostApplyNotice, resolveClientProfileStorage } from '../index.client.tsx';
 import { FixtureApprovalScope, FixtureOperations } from '../client/fixture-approval.tsx';
 import { createOperationTracker } from '../client/apply-tracker.ts';
 import { enrollMultiRoot, readHostRelayOptIn, setHostRelayOptIn, setMultiRootOptIn } from '../server/multi-root-policy.ts';
@@ -360,6 +360,18 @@ test('Main Client UI displays Preview-only notices (Relay / unenrolled) and rend
     assert.ok(opsText.includes('Apply operation journal is full (64 active records)'), 'Expected journal_full message');
     assert.ok(opsText.includes('Recovery required: inspect the operation ledger below against disk'), 'Expected recovery_required message');
     await act(async () => { opsTree.unmount(); });
+
+    // 3. React Native mobile fallback when globalThis.localStorage is undefined.
+    const rnStorage = resolveClientProfileStorage({});
+    const rnTracker = createOperationTracker({ slot: 'paseo-project-skills', storage: () => rnStorage });
+    rnTracker.submit(scope, makeInput('5'.repeat(32)), async () => ({
+      status: 'operation', operationId: '5'.repeat(32), planDigest: 'b'.repeat(64),
+      phase: 'completed', code: 'none', targetMutated: true,
+      requiresPreview: false, durability: 'fsync_completed', ledger: [],
+    }));
+    await new Promise(r => setTimeout(r, 20));
+    assert.equal(rnTracker.snapshot()[0]?.state, 'operation');
+    assert.equal(rnTracker.snapshot()[0]?.operation?.phase, 'completed');
   } finally {
     if (prevStorage === undefined) delete globalThis.localStorage;
     else globalThis.localStorage = prevStorage;
