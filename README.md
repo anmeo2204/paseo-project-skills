@@ -64,7 +64,7 @@ The daemon-side `target.scan` subscription accepts a request ID and the canonica
 
 The scanner reads bounded metadata and collects relative evidence references, application and workspace boundaries, technology declarations and inferences, and existing project skill/rule paths. Partial results carry warnings and coverage limits. It does not need a catalog ref or provider. M2.2 exposes this subscription for SDK use.
 
-The scanner is intended for local projects managed by the user. It excludes dependency trees, secret files, symlinks and special files, and never runs project commands. Node pathname checks can detect the tested replacement races, but do not provide an adversarial filesystem sandbox. See [the completion report](M2.2-completion-report.md) for the evidence policy and runtime checks.
+The scanner is intended for local projects managed by the user. It excludes dependency trees, secret files, symlinks and special files, and never runs project commands. Node pathname checks can detect the tested replacement races, but do not provide an adversarial filesystem sandbox. See [the completion report](docs/reports/M2.2-completion-report.md) for the evidence policy and runtime checks.
 
 ## Deterministic recommendations
 
@@ -72,7 +72,7 @@ Subscribe to `recommendation.evaluate` with a `requestId` and the validated `can
 
 The engine reads `applicability.json` beside each skill's `SKILL.md` at the resolved commit. It evaluates project scope and scanner-assigned boundaries, returns evidence references for matches, and lists observed skill installations independently. Partial scans can still produce positive matches. Older catalog revisions load normally and report `unknown` for skills without a sidecar. Invalid or unsupported sidecars produce skill-level diagnostics. Task applicability is always `not_assessed`.
 
-Run `npm run typecheck` and `npm test` for the contract, scanner, engine, and subscription fixtures. Remote acceptance of the migrated catalog requires a published revision containing the sidecars. See the [applicability contract](M2.4-applicability-contract.md).
+Run `npm run typecheck` and `npm test` for the contract, scanner, engine, and subscription fixtures. Remote acceptance of the migrated catalog requires a published revision containing the sidecars. See the [applicability contract](docs/reports/M2.4-applicability-contract.md).
 
 ## Scan & Recommend in Desktop
 
@@ -90,7 +90,7 @@ Changed UTF-8 text receives a unified diff with three lines of context around on
 
 Limits: 2,048 files, 1,024 bytes/32 segments per destination, 1 MiB per existing file, 8 MiB total destination reads, 32,768 filesystem `lstat` checks, 128 KiB per text diff, and 1 MiB for the complete JSON response. Files exceeding read/diff budgets are `blocked`; complete-plan or response-budget failures return `limit_exceeded` without truncating a plan. The filesystem phase has an 8-second cooperative deadline; catalog loading retains its separate 20-second limit. One preview runs per installation. Plugin disposal cancels the active preview and waits for its work to settle.
 
-Preview rechecks observed destinations after the final settings read. It describes current filesystem observations, not an atomic snapshot: same-path directory replacement before the request cannot be compared with a prior scan because the intent has no inode receipt. As with the scanner, Node pathname guards are intended for local-first projects, not an adversarial filesystem sandbox. Safe Apply must revalidate independently. This endpoint does not call agents/models or write target files. See [the M3.2 completion report](M3.2-completion-report.md).
+Preview rechecks observed destinations after the final settings read. It describes current filesystem observations, not an atomic snapshot: same-path directory replacement before the request cannot be compared with a prior scan because the intent has no inode receipt. As with the scanner, Node pathname guards are intended for local-first projects, not an adversarial filesystem sandbox. Safe Apply must revalidate independently. This endpoint does not call agents/models or write target files. See [the M3.2 completion report](docs/reports/M3.2-completion-report.md).
 
 ## Provider Adapter Preview
 
@@ -102,7 +102,7 @@ Kiro proposes a complete derived copy at `.kiro/skills/<id>/` only when the **se
 
 Derived entries use the exact canonical package bytes/modes, including supporting files, and carry `providerId` plus `canonicalDestination` lineage. If any canonical file of a skill is `conflict` or `blocked`, its entire Kiro package is `deferred` with diagnostics, while unaffected skills can still plan. Late canonical changes withdraw affected derived packages. Existing Kiro destinations are compared directly with `create/unchanged/conflict/blocked` semantics. Kiro status is `ready` for a generated plan without destination issues, `partial` for a mixed/degraded plan, `deferred` when all selected skills are held, or `limited` when root compatibility is unconfirmed; none of these statuses authorizes Apply.
 
-Duplicate diagnostics inspect only selected directory IDs at target-root `.agents/skills/`, `.cursor/skills/` and `.kiro/skills/`. `duplicate_skill_id` carries `basis: directory_id` and observed paths; these are candidate copies, not proof of matching frontmatter, provenance, activation or precedence. Unsafe/changed observations report `inventory_unverified`. No provider-home or exhaustive recursive inventory is claimed. See [M3.1 evidence](M3.1-completion-report.md) and [the M3.3 completion report](M3.3-completion-report.md).
+Duplicate diagnostics inspect only selected directory IDs at target-root `.agents/skills/`, `.cursor/skills/` and `.kiro/skills/`. `duplicate_skill_id` carries `basis: directory_id` and observed paths; these are candidate copies, not proof of matching frontmatter, provenance, activation or precedence. Unsafe/changed observations report `inventory_unverified`. No provider-home or exhaustive recursive inventory is claimed. See [M3.1 evidence](docs/reports/M3.1-completion-report.md) and [the M3.3 completion report](docs/reports/M3.3-completion-report.md).
 
 ## Preview Changes in Desktop
 
@@ -112,11 +112,11 @@ Kiro compatibility explains root requirements and package deferral. Canonical-on
 
 Rescanning, changing host/target/saved settings or skill/provider selection discards the previous preview. Selection generations also invalidate A → B → A changes, including batched updates. Offline or missing hosts clear the current intent. Saving catalog settings temporarily disables Preview. Responses are checked against the request's full intent and obsolete replies are ignored; reconnect never retries automatically.
 
-**Cancel Preview** stops waiting on the UI and ignores late replies. The SDK RPC cannot be cancelled through this control, so the daemon may still finish and a quick retry can return Busy. Retry explicitly in the current scope. Preview itself never writes target files, calls models, or executes providers; when host compatibility, trust boundary, and target enrollment all pass, the screen exposes an explicit create-only approval flow after Preview. See [the M3.4 completion report](M3.4-completion-report.md).
+**Cancel Preview** stops waiting on the UI and ignores late replies. The SDK RPC cannot be cancelled through this control, so the daemon may still finish and a quick retry can return Busy. Retry explicitly in the current scope. Preview itself never writes target files, calls models, or executes providers; when host compatibility, trust boundary, and target enrollment all pass, the screen exposes an explicit create-only approval flow after Preview. See [the M3.4 completion report](docs/reports/M3.4-completion-report.md).
 
 M4.2 added the read-only **`preview.providers.v2`** RPC, accepting `{ intent, viewNonce }`. Its strict versioned response contains an immutable-plan manifest and daemon-retained receipt. The manifest binds the M3 provider projection, pinned source fingerprints, proposed directory effects, exact bigint filesystem observations, Git/worktree proof, installation-instance/epoch scope and policy/budgets. The M3 endpoints keep their existing contracts.
 
-Receipts expire after 10 minutes using the daemon's monotonic clock. The installation retains at most 8 receipts and 32 MiB of source bytes, with an 8 MiB combined canonical/derived source limit per receipt; oldest receipts are evicted first. No source bytes travel in the response. Historically, M4.2 shipped Preview-only with no Apply RPC on the main daemon; starting in M4.P2/M4.P3, `preview.providers.v2` on `paseo-project-skills` reports `eligible` (or `no_changes`) only when host compatibility, build-time SDK manifest, local-only trust boundary (Relay OFF), and exact target enrollment all pass, and otherwise fails closed (`ineligible` / `write_capability_unavailable`) in Preview-only mode. Receipt integrity/lifetime checks do not replace filesystem/settings/catalog revalidation. See [the M4.2 report](M4.2-completion-report.md) for runtime-spike findings.
+Receipts expire after 10 minutes using the daemon's monotonic clock. The installation retains at most 8 receipts and 32 MiB of source bytes, with an 8 MiB combined canonical/derived source limit per receipt; oldest receipts are evicted first. No source bytes travel in the response. Historically, M4.2 shipped Preview-only with no Apply RPC on the main daemon; starting in M4.P2/M4.P3, `preview.providers.v2` on `paseo-project-skills` reports `eligible` (or `no_changes`) only when host compatibility, build-time SDK manifest, local-only trust boundary (Relay OFF), and exact target enrollment all pass, and otherwise fails closed (`ineligible` / `write_capability_unavailable`) in Preview-only mode. Receipt integrity/lifetime checks do not replace filesystem/settings/catalog revalidation. See [the M4.2 report](docs/reports/M4.2-completion-report.md) for runtime-spike findings.
 
 ## Safe Apply (Create-Only v1)
 
@@ -175,7 +175,7 @@ See [the M4.P1 report](docs/safe-apply-pilot/M4.P1-completion-report.md), [the M
 
 ## Optional AI capability
 
-M2.3 provides a server-side structured agent executor through the public Paseo SDK. It ships with no verified execution profiles, so provider availability alone cannot start a run. The executor is internal to the plugin and will be connected to the optional AI-assisted recommendation flow separately. Catalog and project evidence remain available independently. See [the M2.3 completion report](M2.3-completion-report.md) for the local preflight and provider limitations.
+M2.3 provides a server-side structured agent executor through the public Paseo SDK. It ships with no verified execution profiles, so provider availability alone cannot start a run. The executor is internal to the plugin and will be connected to the optional AI-assisted recommendation flow separately. Catalog and project evidence remain available independently. See [the M2.3 completion report](docs/reports/M2.3-completion-report.md) for the local preflight and provider limitations.
 
 ## Roadmap & Milestone Status
 

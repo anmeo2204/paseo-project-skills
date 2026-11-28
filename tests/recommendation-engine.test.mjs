@@ -34,7 +34,7 @@ const evaluate = (skills, data = evidence()) =>
   evaluateRecommendation(input(data.target.canonicalDirectory), snapshot(skills), data, "revision");
 
 test("all 19 authoring rules evaluate against scanner evidence with traceable provenance", async (t) => {
-  const contract = await readFile(new URL("../M2.4-applicability-contract.md", import.meta.url), "utf8");
+  const contract = await readFile(new URL("../docs/reports/M2.4-applicability-contract.md", import.meta.url), "utf8");
   const examples = contract.split("## 5.")[1].split("## 6.")[0];
   const rules = [...examples.matchAll(/^### ([a-z-]+)\n\n```json\n([\s\S]*?)```/gm)].map(([, id, rule]) => skill(id, rule));
   assert.equal(rules.length, 19);
