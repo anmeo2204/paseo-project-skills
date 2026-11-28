@@ -163,9 +163,15 @@ node --import ./tests/register.mjs scripts/enroll-project-skills.mjs relay-polic
 2. Run **Scan & Recommend**, select skills, and click **Preview Changes**.
 3. Review planned creates (`.agents/skills/<id>/*` and, for Kiro at a confirmed Git root, `.kiro/skills/<id>/*`). Any `conflict` or `blocked` file blocks the entire plan.
 4. Click **Review create-only approval → Confirm create-only**. Existing files are never overwritten or deleted (`O_CREAT | O_EXCL`).
-5. **Recovery after crash or partial write:** Safe Apply never auto-retries or rolls back. Keep the `operationId` shown under **Apply Operations** (still readable via `apply.status.v1` even after disabling/revoking enrollment or enabling Relay), inspect any `created_incomplete` / `ownership_unknown` files against the ledger on disk, clean up incomplete files manually outside Safe Apply, and run a fresh **Preview Changes**.
+5. **Recovery after crash, partial write, or lost mobile tracking:** Safe Apply never auto-retries or rolls back. Keep the `operationId` shown under **Apply Operations** (still readable via `apply.status.v1` even after disabling/revoking enrollment or revoking `allowRelay`). On Paseo Mobile (React Native), client operation tracking uses session memory (because `globalThis.localStorage` is absent) and does not survive a force-kill or app restart; if client tracking is lost, locate the authoritative durable record on the daemon host at `~/.paseo/runtime/project-skills/coordinator/<operationId>.json` (`ls -lt ~/.paseo/runtime/project-skills/coordinator/*.json`), inspect any `created_incomplete` / `ownership_unknown` entries against disk, clean up incomplete files manually outside Safe Apply, and run a fresh **Preview Changes**.
 
-See [the M4.P1 report](docs/safe-apply-pilot/M4.P1-completion-report.md), [the M4.P2 release candidate report](docs/safe-apply-pilot/M4.P2-completion-report.md), and [the M4.P3 Paseo 0.18 compatibility report](docs/safe-apply-pilot/M4.P3-completion-report.md) for full acceptance evidence, upgrade steps, and rollback-to-Preview-only procedure.
+### Residual Risks & Known Limitations (M4 v1)
+- **No caller principal in SDK `0.17.4` / Paseo `0.18.0`:** Receipts bind exact plan digest, target root identity, and `policyRevision`, not cryptographic human approver identity. Enrollment and Relay opt-in are strictly out-of-band host CLI operations.
+- **Optional Paired Relay (`relay-policy --allow`):** Default is fail-closed (`allowRelay: false`). When explicitly opted in on a single-owner host, any device paired to your Paseo daemon over Relay can trigger `apply.create.v1` on enrolled roots (loopback `listen`, `remote.enabled: false`, enrollment, and create-only guards remain enforced).
+- **Create-only without auto-rollback:** Crash or `ENOSPC` mid-write can leave an incomplete `0600` file requiring manual reconciliation against the durable daemon journal.
+- **Mobile client tracking:** Session-memory fallback on React Native does not persist `operationId` across app kill/reload; host-side daemon journal recovery (`~/.paseo/runtime/project-skills/coordinator/*.json`) is authoritative. Persistent mobile operation tracking is tracked in the post-M4 backlog.
+
+See [the M4.P1 report](docs/safe-apply-pilot/M4.P1-completion-report.md), [the M4.P2 report](docs/safe-apply-pilot/M4.P2-completion-report.md), [the M4.P3 report](docs/safe-apply-pilot/M4.P3-completion-report.md), [the Final M4 Production Relay Apply report](docs/safe-apply-pilot/FINAL-M4-production-relay-apply-acceptance-report.md), and [the M4 Closure Summary](docs/safe-apply-pilot/M4-closure-summary.md).
 
 ## Optional AI capability
 
@@ -178,10 +184,7 @@ M2.3 provides a server-side structured agent executor through the public Paseo S
 | **M1 — Foundation** | Plugin shell, directory validation, host/workspace selection, catalog settings | **Completed** |
 | **M2 — Read-only scan & recommendation** | Pinned Git catalog loader, bounded project scanner, deterministic recommendation engine, Scan UI | **Completed** |
 | **M3 — Preview & provider adapters** | Canonical preview planner, provider adapters (Codex, Cursor ACP, Antigravity `canonical_only`; Kiro `.kiro/skills/` derived), Preview UI | **Completed** |
-| **M4 — Safe Apply (Pilot)** | Immutable preview receipts (`v2`), native anchored create-only writer, durable journal, single-project enrollment pilot on isolated daemon | **Pilot Completed (PASS 10/10)** |
-| **M4.P1 — Multi-Root Policy, Version Compat & Multi-Skill/Kiro Acceptance** | Multi-root allowlist (`enrollments.json`), per-target approval receipts, semver/trust-boundary compatibility policy, AT-1/2/3/5 & 4-provider live discovery on isolated copies | **Completed (PASS)** |
-| **M4.P2 — Main Plugin Integration & Production Release Gate** | Direct Scan → Recommend → Select → Preview → Approve → Apply on main plugin (`~/.paseo`, Preview-only for unenrolled roots, Relay fail-closed) | **Completed (P0 Hotfix deployed)** |
-| **M4.P3 — Paseo 0.18 Compatibility & Runtime Acceptance** | Build-time SDK manifest (bundler-safe, lockfile + native-artifact bound), synchronized Paseo `0.18.0` compatibility policy + native writer gate, full isolated Paseo `0.18.0` Desktop UI & 4-provider acceptance | **Completed (Production Release — Paseo 0.18.0)** |
-| **M5 — SLP integration pilot** | Validate optional integration while keeping the standalone plugin usable | **Planned** |
+| **M4 — Safe Apply (Create-Only v1)** | Immutable preview receipts (`v2`), native anchored create-only writer, durable journal, multi-root out-of-band enrollment, build-time SDK manifest, Paseo `0.18.0` compatibility, optional host CLI `relay-policy`, Production Desktop & Mobile/Relay Acceptance | **Completed (Production Desktop/Mobile Acceptance: PASS)** |
+| **M5 — SLP integration pilot & post-M4 backlog** | Optional SLP integration while keeping standalone plugin usable; post-M4 backlog: persistent mobile operation tracking | **Planned** |
 
 [Paseo 0.17.4 plugin guide](https://github.com/getpaseo/paseo/blob/v0.17.4/docs/plugins.md)
