@@ -6,6 +6,7 @@ import { test } from "node:test";
 import contribute from "../index.server.ts";
 import { validateDirectory } from "../server/validate-directory.ts";
 import { catalogSettings, catalogSource } from "../shared/catalog-settings.ts";
+import { workspacePreferencesSettings } from "../shared/workspace-preferences.ts";
 import { applyTargetStatusRpc } from "../shared/apply.ts";
 import { canonicalPreviewRpc, providerPreviewRpc, providerPreviewV2Rpc, catalogLoadRpc, catalogReleasesRpc, catalogResolveRpc, foundationStatusRpc, recommendationEvaluateSubscription, targetScanSubscription, validateDirectoryRpc } from "../shared/rpc.ts";
 
@@ -88,7 +89,7 @@ test("server contribution registers the expected typed contracts and host settin
   }
   // Enrollment must remain strictly out-of-band (never exposed as an RPC).
   assert.ok(registered.every((contract) => !contract.name.includes("enroll")));
-  assert.deepEqual(settings, [catalogSettings]);
+  assert.deepEqual(settings, [catalogSettings, workspacePreferencesSettings]);
   assert.deepEqual(foundationStatusRpc.output.parse(handlers.get(foundationStatusRpc)({})), { status: "ready" });
   assert.equal(foundationStatusRpc.input.safeParse({ extra: true }).success, false);
   assert.equal(validateDirectoryRpc.input.safeParse({ path: 7 }).success, false);

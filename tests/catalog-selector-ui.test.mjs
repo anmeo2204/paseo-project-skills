@@ -176,6 +176,7 @@ function createHarness(t, { fixture = false, compact = false } = {}) {
   const input = (label) => tree?.root.findAllByType("input").find((node) => node.props.accessibilityLabel === label);
   const text = () => tree?.root.findAllByType("text").map((node) => node.children.join("")).join("\n") ?? "";
   const setTarget = async (path) => {
+    if (!input("Absolute path on the host")) await press("Advanced: Enter path manually");
     await act(async () => input("Absolute path on the host").props.onChangeText(path));
     await press("Use directory");
   };

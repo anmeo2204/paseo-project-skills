@@ -2,15 +2,21 @@ import type { PluginTheme } from "@getpaseo/plugin";
 import { useHosts, useRpc, useSettings, type PluginScreenProps } from "@getpaseo/plugin/client";
 import { ScrollView } from "@getpaseo/plugin/client/ui";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { View } from "react-native";
 import { catalogSettings } from "../shared/catalog-settings";
 import { applyTargetStatusRpc, type ApplyTargetStatusOutput } from "../shared/apply";
 import { foundationStatusRpc, validateDirectoryRpc } from "../shared/rpc";
+import {
+  lookupProviderPreference,
+  normalizeProviders,
+  workspacePreferencesSettings,
+} from "../shared/workspace-preferences";
 import { CatalogSection } from "./catalog-section";
 import { Action, Detail, Section } from "./controls";
 import { FixtureOperations, useFixtureApproval } from "./fixture-approval";
-import { ProviderSelection, type ProviderId } from "./provider-selection";
+import { createPreferenceWriter } from "./preference-writer";
+import { ProviderSelection, type ProviderId, type ProviderSnapshotBinding } from "./provider-selection";
 import { RecommendationRun } from "./recommendation-run";
 import { TargetPicker, type Target } from "./target-picker";
 
@@ -74,9 +80,33 @@ function HostScreen({ theme, hostId, hostLabel, compact }: { theme: PluginTheme;
   const [target, setTarget] = useState<{ value: Target; selection: number } | null>(null);
 
   const settings = useSettings(catalogSettings);
+  const preferences = useSettings(workspacePreferencesSettings);
+  const preferencesRef = useRef(preferences);
+  preferencesRef.current = preferences;
+  const writerRef = useRef<ReturnType<typeof createPreferenceWriter> | null>(null);
+  if (!writerRef.current) {
+    writerRef.current = createPreferenceWriter({
+      getState: () => preferencesRef.current,
+    });
+  }
+  useEffect(() => {
+    const writer = writerRef.current;
+    return () => {
+      writer?.dispose();
+      writerRef.current = null;
+    };
+  }, [hostId]);
+
   const [catalogBusy, setCatalogBusy] = useState(false);
   const [providers, setProviders] = useState<ProviderId[]>([]);
+  const providersRef = useRef<ProviderId[]>(providers);
+  providersRef.current = providers;
   const [providerGeneration, setProviderGeneration] = useState(0);
+  const [preferenceHint, setPreferenceHint] = useState<"none" | "restored" | "empty">("none");
+  const recordedRecentSelectionRef = useRef<number>(0);
+  const restoredPreferenceKeyRef = useRef<string | null>(null);
+  const userTouchedProvidersRef = useRef<boolean>(false);
+
   const validate = useRpc(validateDirectoryRpc);
   const screenId = useId();
   const path = target?.value.path;
@@ -90,14 +120,105 @@ function HostScreen({ theme, hostId, hostLabel, compact }: { theme: PluginTheme;
   });
   const directory = !result.isError && result.data?.status === "ready" ? result.data.directory : null;
 
+  // Record validated canonical directory in host-scoped Recent Projects (once per target selection).
+  useEffect(() => {
+    if (!directory || !target || recordedRecentSelectionRef.current === target.selection) return;
+    recordedRecentSelectionRef.current = target.selection;
+    void writerRef.current?.enqueue({
+      type: "record_recent",
+      canonicalDirectory: directory,
+      label: target.value.label,
+      kind: target.value.kind,
+      now: Date.now(),
+    });
+  }, [directory, target]);
+
+  // Restore host+canonical-root provider preference once per target selection if user hasn't touched providers yet.
+  useEffect(() => {
+    if (!directory || !target || userTouchedProvidersRef.current) return;
+    if (preferences.status !== "ready") return;
+    const key = `${hostId}:${target.selection}:${directory}`;
+    if (restoredPreferenceKeyRef.current === key) return;
+    restoredPreferenceKeyRef.current = key;
+    const found = lookupProviderPreference(preferences.values, directory);
+    if (!found.found) {
+      setPreferenceHint("none");
+      return;
+    }
+    if (found.providers.length === 0) {
+      // P3: Explicit empty preference is preserved and never replaced with defaults or detected providers.
+      setProviders([]);
+      setPreferenceHint("empty");
+      return;
+    }
+    setProviders(found.providers);
+    setProviderGeneration((value) => value + 1);
+    setPreferenceHint("restored");
+  }, [directory, target, hostId, preferences]);
+
+  function selectTarget(value: Target) {
+    userTouchedProvidersRef.current = false;
+    restoredPreferenceKeyRef.current = null;
+    setPreferenceHint("none");
+    setProviders([]);
+    setTarget((current) => ({ value, selection: (current?.selection ?? 0) + 1 }));
+  }
+
+  function applyProviders(next: readonly ProviderId[]) {
+    if (!directory) return;
+    const normalized = normalizeProviders(next);
+    userTouchedProvidersRef.current = true;
+    providersRef.current = normalized;
+    setPreferenceHint("none");
+    setProviderGeneration((value) => value + 1);
+    setProviders(normalized);
+    void writerRef.current?.enqueue({
+      type: "set_providers",
+      canonicalDirectory: directory,
+      providers: normalized,
+      now: Date.now(),
+    });
+  }
+
+  function toggleProvider(id: ProviderId) {
+    if (!directory) return;
+    const current = providersRef.current;
+    const next = current.includes(id)
+      ? current.filter((selected) => selected !== id)
+      : [...current, id];
+    applyProviders(next);
+  }
+
+  function replaceProviders(next: readonly ProviderId[], binding: ProviderSnapshotBinding) {
+    // P4: Ignore stale snapshot actions that do not match the active host, validated directory, and selection generation.
+    if (binding.hostId !== hostId || binding.cwd !== directory || binding.selectionGeneration !== target?.selection) {
+      return;
+    }
+    applyProviders(next);
+  }
+
+  function removeRecent(canonicalDirectory: string) {
+    void writerRef.current?.enqueue({ type: "remove_recent", canonicalDirectory });
+    if (target?.value.fromRecent && target.value.path === canonicalDirectory) {
+      setTarget(null);
+      setProviders([]);
+      setPreferenceHint("none");
+    }
+  }
+
+  const recentProjects = preferences.status === "ready" ? preferences.values.recentProjects : [];
+
   return (
     <>
       <Section theme={theme} title="Target Project">
         <Detail theme={theme}>Paseo host: {hostLabel}</Detail>
-        <TargetPicker theme={theme} hostId={hostId} onSelect={(value) => {
-          setProviders([]);
-          setTarget((current) => ({ value, selection: (current?.selection ?? 0) + 1 }));
-        }} />
+        <TargetPicker
+          theme={theme}
+          hostId={hostId}
+          recentProjects={recentProjects}
+          onSelect={selectTarget}
+          onRemoveRecent={removeRecent}
+        />
         {!target && <Detail theme={theme}>No target directory selected.</Detail>}
         {target && <View style={{ gap: 4 }} accessibilityLiveRegion="polite">
           <Detail theme={theme}>{target.value.label} · {target.value.kind}</Detail>
@@ -106,20 +227,35 @@ function HostScreen({ theme, hostId, hostLabel, compact }: { theme: PluginTheme;
             <Detail theme={theme} error>Could not validate the directory on this host.</Detail>
             <Action theme={theme} label="Retry validation" onPress={() => void result.refetch()} />
           </>}
-          {!result.isError && result.data?.status === "error" &&
-            <Detail theme={theme} error>{directoryErrors[result.data.code]}</Detail>}
+          {!result.isError && result.data?.status === "error" && (
+            <View style={{ gap: 6 }}>
+              <Detail theme={theme} error>{directoryErrors[result.data.code]}</Detail>
+              {target.value.fromRecent && (
+                <Action
+                  theme={theme}
+                  label="Remove from recent"
+                  onPress={() => removeRecent(target.value.path)}
+                />
+              )}
+            </View>
+          )}
           {directory && <Detail theme={theme}>Target directory: {directory}</Detail>}
           {directory && approvalScope && <TargetApplyStatus theme={theme} hostId={hostId} directory={directory} />}
         </View>}
       </Section>
       <Section theme={theme} title="Target Providers">
-        {directory
-          ? <ProviderSelection key={target?.selection} theme={theme} hostId={hostId} cwd={directory}
-              selected={providers} onToggle={(id) => {
-                setProviderGeneration((value) => value + 1);
-                setProviders((current) => current.includes(id)
-                  ? current.filter((selected) => selected !== id) : [...current, id]);
-              }} />
+        {directory && target
+          ? <ProviderSelection
+              key={target.selection}
+              theme={theme}
+              hostId={hostId}
+              cwd={directory}
+              selectionGeneration={target.selection}
+              selected={providers}
+              preferenceHint={preferenceHint}
+              onToggle={toggleProvider}
+              onReplace={replaceProviders}
+            />
           : <Detail theme={theme}>Choose a valid target directory to discover providers.</Detail>}
       </Section>
       <Section theme={theme} title="Skill Catalog">

@@ -129,6 +129,9 @@ function harness(t) {
     await act(async () => target.props.onPress());
   };
   const target = async (path) => {
+    if (!tree.root.findAllByType("input").find((node) => node.props.accessibilityLabel === "Absolute path on the host")) {
+      await press("Advanced: Enter path manually");
+    }
     const input = tree.root.findAllByType("input").find((node) => node.props.accessibilityLabel === "Absolute path on the host");
     await act(async () => input.props.onChangeText(path));
     await press("Use directory");

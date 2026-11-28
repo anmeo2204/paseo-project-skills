@@ -130,6 +130,7 @@ function harness(t) {
   }
 
   async function target(path) {
+    if (!input("Absolute path on the host")) await press("Advanced: Enter path manually");
     await act(async () => input("Absolute path on the host").props.onChangeText(path));
     await press("Use directory");
     assert.equal(requests.validation.at(-1).path, path);

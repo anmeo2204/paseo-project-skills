@@ -93,7 +93,7 @@ function harness(t, { fixture = false } = {}) {
   const button = (name) => tree?.root.findAllByType('pressable').find((n) => n.props.accessibilityLabel === name || n.findAllByType('text').some((text) => text.children.join('') === name));
   const press = async (name) => { const b = button(name); assert.ok(b, name); assert.ok(!b.props.disabled, name + ' disabled'); await act(async () => b.props.onPress()); };
   const text = () => tree?.root.findAllByType('text').map((n) => n.children.join('')).join('\n') ?? '';
-  const target = async (path) => { const input = tree.root.findAllByType('input').find((n) => n.props.accessibilityLabel === 'Absolute path on the host'); await act(async () => input.props.onChangeText(path)); await press('Use directory'); };
+  const target = async (path) => { if (!tree.root.findAllByType('input').find((n) => n.props.accessibilityLabel === 'Absolute path on the host')) await press('Advanced: Enter path manually'); const input = tree.root.findAllByType('input').find((n) => n.props.accessibilityLabel === 'Absolute path on the host'); await act(async () => input.props.onChangeText(path)); await press('Use directory'); };
   const scan = async () => { await press('Scan & Recommend'); const stream = streams.at(-1); await act(async () => stream.observer.event(terminal(stream.input))); };
   const resolve = async (index = previews.length - 1, reply = ready(previews[index].input)) => act(async () => previews[index].resolve(reply));
   const unmount = async () => { if (tree) await act(async () => tree.unmount()); tree = undefined; };

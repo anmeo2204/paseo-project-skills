@@ -3,6 +3,7 @@ import { existsSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { catalogSettings } from "./shared/catalog-settings";
+import { workspacePreferencesSettings } from "./shared/workspace-preferences";
 import { applyCreateRpc, applyStatusRpc, applyTargetStatusRpc, type ApplyTargetStatusOutput } from "./shared/apply";
 import { canonicalPreviewRpc, providerPreviewRpc, providerPreviewV2Rpc, catalogLoadRpc, catalogReleasesRpc, catalogResolveRpc, foundationStatusRpc, recommendationEvaluateSubscription, targetScanSubscription, validateDirectoryRpc } from "./shared/rpc";
 import { CatalogGit } from "./server/catalog-git";
@@ -82,6 +83,7 @@ export function createMainPluginServer(server: PluginServerContext, options: Mai
   server.handle(validateDirectoryRpc, validateDirectory);
 
   const settings = server.registerSettings(catalogSettings);
+  server.registerSettings(workspacePreferencesSettings);
   const ownedGit = new CatalogGit();
   const ownedLoader = new CatalogLoader(ownedGit);
   const ownedReleases = new CatalogReleaseCache(ownedGit);
