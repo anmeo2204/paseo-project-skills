@@ -11,7 +11,7 @@ Project Skills is a standalone Paseo plugin for selecting and installing project
 
 ## Development and local installation
 
-The SDK remains pinned to **0.17.4** and is verified at build time via `server/native/sdk-manifest-payload.ts` (generated from `package.json`, `package-lock.json`, `node_modules/@getpaseo/*`, and bound to `server/native/writer-payload.ts`). Paseo CLI/daemon **0.17.5–0.17.x** and **0.18.0** are verified; unverified versions (such as `0.18.1+` or `0.19.0+`) fail closed to Preview-only. Use Node.js **22.15 or later** for the test runner and its module hooks. On macOS, use the CLI packaged with Desktop and adjust the app location if needed.
+The SDK remains pinned to **0.17.4** and is verified at build time via `server/native/sdk-manifest-payload.ts` (derived from `package.json`, `package-lock.json`, installed `node_modules/@getpaseo/*/package.json`, and bound to `paseo-plugin.json`, `native/anchored-writer.m`, and `server/native/writer-payload.ts`). Compatibility policy supports Paseo CLI/daemon **0.17.5–0.17.x** and **0.18.0** (runtime-verified on **0.17.5** and **0.18.0**; unverified versions such as `0.18.1+` or `0.19.0+` fail closed to Preview-only). Use Node.js **22.15 or later** for the test runner and its module hooks. On macOS, use the CLI packaged with Desktop and adjust the app location if needed.
 
 From the repository root:
 
@@ -56,7 +56,7 @@ Project-Skills is the single source of skill templates. The host setting starts 
 
 The loader requires Git on the daemon host and non-interactive SSH read access to `git@github.com:anmeo2204/project-skills.git` with its host key already trusted. It uses the host SSH identity or agent, an isolated temporary bare repo, and an in-memory cache of two resolved snapshots. For a runtime check, use the Paseo SDK settings RPC to save a known SHA, call `catalog.load` with `{}` twice, compare commit, IDs and descriptors, try an unavailable revision and restore the saved ref.
 
-The plugin validates existing directories without creating workspaces or writing target files. Native folder picking and application remain outside the current milestone. The canonical skill location is `.agents/skills/`.
+Directory validation and catalog loading are strictly read-only without creating workspaces or modifying target files. Native folder picking remains outside the current milestone; opt-in create-only skill installation is handled separately via Safe Apply below. The canonical skill location is `.agents/skills/`.
 
 ## Project evidence
 
@@ -78,7 +78,7 @@ Run `npm run typecheck` and `npm test` for the contract, scanner, engine, and su
 
 Open **Project Skills**, choose a project or enter a host path, then save a catalog tag or SHA. Target Providers are optional installation destinations. Choose **Scan & Recommend** to review the pinned result. Open a skill’s details for boundary evidence and existing installations. Open **Unknown** to review skills with insufficient evidence or missing rules.
 
-Select skills manually or use **Select Recommended**. **Clear Selection** preserves provider choices. Rescanning or changing the target or saved catalog discards the previous skill selection. Select **Preview Changes** to review proposed files for the current intent. The screen does not write files.
+Select skills manually or use **Select Recommended**. **Clear Selection** preserves provider choices. Rescanning or changing the target or saved catalog discards the previous skill selection. Select **Preview Changes** to review proposed files for the current intent. Scanning, recommending, and previewing never write files; target writes occur only after explicit create-only approval on an enrolled root when Safe Apply is active.
 
 ## Canonical Preview Planner
 
@@ -106,24 +106,33 @@ Duplicate diagnostics inspect only selected directory IDs at target-root `.agent
 
 ## Preview Changes in Desktop
 
-After scanning and selecting at least one skill, choose **Preview Changes**. Providers are optional. Each click makes one `preview.providers` request using the current `SelectionIntentV1`. Review the target, pinned catalog SHA, canonical files and any Kiro derived files. Each file shows Create, Unchanged, Conflict or Blocked; open its details for the text diff or before/after size, SHA-256 and permission mode. When every planned file matches, the screen explicitly reports no file changes.
+After scanning and selecting at least one skill, choose **Preview Changes**. Providers are optional. Each click makes one `preview.providers.v2` request (while `preview.canonical` and `preview.providers` remain available read-only) using the current `SelectionIntentV1`. Review the target, pinned catalog SHA, canonical files and any Kiro derived files. Each file shows Create, Unchanged, Conflict or Blocked; open its details for the text diff or before/after size, SHA-256 and permission mode. When every planned file matches, the screen explicitly reports no file changes.
 
 Kiro compatibility explains root requirements and package deferral. Canonical-only providers show zero additional files. Expand **M3.1 historical verification** for version, mode and CWD evidence; this does not verify the current provider session. Duplicate diagnostics show observed paths and leave precedence/activation unverified.
 
 Rescanning, changing host/target/saved settings or skill/provider selection discards the previous preview. Selection generations also invalidate A → B → A changes, including batched updates. Offline or missing hosts clear the current intent. Saving catalog settings temporarily disables Preview. Responses are checked against the request's full intent and obsolete replies are ignored; reconnect never retries automatically.
 
-**Cancel Preview** stops waiting on the UI and ignores late replies. The SDK RPC cannot be cancelled through this control, so the daemon may still finish and a quick retry can return Busy. Retry explicitly in the current scope. There is no Apply action, target write, model call or provider execution in Preview. See [the M3.4 completion report](M3.4-completion-report.md).
+**Cancel Preview** stops waiting on the UI and ignores late replies. The SDK RPC cannot be cancelled through this control, so the daemon may still finish and a quick retry can return Busy. Retry explicitly in the current scope. Preview itself never writes target files, calls models, or executes providers; when host compatibility, trust boundary, and target enrollment all pass, the screen exposes an explicit create-only approval flow after Preview. See [the M3.4 completion report](M3.4-completion-report.md).
 
-M4.2 adds the separate read-only **`preview.providers.v2`** RPC, accepting `{ intent, viewNonce }`. Its strict versioned response contains an immutable-plan manifest and daemon-retained receipt. The manifest binds the M3 provider projection, pinned source fingerprints, proposed directory effects, exact bigint filesystem observations, Git/worktree proof, installation-instance/epoch scope and policy/budgets. The M3 endpoints and UI keep their existing contracts.
+M4.2 added the read-only **`preview.providers.v2`** RPC, accepting `{ intent, viewNonce }`. Its strict versioned response contains an immutable-plan manifest and daemon-retained receipt. The manifest binds the M3 provider projection, pinned source fingerprints, proposed directory effects, exact bigint filesystem observations, Git/worktree proof, installation-instance/epoch scope and policy/budgets. The M3 endpoints keep their existing contracts.
 
-Receipts expire after 10 minutes using the daemon's monotonic clock. The installation retains at most 8 receipts and 32 MiB of source bytes, with an 8 MiB combined canonical/derived source limit per receipt; oldest receipts are evicted first. No source bytes travel in the response. On the main `paseo-project-skills` installation, all v2 responses explicitly report **write capability unavailable** and **Apply ineligible**, including no-op plans; there is no Apply/status RPC or Apply button on the main daemon. Receipt integrity/lifetime checks do not replace filesystem/settings/catalog revalidation. See [the M4.2 report](M4.2-completion-report.md) for runtime-spike findings.
+Receipts expire after 10 minutes using the daemon's monotonic clock. The installation retains at most 8 receipts and 32 MiB of source bytes, with an 8 MiB combined canonical/derived source limit per receipt; oldest receipts are evicted first. No source bytes travel in the response. Historically, M4.2 shipped Preview-only with no Apply RPC on the main daemon; starting in M4.P2/M4.P3, `preview.providers.v2` on `paseo-project-skills` reports `eligible` (or `no_changes`) only when host compatibility, build-time SDK manifest, local-only trust boundary (Relay OFF), and exact target enrollment all pass, and otherwise fails closed (`ineligible` / `write_capability_unavailable`) in Preview-only mode. Receipt integrity/lifetime checks do not replace filesystem/settings/catalog revalidation. See [the M4.2 report](M4.2-completion-report.md) for runtime-spike findings.
 
-## Safe Apply (Create-Only v1 — Main Plugin Release Candidate)
+## Safe Apply (Create-Only v1)
 
 Safe Apply enables **Select Project → Scan → Recommend → Select Skills & Providers → Preview → Approve → Apply → Verify** directly on the main `paseo-project-skills` plugin while remaining **Preview-only by default** for unenrolled, disabled, or unsupported environments.
 
-### Compatibility & Trust Boundary (Single-User Local Host)
-- **Verified support matrix:** macOS `arm64` (`>= 14.0.0`, verified on `27.2.1`), local APFS case-insensitive volume, Paseo CLI/daemon `0.17.5 <= v < 0.18.0` and verified `0.18.0` (fail-closed for `0.18.1+` and `0.19.0+`), `@getpaseo/{client,plugin,protocol}` `0.17.4 <= v < 0.18.0` verified via build-time SDK manifest (`server/native/sdk-manifest-payload.ts`, independent of runtime module paths), verified embedded native writer (`SHA-256` + `codesign --verify --strict`).
+### Compatibility Matrix & Trust Boundary (Single-User Local Host)
+
+| Dimension | Policy-Supported (Fail-Closed Outside) | Runtime-Verified |
+| --- | --- | --- |
+| **OS / Arch / FS** | `darwin` · `arm64` · `macOS >= 14.0.0` · local APFS read-write · case-insensitive | macOS `27.2.1` arm64 local APFS |
+| **Paseo CLI / Daemon** | `0.17.5 <= v < 0.18.0` and `0.18.0` (blocks `< 0.17.5`, `0.18.1+`, `0.19.0+`) | Paseo `0.17.5` (M4.P2), Paseo `0.18.0` (M4.P3) |
+| **Paseo Plugin SDK** | `@getpaseo/{client,plugin,protocol}` `0.17.4 <= v < 0.18.0` (all 3 identical, verified via build-time SDK manifest) | SDK `0.17.4` (`manifestSha256` verified at build & runtime) |
+| **Native Writer Helper** | Embedded arm64 Mach-O (`SHA-256` + strict `0700` extraction + `codesign --verify --strict` + protocol v1) | Rebuilt & verified (`1e0351cc...`) |
+| **Trust Boundary** | Single-user Local Host: loopback `listen`, Relay/remote OFF, out-of-band CLI enrollment | Verified Relay ON/OFF on Paseo `0.17.5` & `0.18.0` |
+
+- **Build-time SDK manifest scope:** `scripts/build-sdk-manifest.mjs` verifies exact semver pins in `package.json`, matching versions and SRI integrity strings in `package-lock.json`, installed `node_modules/@getpaseo/*/package.json` SHA-256/versions, and binds them to `paseo-plugin.json`, `native/anchored-writer.m`, and `writerArtifacts.{standard,testing}.sha256` via a canonical `manifestSha256`. At runtime (including Paseo's bundled plugin runner where `import.meta.url` is unavailable), `verifyEmbeddedSdkManifest()` checks schema, SRI format, semver policy, `manifestSha256`, and native writer SHA-256 binding; it does not re-hash full `node_modules` JS file trees at runtime.
 - **Local-only fail-closed:** Safe Apply automatically stays **Preview-only** if Paseo Relay (`daemon.relay.enabled` / `PASEO_RELAY_ENABLED`), remote exposure, or a non-loopback `listen` address is active, or if daemon config cannot be verified.
 - **No caller principal in SDK 0.17.4 / Paseo 0.18.0:** Approval receipts bind the exact plan digest, target root identity, and `policyRevision`, but do **not** cryptographically attest human approver identity. Enrollment is strictly out-of-band via host CLI; no enrollment RPC is exposed.
 
@@ -168,7 +177,7 @@ M2.3 provides a server-side structured agent executor through the public Paseo S
 | **M4 — Safe Apply (Pilot)** | Immutable preview receipts (`v2`), native anchored create-only writer, durable journal, single-project enrollment pilot on isolated daemon | **Pilot Completed (PASS 10/10)** |
 | **M4.P1 — Multi-Root Policy, Version Compat & Multi-Skill/Kiro Acceptance** | Multi-root allowlist (`enrollments.json`), per-target approval receipts, semver/trust-boundary compatibility policy, AT-1/2/3/5 & 4-provider live discovery on isolated copies | **Completed (PASS)** |
 | **M4.P2 — Main Plugin Integration & Production Release Gate** | Direct Scan → Recommend → Select → Preview → Approve → Apply on main plugin (`~/.paseo`, Preview-only for unenrolled roots, Relay fail-closed) | **Completed (P0 Hotfix deployed)** |
-| **M4.P3 — Paseo 0.18 Compatibility & Runtime Acceptance** | Build-time SDK manifest (bundler-safe, lockfile + native-artifact bound), synchronized Paseo `0.18.0` compatibility policy + native writer gate, full isolated Paseo `0.18.0` Desktop UI & 4-provider acceptance | **Release Candidate Ready (Pending Production Release Approval)** |
+| **M4.P3 — Paseo 0.18 Compatibility & Runtime Acceptance** | Build-time SDK manifest (bundler-safe, lockfile + native-artifact bound), synchronized Paseo `0.18.0` compatibility policy + native writer gate, full isolated Paseo `0.18.0` Desktop UI & 4-provider acceptance | **Completed (Production Release — Paseo 0.18.0)** |
 | **M5 — SLP integration pilot** | Validate optional integration while keeping the standalone plugin usable | **Planned** |
 
 [Paseo 0.17.4 plugin guide](https://github.com/getpaseo/paseo/blob/v0.17.4/docs/plugins.md)
