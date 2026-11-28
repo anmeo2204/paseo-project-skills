@@ -6,7 +6,9 @@ import {
   inspectLegacyPilotMigrationStatus,
   listMultiRootEnrollments,
   multiRootPolicyPath,
+  readHostRelayOptIn,
   revokeMultiRoot,
+  setHostRelayOptIn,
   setMultiRootOptIn,
 } from '../server/multi-root-policy.ts';
 import {
@@ -46,6 +48,7 @@ function usage() {
     '  node --import ./tests/register.mjs scripts/enroll-project-skills.mjs enable --root <canonicalRoot> [--home <daemonHome>] [--rotate]',
     '  node --import ./tests/register.mjs scripts/enroll-project-skills.mjs disable --root <canonicalRoot> [--home <daemonHome>]',
     '  node --import ./tests/register.mjs scripts/enroll-project-skills.mjs revoke --root <canonicalRoot> [--home <daemonHome>]',
+    '  node --import ./tests/register.mjs scripts/enroll-project-skills.mjs relay-policy (--allow | --deny) [--home <daemonHome>]',
   ].join('\n'));
   process.exit(2);
 }
@@ -59,7 +62,8 @@ if (!homeResolution.ok) {
   process.exit(1);
 }
 const { daemonHome, source: daemonHomeSource } = homeResolution;
-const trustBoundary = checkDaemonTrustBoundary(daemonHome);
+const allowRelay = readHostRelayOptIn(daemonHome);
+const trustBoundary = checkDaemonTrustBoundary(daemonHome, { allowRelay });
 const legacyPilot = inspectLegacyPilotMigrationStatus(daemonHome);
 
 if (command === 'list') {
@@ -74,6 +78,7 @@ if (command === 'list') {
     daemonHome,
     daemonHomeSource,
     policyPath: multiRootPolicyPath(daemonHome),
+    allowRelay,
     trustBoundary,
     legacyPilot,
     count: listed.roots.length,
@@ -149,6 +154,25 @@ if (command === 'list') {
     daemonHome,
     policyPath: result.path,
     canonicalRoot: result.canonicalRoot,
+  }, null, 2));
+} else if (command === 'relay-policy') {
+  const allowFlag = rest.includes('--allow');
+  const denyFlag = rest.includes('--deny');
+  if (allowFlag === denyFlag) usage();
+  const nextAllow = allowFlag;
+  const result = setHostRelayOptIn(daemonHome, nextAllow);
+  if (result.status !== 'updated') {
+    console.log(JSON.stringify({ command: 'relay-policy', status: 'error', code: result.code }, null, 2));
+    process.exit(1);
+  }
+  const updatedTrust = checkDaemonTrustBoundary(daemonHome, { allowRelay: nextAllow });
+  console.log(JSON.stringify({
+    command: 'relay-policy',
+    status: 'updated',
+    daemonHome,
+    policyPath: result.path,
+    allowRelay: result.allowRelay,
+    trustBoundary: updatedTrust,
   }, null, 2));
 } else {
   usage();

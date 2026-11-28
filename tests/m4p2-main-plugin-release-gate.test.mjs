@@ -18,7 +18,7 @@ import { buildExpectedSdkManifest, renderSdkManifestModule } from '../scripts/bu
 import contributeMainClient, { formatHostApplyNotice } from '../index.client.tsx';
 import { FixtureApprovalScope, FixtureOperations } from '../client/fixture-approval.tsx';
 import { createOperationTracker } from '../client/apply-tracker.ts';
-import { enrollMultiRoot, setMultiRootOptIn } from '../server/multi-root-policy.ts';
+import { enrollMultiRoot, readHostRelayOptIn, setHostRelayOptIn, setMultiRootOptIn } from '../server/multi-root-policy.ts';
 import { runSingleProjectEnroll } from '../server/native-writer.ts';
 import { nativeWriterVersion } from '../server/native-writer-contract.ts';
 import { applyCreateRpc, applyStatusRpc, applyTargetStatusRpc } from '../shared/apply.ts';
@@ -455,6 +455,116 @@ test('Build-time SDK manifest & CJS/ESM bundler regression: bundled runtime work
       } finally {
         await cleanup();
       }
+    }
+  } finally {
+    await fs.rm(base, { recursive: true, force: true });
+  }
+});
+
+test('Option A — Explicit out-of-band host relay-policy opt-in: default fail-closed, allows paired Relay when opted in, still blocks non-loopback/remote, immediate revoke on --deny', { skip: !supported, timeout: 60000 }, async () => {
+  const base = await fs.realpath(await fs.mkdtemp(join(tmpdir(), 'pps-relay-optin-')));
+  const fakeHome = join(base, 'user-home');
+  const paseoHome = join(fakeHome, '.paseo');
+  const repoA = join(base, 'repo-a');
+  const repoUnenrolled = join(base, 'repo-unenrolled');
+  for (const d of [fakeHome, paseoHome, repoA, repoUnenrolled]) await fs.mkdir(d, { mode: 0o700 });
+
+  const cliScript = new URL('../scripts/enroll-project-skills.mjs', import.meta.url).pathname;
+  const regScript = new URL('./register.mjs', import.meta.url).pathname;
+  const runCli = (args) => exec(process.execPath, ['--disable-warning=MODULE_TYPELESS_PACKAGE_JSON', '--import', regScript, cliScript, ...args]);
+
+  try {
+    await exec('git', ['init', '-b', 'main', repoA]);
+    await exec('git', ['-C', repoA, 'config', 'user.email', 'test@example.com']);
+    await exec('git', ['-C', repoA, 'config', 'user.name', 'Test User']);
+    await fs.writeFile(join(paseoHome, 'config.json'), JSON.stringify({
+      version: 1,
+      daemon: { listen: '127.0.0.1:6767', relay: { enabled: true } },
+    }), { mode: 0o600 });
+
+    const skills = [makeSkill('relay-skill', { 'SKILL.md': '---\nname: relay-skill\ndescription: Relay opt-in skill\n---\n# Relay\n' })];
+
+    // 1. Default allowRelay is false -> Relay ON fails closed.
+    assert.equal(readHostRelayOptIn(paseoHome), false);
+    const sDefault = mountMainServer({ homeDir: fakeHome, env: {}, skills, paseoVersion: '0.18.0' });
+    try {
+      assert.equal(sDefault.handlers.has(applyCreateRpc), false);
+      const st = await sDefault.handlers.get(applyTargetStatusRpc)({ canonicalDirectory: repoA }, sDefault.context);
+      assert.equal(st.trustBoundaryOk, false);
+      assert.ok(st.reasons.includes('remote_exposure_enabled'));
+    } finally {
+      await sDefault.cleanup();
+    }
+
+    // 2. Enable out-of-band via host CLI (`relay-policy --allow`) and enroll repoA -> preserved across enrollment updates.
+    const allowOut = JSON.parse((await runCli(['relay-policy', '--allow', '--home', paseoHome])).stdout);
+    assert.equal(allowOut.status, 'updated');
+    assert.equal(allowOut.allowRelay, true);
+    assert.equal(allowOut.trustBoundary.ok, true);
+    assert.equal(readHostRelayOptIn(paseoHome), true);
+
+    await enrollMultiRoot({ daemonHome: paseoHome, root: repoA, environment: { paseoVersion: '0.18.0', sdkVersion: '0.17.4' }, enabled: true });
+    assert.equal(readHostRelayOptIn(paseoHome), true, 'enrollMultiRoot must preserve allowRelay');
+
+    // 3. Mount main server with Relay ON + allowRelay: true -> Apply succeeds on enrolled repoA, blocked on unenrolled repo.
+    const sRelayOk = mountMainServer({ homeDir: fakeHome, env: {}, skills, paseoVersion: '0.18.0' });
+    try {
+      assert.equal(sRelayOk.handlers.has(applyCreateRpc), true);
+      const stA = await sRelayOk.handlers.get(applyTargetStatusRpc)({ canonicalDirectory: repoA }, sRelayOk.context);
+      assert.equal(stA.hostCompatible, true);
+      assert.equal(stA.trustBoundaryOk, true);
+      assert.equal(stA.targetState, 'enrolled_enabled');
+
+      const prevUn = await sRelayOk.handlers.get(providerPreviewV2Rpc)({
+        viewNonce: 'v-relay-un',
+        intent: { schemaVersion: 1, hostId, canonicalDirectory: repoUnenrolled, settingsRevision, catalogSource, catalogCommitSha: sha, recommendationRequestId: 'r-un', selectedSkillIds: ['relay-skill'], targetProviderIds: ['codex'] },
+      }, sRelayOk.context);
+      assert.equal(prevUn.status, 'ready');
+      assert.equal(prevUn.applyEligibility.status, 'ineligible');
+
+      const prevA = await sRelayOk.handlers.get(providerPreviewV2Rpc)({
+        viewNonce: 'v-relay-a',
+        intent: { schemaVersion: 1, hostId, canonicalDirectory: repoA, settingsRevision, catalogSource, catalogCommitSha: sha, recommendationRequestId: 'r-a', selectedSkillIds: ['relay-skill'], targetProviderIds: ['codex', 'kiro'] },
+      }, sRelayOk.context);
+      assert.equal(prevA.status, 'ready');
+      assert.equal(prevA.applyEligibility.status, 'eligible');
+
+      const opRes = await sRelayOk.handlers.get(applyCreateRpc)({
+        previewId: prevA.receipt.previewId, planDigest: prevA.receipt.planDigest, viewNonce: prevA.receipt.viewNonce,
+        operationId: opId(), approval: 'create_only_v1',
+      }, sRelayOk.context);
+      assert.equal(opRes.status, 'operation');
+      assert.equal(opRes.phase, 'completed');
+      assert.equal(opRes.durability, 'fsync_completed');
+
+      // 4. Even with allowRelay: true, non-loopback listen or remote.enabled STILL fails closed!
+      await fs.writeFile(join(paseoHome, 'config.json'), JSON.stringify({
+        version: 1, daemon: { listen: '0.0.0.0:6767', relay: { enabled: true } },
+      }), { mode: 0o600 });
+      const stNonLoop = await sRelayOk.handlers.get(applyTargetStatusRpc)({ canonicalDirectory: repoA }, sRelayOk.context);
+      assert.equal(stNonLoop.trustBoundaryOk, false);
+      assert.ok(stNonLoop.reasons.includes('remote_exposure_enabled'));
+
+      await fs.writeFile(join(paseoHome, 'config.json'), JSON.stringify({
+        version: 1, daemon: { listen: '127.0.0.1:6767', relay: { enabled: true }, remote: { enabled: true } },
+      }), { mode: 0o600 });
+      const stRemote = await sRelayOk.handlers.get(applyTargetStatusRpc)({ canonicalDirectory: repoA }, sRelayOk.context);
+      assert.equal(stRemote.trustBoundaryOk, false);
+      assert.ok(stRemote.reasons.includes('remote_exposure_enabled'));
+
+      // Restore loopback + Relay ON, then revoke via CLI `relay-policy --deny` -> immediate fail-closed!
+      await fs.writeFile(join(paseoHome, 'config.json'), JSON.stringify({
+        version: 1, daemon: { listen: '127.0.0.1:6767', relay: { enabled: true } },
+      }), { mode: 0o600 });
+      const denyOut = JSON.parse((await runCli(['relay-policy', '--deny', '--home', paseoHome])).stdout);
+      assert.equal(denyOut.allowRelay, false);
+      assert.equal(denyOut.trustBoundary.ok, false);
+
+      const stDenied = await sRelayOk.handlers.get(applyTargetStatusRpc)({ canonicalDirectory: repoA }, sRelayOk.context);
+      assert.equal(stDenied.trustBoundaryOk, false);
+      assert.ok(stDenied.reasons.includes('remote_exposure_enabled'));
+    } finally {
+      await sRelayOk.cleanup();
     }
   } finally {
     await fs.rm(base, { recursive: true, force: true });

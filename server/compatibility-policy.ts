@@ -148,12 +148,15 @@ function readBoundedJsonFile(filePath: string): { status: "missing" } | { status
   }
 }
 
-function checkConfigSectionExposure(section: Record<string, unknown>): "remote_exposure_enabled" | "trust_boundary_unverified" | undefined {
+function checkConfigSectionExposure(
+  section: Record<string, unknown>,
+  allowRelay = false,
+): "remote_exposure_enabled" | "trust_boundary_unverified" | undefined {
   const relay = section.relay as Record<string, unknown> | boolean | undefined;
   if (relay === true || (relay && typeof relay === "object" && !Array.isArray(relay) && relay.enabled === true)) {
-    return "remote_exposure_enabled";
+    if (!allowRelay) return "remote_exposure_enabled";
   }
-  if (relay !== undefined && relay !== false && (!relay || typeof relay !== "object" || Array.isArray(relay) || typeof (relay as Record<string, unknown>).enabled !== "boolean")) {
+  if (relay !== undefined && relay !== false && relay !== true && (!relay || typeof relay !== "object" || Array.isArray(relay) || typeof (relay as Record<string, unknown>).enabled !== "boolean")) {
     return "trust_boundary_unverified";
   }
   const remote = section.remote as Record<string, unknown> | boolean | undefined;
@@ -168,17 +171,20 @@ function checkConfigSectionExposure(section: Record<string, unknown>): "remote_e
 
 /**
  * Verifies the Single-user Local Host trust boundary for a Paseo daemon home.
- * Inspects both top-level and Paseo 0.17.x nested `daemon.*` settings.
+ * Inspects both top-level and Paseo 0.17.x/0.18.x nested `daemon.*` settings.
  * Fail-closed when Relay / remote exposure is enabled, non-loopback listen is configured,
  * or daemon configuration cannot be safely verified.
+ * When `allowRelay: true` is explicitly opted in via out-of-band host CLI, paired Paseo Relay
+ * is permitted while loopback `listen`, `remote.enabled !== true`, and config integrity remain enforced.
  */
 export function checkDaemonTrustBoundary(
   daemonHome: string,
-  options?: { env?: NodeJS.ProcessEnv },
+  options?: { env?: NodeJS.ProcessEnv; allowRelay?: boolean },
 ): { ok: true } | { ok: false; reason: "remote_exposure_enabled" | "trust_boundary_unverified" } {
   const env = options?.env ?? process.env;
+  const allowRelay = Boolean(options?.allowRelay);
   const relayEnv = (env.PASEO_RELAY_ENABLED ?? env.PASEO_RELAY ?? "").trim().toLowerCase();
-  if (relayEnv === "1" || relayEnv === "true" || relayEnv === "yes") {
+  if (!allowRelay && (relayEnv === "1" || relayEnv === "true" || relayEnv === "yes")) {
     return { ok: false, reason: "remote_exposure_enabled" };
   }
   if (env.PASEO_LISTEN && !isLoopbackListen(env.PASEO_LISTEN)) {
@@ -191,13 +197,13 @@ export function checkDaemonTrustBoundary(
       return { ok: false, reason: "trust_boundary_unverified" };
     }
     const cfg = result.data as Record<string, unknown>;
-    const topIssue = checkConfigSectionExposure(cfg);
+    const topIssue = checkConfigSectionExposure(cfg, allowRelay);
     if (topIssue) return { ok: false, reason: topIssue };
     if ("daemon" in cfg) {
       if (!cfg.daemon || typeof cfg.daemon !== "object" || Array.isArray(cfg.daemon)) {
         return { ok: false, reason: "trust_boundary_unverified" };
       }
-      const nestedIssue = checkConfigSectionExposure(cfg.daemon as Record<string, unknown>);
+      const nestedIssue = checkConfigSectionExposure(cfg.daemon as Record<string, unknown>, allowRelay);
       if (nestedIssue) return { ok: false, reason: nestedIssue };
     }
   }
@@ -387,6 +393,7 @@ export function evaluateHostCompatibility(input: {
   arch?: string;
   env?: NodeJS.ProcessEnv;
   homeDir?: string;
+  allowRelay?: boolean;
   testing?: boolean;
 }): HostCompatibilityResult {
   const reasons: CompatibilityFailureReason[] = [];
@@ -457,7 +464,7 @@ export function evaluateHostCompatibility(input: {
   if (!home.ok) {
     reasons.push(home.reason);
   } else {
-    const trust = checkDaemonTrustBoundary(home.daemonHome, { env: input.env });
+    const trust = checkDaemonTrustBoundary(home.daemonHome, { env: input.env, allowRelay: input.allowRelay });
     if (!trust.ok) reasons.push(trust.reason);
   }
 

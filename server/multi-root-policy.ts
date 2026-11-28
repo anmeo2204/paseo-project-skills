@@ -21,6 +21,7 @@ export type MultiRootEntry = z.infer<typeof multiRootEntrySchema>;
 
 export const multiRootPolicyFileSchema = z.strictObject({
   schemaVersion: z.literal(1),
+  allowRelay: z.boolean().optional(),
   roots: z.record(z.string(), multiRootEntrySchema),
 });
 export type MultiRootPolicyFile = z.infer<typeof multiRootPolicyFileSchema>;
@@ -312,6 +313,7 @@ export async function enrollMultiRoot(input: {
     }
     const next: MultiRootPolicyFile = {
       schemaVersion: 1,
+      ...(existing.allowRelay !== undefined ? { allowRelay: existing.allowRelay } : {}),
       roots: {
         ...existing.roots,
         [result.canonicalRoot]: {
@@ -349,6 +351,7 @@ export function setMultiRootOptIn(
     };
     const next: MultiRootPolicyFile = {
       schemaVersion: 1,
+      ...(raw.policy.allowRelay !== undefined ? { allowRelay: raw.policy.allowRelay } : {}),
       roots: { ...raw.policy.roots, [canonicalRoot]: updated },
     };
     const path = writePolicyFileAtomic(home, dir, next);
@@ -369,7 +372,43 @@ export function revokeMultiRoot(
     }
     const remaining = { ...raw.policy.roots };
     delete remaining[canonicalRoot];
-    const path = writePolicyFileAtomic(home, dir, { schemaVersion: 1, roots: remaining });
+    const path = writePolicyFileAtomic(home, dir, {
+      schemaVersion: 1,
+      ...(raw.policy.allowRelay !== undefined ? { allowRelay: raw.policy.allowRelay } : {}),
+      roots: remaining,
+    });
     return { status: "revoked" as const, canonicalRoot, path };
+  });
+}
+
+/**
+ * Reads the explicit out-of-band host opt-in for allowing Safe Apply while Paseo Relay is enabled.
+ * Strictly fail-closed: returns true ONLY when enrollments.json passes all safe-file checks
+ * and explicitly sets `allowRelay: true`. Defaults to false.
+ */
+export function readHostRelayOptIn(daemonHome: string): boolean {
+  const raw = readPolicyFileRaw(daemonHome);
+  return raw.status === "ok" && raw.policy.allowRelay === true;
+}
+
+/**
+ * Sets the explicit out-of-band host opt-in for allowing Safe Apply while Paseo Relay is enabled.
+ * Only intended for host CLI use; never exposed as a plugin RPC.
+ */
+export function setHostRelayOptIn(
+  daemonHome: string,
+  allowRelay: boolean,
+): { status: "updated"; allowRelay: boolean; path: string } | { status: "error"; code: string } {
+  return withPolicyLock(daemonHome, (home, dir) => {
+    const raw = readPolicyFileRaw(home);
+    if (raw.status === "unsafe") return { status: "error" as const, code: "unsafe_policy_file" };
+    const existing = raw.status === "ok" ? raw.policy : { schemaVersion: 1 as const, roots: {} };
+    const next: MultiRootPolicyFile = {
+      schemaVersion: 1,
+      allowRelay,
+      roots: existing.roots,
+    };
+    const path = writePolicyFileAtomic(home, dir, next);
+    return { status: "updated" as const, allowRelay, path };
   });
 }

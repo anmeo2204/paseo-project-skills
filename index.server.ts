@@ -19,6 +19,7 @@ import {
   multiRootRuntimeDirectory,
   readActiveMultiRootBinding,
   readActiveMultiRootEnrollment,
+  readHostRelayOptIn,
 } from "./server/multi-root-policy";
 import {
   checkDaemonTrustBoundary,
@@ -107,6 +108,8 @@ export function createMainPluginServer(server: PluginServerContext, options: Mai
   }
   const cliPath = options.cliPath ?? detectDefaultPaseoCli(env);
   const homeResolution = resolveSafeDaemonHome(options.daemonHome, { env, homeDir: options.homeDir });
+  const daemonHome = homeResolution.ok ? homeResolution.daemonHome : undefined;
+  const allowRelay = () => (daemonHome ? readHostRelayOptIn(daemonHome) : false);
   const compat = evaluateHostCompatibility({
     daemonHome: options.daemonHome,
     homeDir: options.homeDir,
@@ -118,10 +121,12 @@ export function createMainPluginServer(server: PluginServerContext, options: Mai
     macOsVersion: options.macOsVersion,
     platform: options.platform,
     arch: options.arch,
+    allowRelay: allowRelay(),
   });
 
-  const daemonHome = homeResolution.ok ? homeResolution.daemonHome : undefined;
-  const verifyTrust = () => daemonHome ? checkDaemonTrustBoundary(daemonHome, { env }) : { ok: false as const, reason: "unsafe_daemon_home" as const };
+  const verifyTrust = () => daemonHome
+    ? checkDaemonTrustBoundary(daemonHome, { env, allowRelay: allowRelay() })
+    : { ok: false as const, reason: "unsafe_daemon_home" as const };
 
   let receipts = new PreviewReceiptStore();
   let apply: ReturnType<typeof createMultiRootApply> | undefined;
@@ -138,7 +143,7 @@ export function createMainPluginServer(server: PluginServerContext, options: Mai
         daemonHome,
         installation: mainPluginInstallationId,
         readPolicy: (target) => readActiveMultiRootEnrollment(daemonHome, target),
-        checkTrustBoundary: (home) => checkDaemonTrustBoundary(home, { env }),
+        checkTrustBoundary: (home) => checkDaemonTrustBoundary(home, { env, allowRelay: readHostRelayOptIn(home) }),
         receipts: writableReceipts,
         settings,
         catalog,

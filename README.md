@@ -133,7 +133,7 @@ Safe Apply enables **Select Project → Scan → Recommend → Select Skills & P
 | **Trust Boundary** | Single-user Local Host: loopback `listen`, Relay/remote OFF, out-of-band CLI enrollment | Verified Relay ON/OFF on Paseo `0.17.5` & `0.18.0` |
 
 - **Build-time SDK manifest scope:** `scripts/build-sdk-manifest.mjs` verifies exact semver pins in `package.json`, matching versions and SRI integrity strings in `package-lock.json`, installed `node_modules/@getpaseo/*/package.json` SHA-256/versions, and binds them to `paseo-plugin.json`, `native/anchored-writer.m`, and `writerArtifacts.{standard,testing}.sha256` via a canonical `manifestSha256`. At runtime (including Paseo's bundled plugin runner where `import.meta.url` is unavailable), `verifyEmbeddedSdkManifest()` checks schema, SRI format, semver policy, `manifestSha256`, and native writer SHA-256 binding; it does not re-hash full `node_modules` JS file trees at runtime.
-- **Local-only fail-closed:** Safe Apply automatically stays **Preview-only** if Paseo Relay (`daemon.relay.enabled` / `PASEO_RELAY_ENABLED`), remote exposure, or a non-loopback `listen` address is active, or if daemon config cannot be verified.
+- **Local-only fail-closed (with optional host CLI Relay opt-in):** Safe Apply defaults to **Preview-only** if Paseo Relay (`daemon.relay.enabled` / `PASEO_RELAY_ENABLED`), remote exposure, or a non-loopback `listen` address is active, or if daemon config cannot be verified. For a single-owner personal host where only your own paired devices use Paseo Relay, you may explicitly opt in out-of-band via host CLI (`scripts/enroll-project-skills.mjs relay-policy --allow`) and reload `paseo-project-skills`; non-loopback `listen`, `remote.enabled`, per-project enrollment, and create-only native guards remain strictly enforced, and `relay-policy --deny` revokes immediately.
 - **No caller principal in SDK 0.17.4 / Paseo 0.18.0:** Approval receipts bind the exact plan digest, target root identity, and `policyRevision`, but do **not** cryptographically attest human approver identity. Enrollment is strictly out-of-band via host CLI; no enrollment RPC is exposed.
 
 ### Enrollment & Opt-In CLI (Out-of-Band Host Operation)
@@ -152,6 +152,10 @@ node --import ./tests/register.mjs scripts/enroll-project-skills.mjs enable --ro
 
 # Permanently revoke enrollment for a project root
 node --import ./tests/register.mjs scripts/enroll-project-skills.mjs revoke --root /abs/path/to/project
+
+# Optional (single-owner paired Relay): allow or deny Safe Apply while Paseo Relay is enabled
+node --import ./tests/register.mjs scripts/enroll-project-skills.mjs relay-policy --allow
+node --import ./tests/register.mjs scripts/enroll-project-skills.mjs relay-policy --deny
 ```
 
 ### Usage & Recovery
