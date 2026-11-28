@@ -59,80 +59,119 @@ function afterCursor(
   return item.operationId > cursor.operationId;
 }
 
-export function listJournalSummaries(options: {
+export type DiscoveryConcurrencyGate = {
+  tryAcquire: () => boolean;
+  release: () => void;
+};
+
+export function createDiscoveryConcurrencyGate(maxConcurrent = journalListLimits.maxConcurrentDiscoveries): DiscoveryConcurrencyGate {
+  let active = 0;
+  return {
+    tryAcquire() {
+      if (active >= maxConcurrent) return false;
+      active++;
+      return true;
+    },
+    release() {
+      if (active > 0) active--;
+    },
+  };
+}
+
+export async function listJournalSummaries(options: {
   journal: Pick<ApplyJournal, "list">;
   hostId: string;
   installation: string;
   rawInput: unknown;
   reportOperation: (record: ApplyJournalRecord) => ApplyOperation;
   limits?: Partial<typeof journalListLimits>;
-}): ApplyListOutput {
+  gate?: DiscoveryConcurrencyGate;
+  verifyTrust?: () => boolean;
+  onEntryProcessed?: () => Promise<void> | void;
+}): Promise<ApplyListOutput> {
+  if (options.verifyTrust && !options.verifyTrust()) {
+    return { status: "error", code: "unsupported_environment" };
+  }
   const parsed = applyListInputSchema.safeParse(options.rawInput);
   if (!parsed.success) return { status: "error", code: "invalid_request" };
-  const limit = parsed.data.limit ?? journalListLimits.defaultLimit;
-  const cursor = parsed.data.cursor ? parseCursor(parsed.data.cursor) : undefined;
-  const maxResponseBytes = options.limits?.maxResponseBytes ?? journalListLimits.maxResponseBytes;
+  if (options.gate && !options.gate.tryAcquire()) {
+    return { status: "error", code: "busy" };
+  }
 
-  let listed: ReturnType<ApplyJournal["list"]>;
   try {
-    listed = options.journal.list({
-      hostId: options.hostId,
-      installation: options.installation,
-      limits: options.limits,
+    const limit = parsed.data.limit ?? journalListLimits.defaultLimit;
+    const cursor = parsed.data.cursor ? parseCursor(parsed.data.cursor) : undefined;
+    const maxResponseBytes = options.limits?.maxResponseBytes ?? journalListLimits.maxResponseBytes;
+
+    let listed: Awaited<ReturnType<ApplyJournal["list"]>>;
+    try {
+      listed = await options.journal.list({
+        hostId: options.hostId,
+        installation: options.installation,
+        limits: options.limits,
+        onEntryProcessed: options.onEntryProcessed,
+      });
+    } catch {
+      return { status: "error", code: "journal_unavailable" };
+    }
+
+    // P8: Revalidate trust policy after async I/O completes before returning any records.
+    if (options.verifyTrust && !options.verifyTrust()) {
+      return { status: "error", code: "unsupported_environment" };
+    }
+
+    const ranked = listed.entries.map(({ record, updatedAt }) => {
+      const op = options.reportOperation(record);
+      const summary: ApplyOperationSummary = applyOperationSummarySchema.parse({
+        operationId: op.operationId,
+        planDigest: op.planDigest,
+        phase: op.phase,
+        code: op.code,
+        targetMutated: op.targetMutated,
+        requiresPreview: op.requiresPreview,
+        durability: op.durability,
+        ledgerCount: op.ledger.length,
+        updatedAt,
+      });
+      return { summary, priority: priorityOf(op.phase), updatedAt, operationId: op.operationId };
     });
-  } catch {
-    return { status: "error", code: "journal_unavailable" };
-  }
 
-  const ranked = listed.entries.map(({ record, updatedAt }) => {
-    const op = options.reportOperation(record);
-    const summary: ApplyOperationSummary = applyOperationSummarySchema.parse({
-      operationId: op.operationId,
-      planDigest: op.planDigest,
-      phase: op.phase,
-      code: op.code,
-      targetMutated: op.targetMutated,
-      requiresPreview: op.requiresPreview,
-      durability: op.durability,
-      ledgerCount: op.ledger.length,
-      updatedAt,
+    // P3: Deterministic priority ordering (recovery/active first, then newest updatedAt, then operationId).
+    ranked.sort((a, b) => {
+      if (a.priority !== b.priority) return a.priority - b.priority;
+      if (a.updatedAt !== b.updatedAt) return b.updatedAt - a.updatedAt;
+      return a.operationId < b.operationId ? -1 : a.operationId > b.operationId ? 1 : 0;
     });
-    return { summary, priority: priorityOf(op.phase), updatedAt, operationId: op.operationId };
-  });
 
-  // P3: Deterministic priority ordering (recovery/active first, then newest updatedAt, then operationId).
-  ranked.sort((a, b) => {
-    if (a.priority !== b.priority) return a.priority - b.priority;
-    if (a.updatedAt !== b.updatedAt) return b.updatedAt - a.updatedAt;
-    return a.operationId < b.operationId ? -1 : a.operationId > b.operationId ? 1 : 0;
-  });
+    const filtered = cursor ? ranked.filter((item) => afterCursor(item, cursor)) : ranked;
+    const items: ApplyOperationSummary[] = [];
+    let bytes = 256;
+    let lastIncluded: (typeof filtered)[number] | undefined;
 
-  const filtered = cursor ? ranked.filter((item) => afterCursor(item, cursor)) : ranked;
-  const items: ApplyOperationSummary[] = [];
-  let bytes = 256;
-  let lastIncluded: (typeof filtered)[number] | undefined;
+    for (const row of filtered) {
+      if (items.length >= limit) break;
+      const rowBytes = Buffer.byteLength(JSON.stringify(row.summary)) + 1;
+      if (items.length > 0 && bytes + rowBytes > maxResponseBytes) break;
+      bytes += rowBytes;
+      items.push(row.summary);
+      lastIncluded = row;
+    }
 
-  for (const row of filtered) {
-    if (items.length >= limit) break;
-    const rowBytes = Buffer.byteLength(JSON.stringify(row.summary)) + 1;
-    if (items.length > 0 && bytes + rowBytes > maxResponseBytes) break;
-    bytes += rowBytes;
-    items.push(row.summary);
-    lastIncluded = row;
+    const hasMore = filtered.length > items.length;
+    const nextCursor = hasMore && lastIncluded
+      ? `${lastIncluded.priority}:${lastIncluded.updatedAt}:${lastIncluded.operationId}`
+      : undefined;
+
+    return applyListOutputSchema.parse({
+      status: "ready",
+      items,
+      ...(nextCursor ? { nextCursor } : {}),
+      unreadableCount: listed.unreadableCount,
+      truncated: listed.truncated,
+    });
+  } finally {
+    options.gate?.release();
   }
-
-  const hasMore = filtered.length > items.length;
-  const nextCursor = hasMore && lastIncluded
-    ? `${lastIncluded.priority}:${lastIncluded.updatedAt}:${lastIncluded.operationId}`
-    : undefined;
-
-  return applyListOutputSchema.parse({
-    status: "ready",
-    items,
-    ...(nextCursor ? { nextCursor } : {}),
-    unreadableCount: listed.unreadableCount,
-    truncated: listed.truncated,
-  });
 }
 
 type FixtureConfiguration = {
@@ -511,15 +550,17 @@ function createApplyEngine(config: EngineConfiguration) {
         return record && visible(record, hostId) ? report(record) : error("outcome_unknown");
       } catch { return error("outcome_unknown"); }
     },
-    async list(raw: unknown, context: Context): Promise<ApplyListOutput> {
+    async list(raw: unknown, context: Context, listOptions?: { gate?: DiscoveryConcurrencyGate; verifyTrust?: () => boolean }): Promise<ApplyListOutput> {
       try {
         const hostId = await host(context);
-        return listJournalSummaries({
+        return await listJournalSummaries({
           journal,
           hostId,
           installation: config.installation,
           rawInput: raw,
           reportOperation: report,
+          gate: listOptions?.gate,
+          verifyTrust: listOptions?.verifyTrust,
         });
       } catch {
         return { status: "error", code: "journal_unavailable" };

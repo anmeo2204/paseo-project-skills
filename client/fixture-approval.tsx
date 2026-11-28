@@ -297,6 +297,8 @@ export function FixtureOperations({ theme, host, online }: Pick<PluginScreenProp
           // P1: Clear discovery-only cached items when trust boundary / Relay policy denies discovery.
           tracker.clearDiscoveryOnly(host.id, slot);
           setListNotice("Operation discovery is unavailable under the current Relay or trust policy. Known Operation IDs can still be checked below.");
+        } else if (parsed.data.code === "busy") {
+          setListNotice("Operation discovery is temporarily busy on this host. Refresh again in a moment.");
         } else {
           setListNotice("Daemon operation journal is currently unavailable. Known Operation IDs can still be checked below.");
         }
@@ -376,6 +378,11 @@ export function FixtureOperations({ theme, host, online }: Pick<PluginScreenProp
       )}
     </View>
     {listNotice && <Detail theme={theme}>{listNotice}</Detail>}
+    {nextCursor?.startsWith("0:") && (
+      <Detail theme={theme} error>
+        Additional active or recovery-required operations exist on later pages. Choose Load more to inspect them, or Refresh operations to reload from the top.
+      </Detail>
+    )}
     {unreadableCount > 0 && (
       <Detail theme={theme} error>
         {unreadableCount} journal {unreadableCount === 1 ? "record" : "records"} could not be read. Inspect ~/.paseo/runtime/project-skills/coordinator/ on the host.

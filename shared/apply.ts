@@ -63,7 +63,7 @@ export const applyListOutputSchema = z.discriminatedUnion("status", [
   }),
   z.strictObject({
     status: z.literal("error"),
-    code: z.enum(["invalid_request", "journal_unavailable", "unsupported_environment"]),
+    code: z.enum(["busy", "invalid_request", "journal_unavailable", "unsupported_environment"]),
   }),
 ]);
 export type ApplyListInput = z.infer<typeof applyListInputSchema>;

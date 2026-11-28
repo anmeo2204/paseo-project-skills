@@ -9,10 +9,10 @@ import { QueryClient, QueryClientProvider, notifyManager } from "@tanstack/react
 import { PaseoApiProvider, PluginRpcProvider } from "@getpaseo/plugin/client/host";
 import { createMainPluginServer } from "../index.server.ts";
 import { ApplyJournal, terminalRetentionMs } from "../server/apply-journal.ts";
-import { listJournalSummaries } from "../server/fixture-apply.ts";
+import { createDiscoveryConcurrencyGate, listJournalSummaries } from "../server/fixture-apply.ts";
 import { applyListRpc, applyStatusRpc } from "../shared/apply.ts";
 import { catalogSource } from "../shared/catalog-settings.ts";
-import { createOperationTracker } from "../client/apply-tracker.ts";
+import { createOperationTracker, shouldAcceptOperation, shouldAcceptSummary } from "../client/apply-tracker.ts";
 import { FixtureApprovalScope } from "../client/fixture-approval.tsx";
 import { FoundationScreen } from "../client/foundation-screen.tsx";
 import { HostFixture } from "./client-fixture.mjs";
@@ -80,7 +80,7 @@ test("P3 ApplyJournal.list is strictly read-only, bounded, prioritizes recovery/
   const expiredStatBefore = await stat(join(dir, `${opId(1)}.json`));
 
   // Page 1 (limit 2): recovery_required MUST appear first (never obscured by completed history!)
-  const page1 = listJournalSummaries({
+  const page1 = await listJournalSummaries({
     journal,
     hostId: "host-a",
     installation: "paseo-project-skills",
@@ -102,7 +102,7 @@ test("P3 ApplyJournal.list is strictly read-only, bounded, prioritizes recovery/
   assert.doesNotMatch(serialized, /requestHash|receiptHash/);
 
   // Page 2: deterministic cursor with zero duplicate operationIds
-  const page2 = listJournalSummaries({
+  const page2 = await listJournalSummaries({
     journal,
     hostId: "host-a",
     installation: "paseo-project-skills",
@@ -118,13 +118,13 @@ test("P3 ApplyJournal.list is strictly read-only, bounded, prioritizes recovery/
   assert.equal((await stat(join(dir, `${opId(1)}.json`))).mtimeMs, expiredStatBefore.mtimeMs);
 
   // Bounded directory enumeration sets truncated: true
-  const bounded = journal.list({ hostId: "host-a", installation: "paseo-project-skills", limits: { maxRecordsRead: 1 } });
+  const bounded = await journal.list({ hostId: "host-a", installation: "paseo-project-skills", limits: { maxRecordsRead: 1 } });
   assert.equal(bounded.truncated, true);
 
   // Unsafe directory mode fails closed with journal_unavailable
   await chmod(dir, 0o755);
   try {
-    const unsafe = listJournalSummaries({
+    const unsafe = await listJournalSummaries({
       journal,
       hostId: "host-a",
       installation: "paseo-project-skills",
@@ -400,4 +400,298 @@ test("Mobile restart recovery (empty memory storage), lazy ledger fetch, stale l
   await act(async () => statusQueue.at(-1).resolve(makeRecord({ id: opId(31), phase: "completed" }).operation));
   assert.match(text(), /Completed/);
   assert.match(text(), new RegExp(opId(31)));
+});
+
+test("P7-A & P7-B shared freshness rejects older same-phase summaries/ledgers, coordinates lookup/check/submit/discovery, and allows restart recovery", async () => {
+  const tracker = createOperationTracker();
+  const id = opId(41);
+
+  // Same-phase writing summary with older updatedAt MUST be rejected (P7-A)
+  tracker.ingestDiscovered("host-a", "slot-1", [{
+    operationId: id, planDigest: hash("4"), phase: "writing", code: "none",
+    targetMutated: true, requiresPreview: true, durability: "not_confirmed", ledgerCount: 2, updatedAt: 2000,
+  }]);
+  tracker.ingestDiscovered("host-a", "slot-1", [{
+    operationId: id, planDigest: hash("4"), phase: "writing", code: "none",
+    targetMutated: false, requiresPreview: true, durability: "not_confirmed", ledgerCount: 2, updatedAt: 1000,
+  }]);
+  assert.equal(tracker.snapshot()[0].summary.updatedAt, 2000);
+  assert.equal(tracker.snapshot()[0].summary.targetMutated, true);
+
+  // Same-phase writing full operation: ledger state progression governs over byte counts alone (P7-B)
+  const writingLater = makeRecord({
+    id,
+    phase: "writing",
+    ledger: [
+      { destination: ".agents/skills/demo/SKILL.md", kind: "file", state: "created_verified", bytesWritten: 10 },
+      { destination: ".agents/skills/demo/extra.txt", kind: "file", state: "created_incomplete", bytesWritten: 5 },
+    ],
+  }).operation;
+  const writingEarlierHighBytes = makeRecord({
+    id,
+    phase: "writing",
+    ledger: [
+      { destination: ".agents/skills/demo/SKILL.md", kind: "file", state: "created_incomplete", bytesWritten: 9999 },
+      { destination: ".agents/skills/demo/extra.txt", kind: "file", state: "not_attempted" },
+    ],
+  }).operation;
+
+  assert.equal(shouldAcceptOperation({ operation: writingLater }, writingEarlierHighBytes), false);
+  assert.equal(shouldAcceptOperation({ operation: writingEarlierHighBytes }, writingLater), true);
+  assert.equal(shouldAcceptSummary({ operation: writingLater }, {
+    operationId: id, planDigest: hash("4"), phase: "writing", code: "none",
+    targetMutated: true, requiresPreview: true, durability: "not_confirmed", ledgerCount: 2, updatedAt: 9999,
+  }), false);
+
+  // Race: lookup #1 starts (slow, returns stale writingEarlierHighBytes), check #2 starts (fast, returns writingLater)
+  let resolveLookup1;
+  const lookup1Promise = tracker.lookup("host-a", "slot-1", id, () => new Promise((r) => { resolveLookup1 = r; }));
+  // Supersede with a newer lookup #2 returning writingLater
+  const lookup2Result = await tracker.lookup("host-a", "slot-1", id, async () => writingLater);
+  assert.equal(lookup2Result.status, "found");
+  assert.equal(tracker.snapshot()[0].operation.ledger[0].state, "created_verified");
+
+  // Slow lookup #1 settles late -> MUST be discarded by token AND freshness check
+  resolveLookup1(writingEarlierHighBytes);
+  const lookup1Result = await lookup1Promise;
+  assert.equal(lookup1Result.status, "unknown");
+  assert.equal(tracker.snapshot()[0].operation.ledger[0].state, "created_verified");
+
+  // Legitimate daemon restart recovery transition: writing -> recovery_required MUST be accepted!
+  const restartRecovery = makeRecord({
+    id,
+    phase: "recovery_required",
+    ledger: writingLater.ledger,
+  }).operation;
+  restartRecovery.code = "terminal_record_missing";
+  restartRecovery.targetMutated = "unknown";
+  const recLookup = await tracker.lookup("host-a", "slot-1", id, async () => restartRecovery);
+  assert.equal(recLookup.status, "found");
+  assert.equal(tracker.snapshot()[0].operation.phase, "recovery_required");
+
+  // Once terminal (recovery_required), a conflicting terminal phase (completed) MUST NOT overwrite it!
+  const conflictingCompleted = makeRecord({ id, phase: "completed", ledger: writingLater.ledger }).operation;
+  assert.equal(shouldAcceptOperation({ operation: restartRecovery }, conflictingCompleted), false);
+  await tracker.lookup("host-a", "slot-1", id, async () => conflictingCompleted);
+  assert.equal(tracker.snapshot()[0].operation.phase, "recovery_required");
+});
+
+test("P8-A & P8-B bounded opendir iterator, concurrent discovery gate, atomic rename safety, and mid-scan trust revocation", async (t) => {
+  const dir = await realpath(await mkdtemp(join(tmpdir(), "pps-m56-p8-")));
+  await chmod(dir, 0o700);
+  t.after(() => rm(dir, { recursive: true, force: true }));
+
+  const journal = new ApplyJournal(dir);
+  for (let i = 1; i <= 6; i++) {
+    journal.publish(makeRecord({ id: opId(100 + i), phase: "completed" }), true);
+  }
+  // Add 10 non-journal stray files so total directory entries (16) exceed small maxDirectoryEntries cap (5)
+  for (let i = 1; i <= 10; i++) {
+    await writeFile(join(dir, `stray-${i}.tmp`), "x", { mode: 0o600 });
+  }
+
+  const capped = await journal.list({
+    hostId: "host-a",
+    installation: "paseo-project-skills",
+    limits: { maxDirectoryEntries: 5 },
+  });
+  assert.equal(capped.truncated, true);
+  assert.ok(capped.entries.length <= 5);
+
+  // Concurrent discovery gate bounds active scans and returns busy when exceeded
+  const gate = createDiscoveryConcurrencyGate(1);
+  let releaseFirst;
+  const firstScan = listJournalSummaries({
+    journal,
+    hostId: "host-a",
+    installation: "paseo-project-skills",
+    rawInput: {},
+    gate,
+    reportOperation: (r) => r.operation,
+    onEntryProcessed: () => new Promise((r) => { if (!releaseFirst) releaseFirst = r; else r(); }),
+  });
+  // Wait one tick so firstScan acquires the gate and pauses inside async scan
+  await new Promise((r) => setTimeout(r, 15));
+  const secondScan = await listJournalSummaries({
+    journal,
+    hostId: "host-a",
+    installation: "paseo-project-skills",
+    rawInput: {},
+    gate,
+    reportOperation: (r) => r.operation,
+  });
+  assert.deepEqual(secondScan, { status: "error", code: "busy" });
+
+  // Atomic journal replacement mid-scan: publish terminal replacement for opId(101) while firstScan is paused
+  journal.publish(makeRecord({ id: opId(101), phase: "partial_failure" }), false);
+  releaseFirst();
+  const firstResult = await firstScan;
+  assert.equal(firstResult.status, "ready");
+  assert.equal(firstResult.items.length, 6);
+
+  // Trust-policy revocation DURING asynchronous discovery fails closed with unsupported_environment!
+  let trustAllowed = true;
+  const revokedMidScan = await listJournalSummaries({
+    journal,
+    hostId: "host-a",
+    installation: "paseo-project-skills",
+    rawInput: {},
+    verifyTrust: () => trustAllowed,
+    reportOperation: (r) => r.operation,
+    onEntryProcessed: () => { trustAllowed = false; },
+  });
+  assert.deepEqual(revokedMidScan, { status: "error", code: "unsupported_environment" });
+});
+
+test("P8-B daemon event-loop responsiveness measurement during 64-record async journal discovery", async (t) => {
+  const dir = await realpath(await mkdtemp(join(tmpdir(), "pps-m56-resp-")));
+  await chmod(dir, 0o700);
+  t.after(() => rm(dir, { recursive: true, force: true }));
+
+  const journal = new ApplyJournal(dir);
+  const bigLedger = Array.from({ length: 40 }, (_, i) => ({
+    destination: `.agents/skills/skill-${i}/SKILL.md`,
+    kind: "file",
+    state: "created_verified",
+    bytesWritten: 2048,
+  }));
+  for (let i = 1; i <= 64; i++) {
+    journal.publish(makeRecord({ id: opId(200 + i), phase: "completed", ledger: bigLedger }), true);
+  }
+
+  let ticks = 0;
+  let maxLagMs = 0;
+  let lastTick = performance.now();
+  const timer = setInterval(() => {
+    const now = performance.now();
+    const lag = Math.max(0, now - lastTick - 5);
+    if (lag > maxLagMs) maxLagMs = lag;
+    lastTick = now;
+    ticks++;
+  }, 5);
+
+  const start = performance.now();
+  const listed = await journal.list({ hostId: "host-a", installation: "paseo-project-skills" });
+  const scanMs = performance.now() - start;
+  clearInterval(timer);
+
+  assert.equal(listed.entries.length, 64);
+  assert.equal(listed.truncated, false);
+  console.log(`M5.6_DISCOVERY_RESPONSIVENESS=${JSON.stringify({
+    records: listed.entries.length,
+    scanMs: Number(scanMs.toFixed(2)),
+    timerTicks: ticks,
+    maxLagMs: Number(maxLagMs.toFixed(2)),
+  })}`);
+});
+
+test("P6 pagination with > 20 priority-0 records deduplicates deterministically and warns about additional unresolved pages", async (t) => {
+  const dir = await realpath(await mkdtemp(join(tmpdir(), "pps-m56-p6-")));
+  await chmod(dir, 0o700);
+  t.after(() => rm(dir, { recursive: true, force: true }));
+
+  let wall = 1_700_000_000_000;
+  const journal = new ApplyJournal(dir, () => wall);
+  // Publish 25 priority-0 records (recovery_required & partial_failure) + 3 completed records
+  for (let i = 1; i <= 25; i++) {
+    wall += 1000;
+    journal.publish(makeRecord({
+      id: opId(300 + i),
+      phase: i % 2 === 0 ? "partial_failure" : "recovery_required",
+    }), true);
+  }
+  for (let i = 1; i <= 3; i++) {
+    wall += 1000;
+    journal.publish(makeRecord({ id: opId(400 + i), phase: "completed" }), true);
+  }
+
+  const page1 = await listJournalSummaries({
+    journal,
+    hostId: "host-a",
+    installation: "paseo-project-skills",
+    rawInput: { limit: 20 },
+    reportOperation: (r) => r.operation,
+  });
+  assert.equal(page1.status, "ready");
+  assert.equal(page1.items.length, 20);
+  assert.ok(page1.nextCursor?.startsWith("0:"), `Expected priority-0 nextCursor, got ${page1.nextCursor}`);
+
+  const page2 = await listJournalSummaries({
+    journal,
+    hostId: "host-a",
+    installation: "paseo-project-skills",
+    rawInput: { limit: 20, cursor: page1.nextCursor },
+    reportOperation: (r) => r.operation,
+  });
+  assert.equal(page2.status, "ready");
+  assert.equal(page2.items.length, 8); // remaining 5 priority-0 + 3 completed
+  assert.equal(page2.nextCursor, undefined);
+
+  // Zero duplicate operationIds across pages; all 25 priority-0 precede the 3 completed
+  const all = [...page1.items, ...page2.items];
+  assert.equal(new Set(all.map((i) => i.operationId)).size, 28);
+  assert.ok(all.slice(0, 25).every((i) => i.phase === "recovery_required" || i.phase === "partial_failure"));
+  assert.ok(all.slice(25).every((i) => i.phase === "completed"));
+
+  // UI verifies explicit notice when nextCursor starts with "0:" and deduplicates after Load more
+  const tracker = createOperationTracker();
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  const paseo = {
+    hosts: { list: async () => ({ self: { serverId: "host-a" } }) },
+    projects: { list: async () => ({ projects: [] }) },
+    workspaces: { list: async () => ({ workspaces: [], hasMore: false }) },
+    providers: { list: async () => ({ providers: [] }) },
+  };
+  const invoke = async (name, input) => {
+    if (name === applyListRpc.name) return input?.cursor ? page2 : page1;
+    return { status: "ready" };
+  };
+  let tree;
+  await act(async () => {
+    tree = renderer.create(createElement(
+      QueryClientProvider,
+      { client: queryClient },
+      createElement(
+        HostFixture.Provider,
+        {
+          value: {
+            hosts: [{ serverId: "host-a", status: "online" }],
+            settings: { status: "ready", revision: "r1", values: { catalogRef: hash("a") }, reload: async () => {}, save: async () => true },
+          },
+        },
+        createElement(
+          PaseoApiProvider,
+          { paseo },
+          createElement(
+            PluginRpcProvider,
+            { invoke },
+            createElement(
+              FixtureApprovalScope,
+              { tracker, slot: "slot-p6" },
+              createElement(FoundationScreen, {
+                theme: { colors: {} },
+                host: { id: "host-a", label: "Host A" },
+                layout: { compact: false, platform: "desktop" },
+                params: {},
+              }),
+            ),
+          ),
+        ),
+      ),
+    ));
+  });
+  t.after(async () => { await act(async () => { tree.unmount(); }); queryClient.clear(); });
+
+  const text = () => tree.root.findAllByType("text").map((n) => n.children.join("")).join("\n");
+  assert.match(text(), /Additional active or recovery-required operations exist on later pages/);
+  assert.equal(tracker.snapshot().length, 20);
+
+  const loadMore = tree.root.findAllByType("pressable").find((n) =>
+    n.props.accessibilityLabel === "Load more" ||
+    n.findAllByType("text").some((tNode) => tNode.children.join("") === "Load more"),
+  );
+  assert.ok(loadMore);
+  await act(async () => { loadMore.props.onPress(); });
+  assert.equal(tracker.snapshot().length, 28);
+  assert.doesNotMatch(text(), /Additional active or recovery-required operations exist on later pages/);
 });

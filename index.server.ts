@@ -14,7 +14,7 @@ import { ProjectScanner } from "./server/project-scanner";
 import { createRecommendationHandler } from "./server/recommendation-rpc";
 import { validateDirectory } from "./server/validate-directory";
 import { createCanonicalPreviewHandler } from "./server/canonical-preview";
-import { createMultiRootApply, listJournalSummaries } from "./server/fixture-apply";
+import { createDiscoveryConcurrencyGate, createMultiRootApply, listJournalSummaries } from "./server/fixture-apply";
 import { PreviewReceiptStore } from "./server/preview-receipts";
 import { ApplyJournal } from "./server/apply-journal";
 import {
@@ -239,14 +239,17 @@ export function createMainPluginServer(server: PluginServerContext, options: Mai
     };
   });
 
+  const discoveryGate = createDiscoveryConcurrencyGate();
+  const isTrustAllowed = () => verifyTrust().ok;
+
   if (apply) {
     const service = apply;
     server.handle(applyCreateRpc, (input, context) => service.create(input, context));
     server.handle(applyStatusRpc, (input, context) => service.status(input, context));
-    // P1: Revalidate trust boundary on every discovery request; reject immediately after Relay revocation.
+    // P1 & P8: Revalidate trust boundary before and after async discovery; bound concurrent scans.
     server.handle(applyListRpc, async (input, context) => {
-      if (!verifyTrust().ok) return { status: "error" as const, code: "unsupported_environment" as const };
-      return service.list(input, context);
+      if (!isTrustAllowed()) return { status: "error" as const, code: "unsupported_environment" as const };
+      return service.list(input, context, { gate: discoveryGate, verifyTrust: isTrustAllowed });
     });
   } else if (daemonHome) {
     // Even when Apply is inactive (e.g. Relay enabled), keep read-only status lookup available for recovery.
@@ -276,9 +279,9 @@ export function createMainPluginServer(server: PluginServerContext, options: Mai
         return { status: "error" as const, code: "outcome_unknown" as const };
       }
     });
-    // P1: Revalidate trust boundary on every discovery request; fail closed when Relay/remote policy denies access.
+    // P1 & P8: Revalidate trust boundary before and after async discovery; bound concurrent scans.
     server.handle(applyListRpc, async (input, context) => {
-      if (!verifyTrust().ok) return { status: "error" as const, code: "unsupported_environment" as const };
+      if (!isTrustAllowed()) return { status: "error" as const, code: "unsupported_environment" as const };
       try {
         const coordinator = join(multiRootRuntimeDirectory(daemonHome), "coordinator");
         if (!existsSync(coordinator)) {
@@ -286,11 +289,13 @@ export function createMainPluginServer(server: PluginServerContext, options: Mai
         }
         const journal = new ApplyJournal(coordinator);
         const hostId = (await context.paseo.hosts.list()).self.serverId;
-        return listJournalSummaries({
+        return await listJournalSummaries({
           journal,
           hostId,
           installation: mainPluginInstallationId,
           rawInput: input,
+          gate: discoveryGate,
+          verifyTrust: isTrustAllowed,
           reportOperation: (record) => {
             const op = record.operation;
             if (op.phase === "accepted" || op.phase === "preflight" || op.phase === "writing") {
