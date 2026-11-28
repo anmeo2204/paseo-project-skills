@@ -30,16 +30,38 @@ const diagnosticMessages = {
   inventory_unverified: "Some skill paths were unsafe or changed; their inventory could not be verified.",
 };
 
-export function PreviewResults({ theme, result, paged = false }: Themed & { result: Ready; paged?: boolean }) {
+export function PreviewResults({ theme, result, paged = false, hideHeaderScope = false }: Themed & {
+  result: Ready;
+  paged?: boolean;
+  hideHeaderScope?: boolean;
+}) {
   const files = [...result.entries, ...result.derivedEntries];
+  const createCount = files.filter((e) => e.status === "create").length;
+  const unchangedCount = files.filter((e) => e.status === "unchanged").length;
+  const conflictCount = files.filter((e) => e.status === "conflict").length;
+  const blockedCount = files.filter((e) => e.status === "blocked").length;
+  const hasBlocking = conflictCount > 0 || blockedCount > 0;
   const noop = files.length > 0 && files.every((entry) => entry.status === "unchanged");
   const limited = result.providers.some((provider) => provider.status === "limited" || provider.skills.some((skill) => skill.status === "deferred"));
   return <Section theme={theme} title="Preview Results">
-    <Text selectable style={{ color: theme.colors.foreground }}>Target: {result.intent.canonicalDirectory}</Text>
-    <Text selectable style={{ color: theme.colors.foregroundMuted }}>Pinned catalog: {result.intent.catalogCommitSha}</Text>
+    {!hideHeaderScope && <>
+      <Text selectable style={{ color: theme.colors.foreground }}>Target: {result.intent.canonicalDirectory}</Text>
+      <Text selectable style={{ color: theme.colors.foregroundMuted }}>Pinned catalog: {result.intent.catalogCommitSha}</Text>
+    </>}
     {noop && <Detail theme={theme}>No file changes: all planned files already match in bytes and mode.</Detail>}
     {noop && limited && <Detail theme={theme}>Some provider packages are limited or deferred; review compatibility below.</Detail>}
-    <Detail theme={theme}>Create: {files.filter((e) => e.status === "create").length} · Unchanged: {files.filter((e) => e.status === "unchanged").length} · Conflict: {files.filter((e) => e.status === "conflict").length} · Blocked: {files.filter((e) => e.status === "blocked").length}</Detail>
+    {hasBlocking && (
+      <View style={{ padding: 10, borderRadius: 6, borderWidth: 1, borderColor: theme.colors.statusDanger, backgroundColor: theme.colors.surface0 }}>
+        <Detail theme={theme} error>Blocking conflicts or blocked destinations detected. Safe Apply cannot proceed until resolved.</Detail>
+      </View>
+    )}
+    <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
+      <StatusBadge theme={theme} label={`Create: ${createCount}`} danger={false} />
+      <StatusBadge theme={theme} label={`Unchanged: ${unchangedCount}`} danger={false} />
+      <StatusBadge theme={theme} label={`Conflict: ${conflictCount}`} danger={conflictCount > 0} />
+      <StatusBadge theme={theme} label={`Blocked: ${blockedCount}`} danger={blockedCount > 0} />
+    </View>
+    <Detail theme={theme}>Create: {createCount} · Unchanged: {unchangedCount} · Conflict: {conflictCount} · Blocked: {blockedCount}</Detail>
     <Text accessibilityRole="header" style={{ color: theme.colors.foreground, fontWeight: "600" }}>Canonical files ({result.entries.length})</Text>
     {paged ? <PagedEffects theme={theme} label="canonical files" items={result.entries} render={entry => <FileRow key={entry.destination} theme={theme} entry={entry} />} /> :
       result.entries.map((entry) => <FileRow key={entry.destination} theme={theme} entry={entry} />)}
@@ -54,6 +76,23 @@ export function PreviewResults({ theme, result, paged = false }: Themed & { resu
       {diagnostic.paths.map((path) => <Text key={path} selectable style={{ color: theme.colors.foregroundMuted }}>{path}</Text>)}
     </View>)}
   </Section>;
+}
+
+function StatusBadge({ theme, label, danger }: Themed & { label: string; danger: boolean }) {
+  return (
+    <View style={{
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 6,
+      borderWidth: 1,
+      borderColor: danger ? theme.colors.statusDanger : theme.colors.border,
+      backgroundColor: theme.colors.surface2,
+    }}>
+      <Text style={{ color: danger ? theme.colors.statusDanger : theme.colors.foreground, fontWeight: danger ? "600" : "400" }}>
+        {label}
+      </Text>
+    </View>
+  );
 }
 
 function FileRow({ theme, entry }: Themed & { entry: PreviewEntry | DerivedPreviewEntry }) {

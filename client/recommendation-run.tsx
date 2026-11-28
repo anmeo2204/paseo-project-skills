@@ -16,6 +16,7 @@ import { Action, Detail, Section } from "./controls";
 import type { ProviderId } from "./provider-selection";
 import { RecommendationResults } from "./recommendation-results";
 import { PreviewRun } from "./preview-run";
+import { StepFooter, type MobileStep } from "./workflow-layout";
 export type { SelectionIntentV1 } from "../shared/selection-intent";
 
 type TerminalResult = Extract<RecommendationEvent, { status: "ready" | "partial" }>;
@@ -72,6 +73,9 @@ export function RecommendationRun({
   providerGeneration = 0,
   catalogBusy = false,
   compact = false,
+  mobileStep,
+  onNavigateStep,
+  onSelectedCountChange,
 }: {
   theme: PluginTheme;
   hostId: string;
@@ -82,6 +86,9 @@ export function RecommendationRun({
   providerGeneration?: number;
   catalogBusy?: boolean;
   compact?: boolean;
+  mobileStep?: MobileStep;
+  onNavigateStep?: (step: MobileStep) => void;
+  onSelectedCountChange?: (count: number) => void;
 }) {
   const loadCatalog = useRpc(catalogLoadRpc);
   const resolveCatalog = useRpc(catalogResolveRpc);
@@ -229,6 +236,10 @@ export function RecommendationRun({
   const selectedRef = useRef<string[]>(completed?.selected ?? []);
   selectedRef.current = completed?.selected ?? [];
 
+  useEffect(() => {
+    onSelectedCountChange?.(completed?.selected.length ?? 0);
+  }, [completed?.selected.length, onSelectedCountChange]);
+
   const intent = completed && selectionIntentV1Schema.parse({
     schemaVersion: 1,
     hostId,
@@ -257,60 +268,105 @@ export function RecommendationRun({
 
   const canScan = Boolean(directory && revision && (isPinnedSha || isUnconfigured) && !settings.saving && !catalogBusy);
   const previewDisabled = Boolean(settings.saving || catalogBusy);
+  const hideSkills = mobileStep !== undefined && mobileStep !== "skills";
+  const hidePreview = mobileStep !== undefined && mobileStep !== "preview";
 
   return (
     <>
-      <Section theme={theme} title="Scan & Recommend">
-        <View accessibilityLiveRegion="polite" style={{ gap: 6 }}>
-          {!directory && <Detail theme={theme}>Choose a valid project directory to scan.</Detail>}
-          {directory && isUnconfigured && (
-            <Detail theme={theme}>No catalog revision pinned yet. Scan & Recommend will resolve and pin Latest Stable automatically.</Detail>
-          )}
-          {directory && isLegacyTag && (
-            <Detail theme={theme} error>Resolve and pin the saved legacy tag to an immutable commit SHA before scanning.</Detail>
-          )}
-          {directory && settings.status !== "ready" && <Detail theme={theme}>Waiting for valid host catalog settings.</Detail>}
-          {visible?.phase === "loading" && (
-            <Detail theme={theme}>
-              {isUnconfigured ? "Resolving and pinning latest stable catalog…" : "Loading skill catalog…"}
-            </Detail>
-          )}
-          {visible?.phase === "scanning" && <Detail theme={theme}>Scanning project and evaluating skills…</Detail>}
-          {visible?.phase === "cancelled" && <Detail theme={theme}>Scan cancelled.</Detail>}
-          {(visible?.phase === "error" || visible?.phase === "stale") && <Detail theme={theme} error>{visible.message}</Detail>}
-          {(visible?.phase === "scanning" || completed) && (
-            <Text selectable style={{ color: theme.colors.foregroundMuted }}>
-              {selectedTag
-                ? `Pinned catalog: ${selectedTag} (${(visible?.phase === "scanning" ? visible : completed)?.catalog.commitSha})`
-                : `Pinned catalog: ${(visible?.phase === "scanning" ? visible : completed)?.catalog.commitSha}`}
-            </Text>
-          )}
-        </View>
-        {pending ? <Action theme={theme} label="Cancel" onPress={() => {
-          if (!active.current) return;
-          const attempt = active.current;
-          attempt.firstUsePinnedSha = undefined;
-          active.current = null;
-          setRun({ phase: "cancelled", attempt });
-        }} /> : <Action theme={theme} primary label="Scan & Recommend" disabled={!canScan}
-          onPress={() => void start()} />}
-      </Section>
+      <View
+        style={{ gap: 12, display: hideSkills ? "none" : "flex" }}
+        aria-hidden={hideSkills}
+        importantForAccessibility={hideSkills ? "no-hide-descendants" : "auto"}
+        pointerEvents={hideSkills ? "none" : "auto"}
+      >
+        <Section theme={theme} title="Scan & Recommend">
+          <View accessibilityLiveRegion="polite" style={{ gap: 6 }}>
+            {!directory && <Detail theme={theme}>Choose a valid project directory to scan.</Detail>}
+            {directory && isUnconfigured && (
+              <Detail theme={theme}>No catalog revision pinned yet. Scan & Recommend will resolve and pin Latest Stable automatically.</Detail>
+            )}
+            {directory && isLegacyTag && (
+              <Detail theme={theme} error>Resolve and pin the saved legacy tag to an immutable commit SHA before scanning.</Detail>
+            )}
+            {directory && settings.status !== "ready" && <Detail theme={theme}>Waiting for valid host catalog settings.</Detail>}
+            {visible?.phase === "loading" && (
+              <Detail theme={theme}>
+                {isUnconfigured ? "Resolving and pinning latest stable catalog…" : "Loading skill catalog…"}
+              </Detail>
+            )}
+            {visible?.phase === "scanning" && <Detail theme={theme}>Scanning project and evaluating skills…</Detail>}
+            {visible?.phase === "cancelled" && <Detail theme={theme}>Scan cancelled.</Detail>}
+            {(visible?.phase === "error" || visible?.phase === "stale") && <Detail theme={theme} error>{visible.message}</Detail>}
+            {(visible?.phase === "scanning" || completed) && (
+              <Text selectable style={{ color: theme.colors.foregroundMuted }}>
+                {selectedTag
+                  ? `Pinned catalog: ${selectedTag} (${(visible?.phase === "scanning" ? visible : completed)?.catalog.commitSha})`
+                  : `Pinned catalog: ${(visible?.phase === "scanning" ? visible : completed)?.catalog.commitSha}`}
+              </Text>
+            )}
+          </View>
+          {pending ? <Action theme={theme} label="Cancel" onPress={() => {
+            if (!active.current) return;
+            const attempt = active.current;
+            attempt.firstUsePinnedSha = undefined;
+            active.current = null;
+            setRun({ phase: "cancelled", attempt });
+          }} /> : <Action theme={theme} primary label="Scan & Recommend" disabled={!canScan}
+            onPress={() => void start()} />}
+        </Section>
+        {completed && intent && <RecommendationResults key={intent.recommendationRequestId} theme={theme}
+          result={completed.event.result} partial={completed.event.status === "partial"} catalog={completed.catalog}
+          selected={intent.selectedSkillIds} providers={providers} compact={compact}
+          onToggle={(id) => select((previous) => previous.includes(id) ? previous.filter((item) => item !== id) : [...previous, id])}
+          onSelectRecommended={() => select((previous) => [...new Set([
+            ...previous, ...completed.event.result.items.filter(({ applicability }) => applicability === "recommended").map(({ skillId }) => skillId),
+          ])])}
+          onClear={() => select(() => [])} />}
+        {mobileStep === "skills" && onNavigateStep && (
+          <StepFooter
+            theme={theme}
+            backLabel="Back to Setup"
+            onBack={() => onNavigateStep("setup")}
+            nextLabel="Continue to Preview & Apply"
+            onNext={() => onNavigateStep("preview")}
+            hint={!completed ? "Run Scan & Recommend and select skills before previewing changes." : undefined}
+          />
+        )}
+      </View>
+
       {visible?.phase === "scanning" && <RecommendationSubscription key={visible.attempt.requestId}
         input={{ requestId: visible.attempt.requestId, canonicalDirectory: visible.attempt.directory,
           expectedCatalogSha: visible.catalog.commitSha, expectedSettingsRevision: visible.attempt.revision }}
         onEvent={(event) => accept(visible, event)}
         onFailure={() => finish(visible.attempt, "error", "The recommendation connection closed before a result arrived. Try again.")} />}
-      {completed && intent && <RecommendationResults key={intent.recommendationRequestId} theme={theme}
-        result={completed.event.result} partial={completed.event.status === "partial"} catalog={completed.catalog}
-        selected={intent.selectedSkillIds} providers={providers} compact={compact}
-        onToggle={(id) => select((previous) => previous.includes(id) ? previous.filter((item) => item !== id) : [...previous, id])}
-        onSelectRecommended={() => select((previous) => [...new Set([
-          ...previous, ...completed.event.result.items.filter(({ applicability }) => applicability === "recommended").map(({ skillId }) => skillId),
-        ])])}
-        onClear={() => select(() => [])} />}
-      {completed && intent && <PreviewRun key={"preview-" + intent.recommendationRequestId} theme={theme} intent={intent}
-        generation={JSON.stringify([scope, selectionGeneration, providerGeneration, previewDisabled])}
-        disabled={previewDisabled} />}
+
+      <View
+        style={{ gap: 12, display: hidePreview ? "none" : "flex" }}
+        aria-hidden={hidePreview}
+        importantForAccessibility={hidePreview ? "no-hide-descendants" : "auto"}
+        pointerEvents={hidePreview ? "none" : "auto"}
+      >
+        {completed && intent ? (
+          <PreviewRun key={"preview-" + intent.recommendationRequestId} theme={theme} intent={intent}
+            generation={JSON.stringify([scope, selectionGeneration, providerGeneration, previewDisabled])}
+            disabled={previewDisabled} />
+        ) : mobileStep === "preview" ? (
+          <Section theme={theme} title="Preview Changes">
+            <Detail theme={theme}>
+              {!directory
+                ? "Select a valid target directory in Step 1 (Setup) and run Scan & Recommend in Step 2 (Skills) to preview changes."
+                : "Run Scan & Recommend and select at least one skill in Step 2 (Skills) to preview changes."}
+            </Detail>
+          </Section>
+        ) : null}
+        {mobileStep === "preview" && onNavigateStep && (
+          <StepFooter
+            theme={theme}
+            backLabel="Back to Skills"
+            onBack={() => onNavigateStep("skills")}
+          />
+        )}
+      </View>
     </>
   );
 }

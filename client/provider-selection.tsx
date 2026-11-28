@@ -106,12 +106,14 @@ export function ProviderSelection({
               aria-checked={checked}
               accessibilityState={{ checked }}
               onPress={() => onToggle(id)}
+              hitSlop={4}
               style={{
                 flexDirection: "row",
                 alignItems: "center",
                 gap: 6,
-                minHeight: 36,
-                paddingVertical: 6,
+                minHeight: 44,
+                minWidth: 44,
+                paddingVertical: 8,
                 paddingHorizontal: 10,
                 borderRadius: 6,
                 borderWidth: 1,

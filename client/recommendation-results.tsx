@@ -415,8 +415,9 @@ function SkillRow({
         accessibilityLabel={`Select ${item.skillId}`}
         aria-checked={checked}
         accessibilityState={{ checked }}
+        hitSlop={4}
         onPress={onToggle}
-        style={{ flexDirection: "row", alignItems: "center", minHeight: 36, gap: 8 }}
+        style={{ flexDirection: "row", alignItems: "center", minHeight: 44, minWidth: 44, gap: 8 }}
       >
         <Icon
           name={checked ? "SquareCheck" : "Square"}

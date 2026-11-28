@@ -28,8 +28,8 @@ export function Action({ theme, label, onPress, disabled = false, primary = fals
   primary?: boolean;
 }) {
   return (
-    <Pressable accessibilityRole="button" accessibilityState={{ disabled }} disabled={disabled} onPress={onPress}
-      style={{ alignSelf: "flex-start", paddingHorizontal: 12, paddingVertical: 8, borderRadius: 6,
+    <Pressable accessibilityRole="button" accessibilityState={{ disabled }} disabled={disabled} onPress={onPress} hitSlop={4}
+      style={{ alignSelf: "flex-start", minHeight: 40, minWidth: 44, justifyContent: "center", paddingHorizontal: 12, paddingVertical: 8, borderRadius: 6,
         borderWidth: 1, borderColor: primary ? theme.colors.accent : theme.colors.border,
         backgroundColor: primary ? theme.colors.accent : theme.colors.surface2, opacity: disabled ? 0.55 : 1 }}>
       <Text style={{ color: primary ? theme.colors.accentForeground : theme.colors.foreground }}>{label}</Text>

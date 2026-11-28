@@ -196,7 +196,7 @@ function ReviewPlan({ theme, result }: { theme: PluginTheme; result: Ready }) {
       <PagedEffects theme={theme} label="directories" items={result.manifest.directoryEffects} render={item =>
         <Text key={item.destination} selectable style={{ color: theme.colors.foreground }}>Create directory · {item.destination} · mode 0755</Text>} />
     </Section>
-    <PreviewResults theme={theme} result={result.manifest.plan} paged />
+    <PreviewResults theme={theme} result={result.manifest.plan} paged hideHeaderScope />
   </>;
 }
 
@@ -220,6 +220,39 @@ const rowLabels = {
   not_attempted: "Not attempted", unchanged_verified: "Unchanged and verified", created_verified: "Created and verified",
   created_incomplete: "Created, incomplete", observation_changed: "Destination changed", ownership_unknown: "Ownership unverified",
 };
+
+export function summarizeHostOperations(
+  operations: readonly TrackedOperation[],
+  hostId: string,
+  slot: string,
+): { label: string; isRecovery: boolean } | null {
+  const scoped = operations.filter((item) => item.scope.hostId === hostId && item.scope.slot === slot);
+  if (scoped.length === 0) return null;
+  const recovery = scoped.find((item) =>
+    item.state === "outcome_unknown" ||
+    item.operation?.phase === "recovery_required" ||
+    item.operation?.phase === "partial_failure",
+  );
+  if (recovery) {
+    return {
+      label: `Apply operation ${recovery.operationId.slice(0, 8)} requires review or recovery.`,
+      isRecovery: true,
+    };
+  }
+  const active = scoped.find((item) =>
+    item.state === "sending" ||
+    item.operation?.phase === "accepted" ||
+    item.operation?.phase === "preflight" ||
+    item.operation?.phase === "writing",
+  );
+  if (active) {
+    return {
+      label: `Apply operation ${active.operationId.slice(0, 8)} is in progress.`,
+      isRecovery: false,
+    };
+  }
+  return null;
+}
 
 export function FixtureOperations({ theme, host, online }: Pick<PluginScreenProps, "theme" | "host"> & { online: boolean }) {
   const { tracker, slot } = useFixtureApproval()!;
