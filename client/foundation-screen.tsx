@@ -347,7 +347,7 @@ function HostScreen({
                 </View>
               )}
               {directory && <Detail theme={theme}>Target directory: {directory}</Detail>}
-              {directory && approvalScope && <TargetApplyStatus theme={theme} hostId={hostId} directory={directory} />}
+              {directory && approvalScope?.allowApproval && <TargetApplyStatus theme={theme} hostId={hostId} directory={directory} />}
             </View>}
           </Section>
           <Section theme={theme} title="Target Providers">

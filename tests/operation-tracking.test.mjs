@@ -695,3 +695,75 @@ test("P6 pagination with > 20 priority-0 records deduplicates deterministically 
   assert.equal(tracker.snapshot().length, 28);
   assert.doesNotMatch(text(), /Additional active or recovery-required operations exist on later pages/);
 });
+
+test("M5.6 Mobile reopen after Relay revocation keeps read-only operation recovery and manual ID lookup available while keeping Preview-only mode", async (t) => {
+  const tracker = createOperationTracker();
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  const id = opId(501);
+  const paseo = {
+    hosts: { list: async () => ({ self: { serverId: "host-a" } }) },
+    projects: { list: async () => ({ projects: [] }) },
+    workspaces: { list: async () => ({ workspaces: [], hasMore: false }) },
+    providers: { list: async () => ({ providers: [] }) },
+  };
+  const invoke = async (name, input) => {
+    if (name === applyListRpc.name) return { status: "error", code: "unsupported_environment" };
+    if (name === applyStatusRpc.name && input?.operationId === id) return makeRecord({ id, phase: "completed" }).operation;
+    return { status: "ready" };
+  };
+  let tree;
+  await act(async () => {
+    tree = renderer.create(createElement(
+      QueryClientProvider,
+      { client: queryClient },
+      createElement(
+        HostFixture.Provider,
+        {
+          value: {
+            hosts: [{ serverId: "host-a", status: "online" }],
+            settings: { status: "ready", revision: "r1", values: { catalogRef: hash("a") }, reload: async () => {}, save: async () => true },
+          },
+        },
+        createElement(
+          PaseoApiProvider,
+          { paseo },
+          createElement(
+            PluginRpcProvider,
+            { invoke },
+            createElement(
+              FixtureApprovalScope,
+              { tracker, slot: "slot-revoked", allowApproval: false },
+              createElement(FoundationScreen, {
+                theme: { colors: {} },
+                host: { id: "host-a", label: "Host A" },
+                layout: { compact: true, platform: "android" },
+                params: {},
+              }),
+            ),
+          ),
+        ),
+      ),
+    ));
+  });
+  t.after(async () => { await act(async () => { tree.unmount(); }); queryClient.clear(); });
+
+  const text = () => tree.root.findAllByType("text").map((n) => n.children.join("")).join("\n");
+  const press = async (label) => {
+    const b = tree.root.findAllByType("pressable").find((node) =>
+      node.props.accessibilityLabel === label ||
+      node.findAllByType("text").some((tNode) => tNode.children.join("") === label),
+    );
+    assert.ok(b, `Missing button: ${label}`);
+    await act(async () => b.props.onPress());
+  };
+
+  await press("Step 3: Preview & Apply");
+  assert.match(text(), /Operation discovery is unavailable under the current Relay or trust policy/);
+  await press("Look up operation by ID");
+  const idInput = tree.root.findAllByType("input").find((n) => n.props.accessibilityLabel === "Operation ID");
+  assert.ok(idInput);
+  await act(async () => idInput.props.onChangeText(id));
+  await press("Check by ID");
+  assert.match(text(), /Completed/);
+  assert.match(text(), new RegExp(id));
+});

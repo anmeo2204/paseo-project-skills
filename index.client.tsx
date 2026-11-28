@@ -106,7 +106,7 @@ export default function contribute(client: PluginClientContext) {
       </View>
     ) : baseScreen;
 
-    return canApprove ? <FixtureApprovalScope slot={slot} tracker={tracker}>{withNotice}</FixtureApprovalScope> : withNotice;
+    return <FixtureApprovalScope slot={slot} tracker={tracker} allowApproval={canApprove}>{withNotice}</FixtureApprovalScope>;
   }
 
   const removeScreen = client.addScreen({ id: screenId, title, Component: Screen });

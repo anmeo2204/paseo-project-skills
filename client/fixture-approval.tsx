@@ -12,12 +12,12 @@ import { PagedEffects } from "./paged-effects";
 import { previewErrors, previewIntentKey, invalidResult } from "./preview-presentation";
 import { PreviewResults } from "./preview-results";
 
-const Context = createContext<{ tracker: OperationTracker; slot: string } | null>(null);
+const Context = createContext<{ tracker: OperationTracker; slot: string; allowApproval: boolean } | null>(null);
 export const useFixtureApproval = () => useContext(Context);
-export function FixtureApprovalScope({ tracker, slot, children }: {
-  tracker: OperationTracker; slot: string; children: ReactNode;
+export function FixtureApprovalScope({ tracker, slot, allowApproval = true, children }: {
+  tracker: OperationTracker; slot: string; allowApproval?: boolean; children: ReactNode;
 }) {
-  return <Context.Provider value={{ tracker, slot }}>{children}</Context.Provider>;
+  return <Context.Provider value={{ tracker, slot, allowApproval }}>{children}</Context.Provider>;
 }
 
 type Ready = Extract<ProviderPreviewV2Result, { status: "ready" }>;

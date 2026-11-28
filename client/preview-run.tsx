@@ -18,7 +18,8 @@ type Run = { attempt: Attempt } & (
 );
 type PreviewProps = { theme: PluginTheme; intent: SelectionIntentV1; generation: string; disabled?: boolean };
 export function PreviewRun(props: PreviewProps) {
-  return useFixtureApproval() ? <FixtureApprovalPreview {...props} /> : <ReadOnlyPreview {...props} />;
+  const approval = useFixtureApproval();
+  return approval?.allowApproval ? <FixtureApprovalPreview {...props} /> : <ReadOnlyPreview {...props} />;
 }
 
 function ReadOnlyPreview({ theme, intent, generation, disabled = false }: PreviewProps) {
