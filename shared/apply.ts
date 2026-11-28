@@ -38,8 +38,41 @@ export const applyOutputSchema = z.discriminatedUnion("status", [
 export type ApplyCreateInput = z.infer<typeof applyCreateInputSchema>;
 export type ApplyOperation = z.infer<typeof applyOperationSchema>;
 export type ApplyOutput = z.infer<typeof applyOutputSchema>;
+export const applyListInputSchema = z.strictObject({
+  limit: z.number().int().min(1).max(50).optional(),
+  cursor: z.string().regex(/^[01]:[0-9]{1,16}:[a-f0-9]{32,64}$/).optional(),
+});
+export const applyOperationSummarySchema = z.strictObject({
+  operationId: operationIdSchema,
+  planDigest: digest,
+  phase: applyOperationSchema.shape.phase,
+  code: z.string().min(1).max(64),
+  targetMutated: applyOperationSchema.shape.targetMutated,
+  requiresPreview: z.boolean(),
+  durability: applyOperationSchema.shape.durability,
+  ledgerCount: z.number().int().nonnegative(),
+  updatedAt: z.number().int().nonnegative(),
+});
+export const applyListOutputSchema = z.discriminatedUnion("status", [
+  z.strictObject({
+    status: z.literal("ready"),
+    items: z.array(applyOperationSummarySchema).max(50),
+    nextCursor: z.string().regex(/^[01]:[0-9]{1,16}:[a-f0-9]{32,64}$/).optional(),
+    unreadableCount: z.number().int().nonnegative(),
+    truncated: z.boolean(),
+  }),
+  z.strictObject({
+    status: z.literal("error"),
+    code: z.enum(["invalid_request", "journal_unavailable", "unsupported_environment"]),
+  }),
+]);
+export type ApplyListInput = z.infer<typeof applyListInputSchema>;
+export type ApplyOperationSummary = z.infer<typeof applyOperationSummarySchema>;
+export type ApplyListOutput = z.infer<typeof applyListOutputSchema>;
+
 export const applyCreateRpc = defineRpc({ name: "apply.create.v1", input: applyCreateInputSchema, output: applyOutputSchema });
 export const applyStatusRpc = defineRpc({ name: "apply.status.v1", input: applyStatusInputSchema, output: applyOutputSchema });
+export const applyListRpc = defineRpc({ name: "apply.list.v1", input: applyListInputSchema, output: applyListOutputSchema });
 
 export const localApplyCapabilityRpc = defineRpc({
   name: "apply.local-capability.v1", input: z.strictObject({}), output: z.strictObject({ enabled: z.boolean() }),

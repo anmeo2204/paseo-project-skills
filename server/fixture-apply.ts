@@ -2,9 +2,20 @@ import type { PluginHandlerContext } from "@getpaseo/plugin/server";
 import { createHash } from "node:crypto";
 import { isAbsolute, join, relative } from "node:path";
 import { lstatSync, mkdirSync, realpathSync } from "node:fs";
-import { applyCreateInputSchema, applyStatusInputSchema, type ApplyOutput, type ApplyOperation, type ApplyCreateInput } from "../shared/apply";
+import {
+  applyCreateInputSchema,
+  applyListInputSchema,
+  applyListOutputSchema,
+  applyOperationSummarySchema,
+  applyStatusInputSchema,
+  type ApplyCreateInput,
+  type ApplyListOutput,
+  type ApplyOperation,
+  type ApplyOperationSummary,
+  type ApplyOutput,
+} from "../shared/apply";
 import { createCanonicalPreviewHandler } from "./canonical-preview";
-import { ApplyJournal, type ApplyJournalRecord } from "./apply-journal";
+import { ApplyJournal, journalListLimits, type ApplyJournalRecord } from "./apply-journal";
 import { canonicalSerialize, manifestDigest, PreviewReceiptStore } from "./preview-receipts";
 import { fixtureWriterRequest, singleProjectWriterRequest, type NativeControls, type NativeWriterRequest, type NativeWriterResult } from "./native-writer-contract";
 import { runFixtureWriter, runSingleProjectWriter, type FixtureWriterOptions } from "./native-writer";
@@ -30,6 +41,99 @@ const recovery = (operation: ApplyOperation): ApplyOperation => ({
   ...operation, phase: "recovery_required", code: "terminal_record_missing",
   targetMutated: "unknown", durability: "not_confirmed", requiresPreview: true,
 });
+
+const priorityOf = (phase: ApplyOperation["phase"]): 0 | 1 =>
+  phase === "completed" || phase === "failed_before_write" ? 1 : 0;
+
+function parseCursor(cursor: string): { priority: 0 | 1; updatedAt: number; operationId: string } {
+  const [p, ts, id] = cursor.split(":");
+  return { priority: p === "0" ? 0 : 1, updatedAt: Number(ts), operationId: id };
+}
+
+function afterCursor(
+  item: { priority: 0 | 1; updatedAt: number; operationId: string },
+  cursor: { priority: 0 | 1; updatedAt: number; operationId: string },
+): boolean {
+  if (item.priority !== cursor.priority) return item.priority > cursor.priority;
+  if (item.updatedAt !== cursor.updatedAt) return item.updatedAt < cursor.updatedAt;
+  return item.operationId > cursor.operationId;
+}
+
+export function listJournalSummaries(options: {
+  journal: Pick<ApplyJournal, "list">;
+  hostId: string;
+  installation: string;
+  rawInput: unknown;
+  reportOperation: (record: ApplyJournalRecord) => ApplyOperation;
+  limits?: Partial<typeof journalListLimits>;
+}): ApplyListOutput {
+  const parsed = applyListInputSchema.safeParse(options.rawInput);
+  if (!parsed.success) return { status: "error", code: "invalid_request" };
+  const limit = parsed.data.limit ?? journalListLimits.defaultLimit;
+  const cursor = parsed.data.cursor ? parseCursor(parsed.data.cursor) : undefined;
+  const maxResponseBytes = options.limits?.maxResponseBytes ?? journalListLimits.maxResponseBytes;
+
+  let listed: ReturnType<ApplyJournal["list"]>;
+  try {
+    listed = options.journal.list({
+      hostId: options.hostId,
+      installation: options.installation,
+      limits: options.limits,
+    });
+  } catch {
+    return { status: "error", code: "journal_unavailable" };
+  }
+
+  const ranked = listed.entries.map(({ record, updatedAt }) => {
+    const op = options.reportOperation(record);
+    const summary: ApplyOperationSummary = applyOperationSummarySchema.parse({
+      operationId: op.operationId,
+      planDigest: op.planDigest,
+      phase: op.phase,
+      code: op.code,
+      targetMutated: op.targetMutated,
+      requiresPreview: op.requiresPreview,
+      durability: op.durability,
+      ledgerCount: op.ledger.length,
+      updatedAt,
+    });
+    return { summary, priority: priorityOf(op.phase), updatedAt, operationId: op.operationId };
+  });
+
+  // P3: Deterministic priority ordering (recovery/active first, then newest updatedAt, then operationId).
+  ranked.sort((a, b) => {
+    if (a.priority !== b.priority) return a.priority - b.priority;
+    if (a.updatedAt !== b.updatedAt) return b.updatedAt - a.updatedAt;
+    return a.operationId < b.operationId ? -1 : a.operationId > b.operationId ? 1 : 0;
+  });
+
+  const filtered = cursor ? ranked.filter((item) => afterCursor(item, cursor)) : ranked;
+  const items: ApplyOperationSummary[] = [];
+  let bytes = 256;
+  let lastIncluded: (typeof filtered)[number] | undefined;
+
+  for (const row of filtered) {
+    if (items.length >= limit) break;
+    const rowBytes = Buffer.byteLength(JSON.stringify(row.summary)) + 1;
+    if (items.length > 0 && bytes + rowBytes > maxResponseBytes) break;
+    bytes += rowBytes;
+    items.push(row.summary);
+    lastIncluded = row;
+  }
+
+  const hasMore = filtered.length > items.length;
+  const nextCursor = hasMore && lastIncluded
+    ? `${lastIncluded.priority}:${lastIncluded.updatedAt}:${lastIncluded.operationId}`
+    : undefined;
+
+  return applyListOutputSchema.parse({
+    status: "ready",
+    items,
+    ...(nextCursor ? { nextCursor } : {}),
+    unreadableCount: listed.unreadableCount,
+    truncated: listed.truncated,
+  });
+}
 
 type FixtureConfiguration = {
   fixtureBase: string;
@@ -406,6 +510,20 @@ function createApplyEngine(config: EngineConfiguration) {
         const record = journal.read(parsed.data.operationId);
         return record && visible(record, hostId) ? report(record) : error("outcome_unknown");
       } catch { return error("outcome_unknown"); }
+    },
+    async list(raw: unknown, context: Context): Promise<ApplyListOutput> {
+      try {
+        const hostId = await host(context);
+        return listJournalSummaries({
+          journal,
+          hostId,
+          installation: config.installation,
+          rawInput: raw,
+          reportOperation: report,
+        });
+      } catch {
+        return { status: "error", code: "journal_unavailable" };
+      }
     },
     async dispose() {
       stop.abort();

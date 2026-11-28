@@ -137,6 +137,9 @@ function createHarness(t, { fixture = true } = {}) {
     if (method === "apply.target-status.v1") {
       return Promise.resolve({ hostCompatible: true, trustBoundaryOk: true, reasons: [], enrolledCount: 1, targetState: "enrolled_enabled" });
     }
+    if (method === "apply.list.v1") {
+      return Promise.resolve({ status: "ready", items: [], unreadableCount: 0, truncated: false });
+    }
     if (method === "apply.status.v1") {
       statusCalls.push(input);
       return Promise.resolve({ status: "error", code: "outcome_unknown" });

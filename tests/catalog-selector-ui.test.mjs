@@ -93,6 +93,9 @@ function createHarness(t, { fixture = false, compact = false } = {}) {
       loadQueue.push(pending);
       return pending.promise;
     }
+    if (method === "apply.list.v1") {
+      return Promise.resolve({ status: "ready", items: [], unreadableCount: 0, truncated: false });
+    }
     if (method === "preview.providers.v2" || method === "preview.providers") {
       const pending = { ...Promise.withResolvers(), input };
       previewQueue.push(pending);

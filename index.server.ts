@@ -4,7 +4,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { catalogSettings } from "./shared/catalog-settings";
 import { workspacePreferencesSettings } from "./shared/workspace-preferences";
-import { applyCreateRpc, applyStatusRpc, applyTargetStatusRpc, type ApplyTargetStatusOutput } from "./shared/apply";
+import { applyCreateRpc, applyListRpc, applyStatusRpc, applyTargetStatusRpc, type ApplyTargetStatusOutput } from "./shared/apply";
 import { canonicalPreviewRpc, providerPreviewRpc, providerPreviewV2Rpc, catalogLoadRpc, catalogReleasesRpc, catalogResolveRpc, foundationStatusRpc, recommendationEvaluateSubscription, targetScanSubscription, validateDirectoryRpc } from "./shared/rpc";
 import { CatalogGit } from "./server/catalog-git";
 import { CatalogLoader } from "./server/catalog-loader";
@@ -14,7 +14,7 @@ import { ProjectScanner } from "./server/project-scanner";
 import { createRecommendationHandler } from "./server/recommendation-rpc";
 import { validateDirectory } from "./server/validate-directory";
 import { createCanonicalPreviewHandler } from "./server/canonical-preview";
-import { createMultiRootApply } from "./server/fixture-apply";
+import { createMultiRootApply, listJournalSummaries } from "./server/fixture-apply";
 import { PreviewReceiptStore } from "./server/preview-receipts";
 import { ApplyJournal } from "./server/apply-journal";
 import {
@@ -243,6 +243,11 @@ export function createMainPluginServer(server: PluginServerContext, options: Mai
     const service = apply;
     server.handle(applyCreateRpc, (input, context) => service.create(input, context));
     server.handle(applyStatusRpc, (input, context) => service.status(input, context));
+    // P1: Revalidate trust boundary on every discovery request; reject immediately after Relay revocation.
+    server.handle(applyListRpc, async (input, context) => {
+      if (!verifyTrust().ok) return { status: "error" as const, code: "unsupported_environment" as const };
+      return service.list(input, context);
+    });
   } else if (daemonHome) {
     // Even when Apply is inactive (e.g. Relay enabled), keep read-only status lookup available for recovery.
     server.handle(applyStatusRpc, async (input, context) => {
@@ -271,6 +276,42 @@ export function createMainPluginServer(server: PluginServerContext, options: Mai
         return { status: "error" as const, code: "outcome_unknown" as const };
       }
     });
+    // P1: Revalidate trust boundary on every discovery request; fail closed when Relay/remote policy denies access.
+    server.handle(applyListRpc, async (input, context) => {
+      if (!verifyTrust().ok) return { status: "error" as const, code: "unsupported_environment" as const };
+      try {
+        const coordinator = join(multiRootRuntimeDirectory(daemonHome), "coordinator");
+        if (!existsSync(coordinator)) {
+          return { status: "ready" as const, items: [], unreadableCount: 0, truncated: false };
+        }
+        const journal = new ApplyJournal(coordinator);
+        const hostId = (await context.paseo.hosts.list()).self.serverId;
+        return listJournalSummaries({
+          journal,
+          hostId,
+          installation: mainPluginInstallationId,
+          rawInput: input,
+          reportOperation: (record) => {
+            const op = record.operation;
+            if (op.phase === "accepted" || op.phase === "preflight" || op.phase === "writing") {
+              return {
+                ...op,
+                phase: "recovery_required" as const,
+                code: "terminal_record_missing",
+                targetMutated: "unknown" as const,
+                durability: "not_confirmed" as const,
+                requiresPreview: true,
+              };
+            }
+            return op;
+          },
+        });
+      } catch {
+        return { status: "error" as const, code: "journal_unavailable" as const };
+      }
+    });
+  } else {
+    server.handle(applyListRpc, () => ({ status: "error" as const, code: "unsupported_environment" as const }));
   }
 
   return async () => {

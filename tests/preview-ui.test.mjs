@@ -68,6 +68,9 @@ function harness(t, { fixture = false } = {}) {
     calls.push(method);
     if (method === 'target.validate-directory') return Promise.resolve({ status: 'ready', directory: input.path });
     if (method === 'catalog.load') return Promise.resolve({ status: 'ready', settingsRevision: currentSettings.revision, requestedRef: currentSettings.values.catalogRef, snapshot: catalog });
+    if (fixture && method === 'apply.list.v1') {
+      return Promise.resolve({ status: 'ready', items: [], unreadableCount: 0, truncated: false });
+    }
     if (fixture && (method === 'apply.create.v1' || method === 'apply.status.v1')) {
       const pending = { ...Promise.withResolvers(), method, host: currentHost, input: structuredClone(input),
         trackedBeforeTransport: tracker.snapshot().some(row => row.operationId === input.operationId) };
